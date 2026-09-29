@@ -4,6 +4,7 @@
 [![PWA Ready](https://img.shields.io/badge/PWA-Ready-orange.svg)](manifest.json)
 [![Pure Vanilla JS](https://img.shields.io/badge/Vanilla-JS-F7DF1E.svg?logo=javascript&logoColor=black)](index.html)
 [![Chart.js v4](https://img.shields.io/badge/Chart.js-v4.4.2-FF6384.svg?logo=chartdotjs&logoColor=white)](chart.umd.min.js)
+[![Firebase Firestore](https://img.shields.io/badge/Firebase-Firestore%20%26%20Storage-FFA611.svg?logo=firebase&logoColor=black)](firebase-config.js)
 
 **SpeedGuard** adalah aplikasi web monitoring, perekaman, dan pelaporan pelanggaran batas kecepatan kendaraan (> 20 KM/JAM) untuk area operasional logistik **PT Puninar Jaya – Area Puninar Nagrak**.
 
@@ -80,6 +81,50 @@ Aplikasi ini dibangun menggunakan arsitektur **Zero-Dependency Backend / Client-
 
 ---
 
+## 🔥 Panduan Menghubungkan ke Google Firebase (Cloud Firestore & Storage)
+
+Aplikasi mendukung arsitektur **Dual-Mode Hybrid**:
+- **Jika Firebase belum diatur**: Berjalan offline 100% normal menggunakan `localStorage` peramban.
+- **Jika Firebase dihubungkan**: Beralih otomatis ke **Google Cloud Firestore & Firebase Storage** dengan sinkronisasi multi-perangkat real-time!
+
+### Langkah 1: Buat Proyek Firebase (Gratis Spark Plan)
+1. Buka [Firebase Console](https://console.firebase.google.com/) menggunakan akun Google Anda.
+2. Klik **Add project** -> beri nama proyek (contoh: `speedguard-puninar`).
+3. Google Analytics opsional (bisa dimatikan) -> klik **Create project**.
+
+### Langkah 2: Aktifkan Firestore Database & Storage
+1. Pada menu sebelah kiri, pilih **Build** > **Firestore Database**:
+   - Klik **Create database**.
+   - Pilih lokasi server terdekat (contoh: `asia-southeast2` Jakarta atau `asia-southeast1` Singapura).
+   - Pilih mode keamanan **Start in test mode** -> klik **Enable**.
+2. Pada menu sebelah kiri, pilih **Build** > **Storage**:
+   - Klik **Get started** -> pilih **Start in test mode** -> klik **Done**.
+
+### Langkah 3: Hubungkan Aplikasi ke Firebase (Pilih Salah Satu Cara)
+
+#### Cara A: Langsung dari Tampilan Aplikasi Web (Paling Praktis)
+1. Buka aplikasi SpeedGuard di browser.
+2. Login sebagai **Admin** (Username: `admin`, Password: `admin123`).
+3. Klik ikon profil di pojok kanan atas -> pilih **🔥 Koneksi Firebase Cloud**.
+4. Tempelkan (*paste*) kode `const firebaseConfig = { ... }` dari Firebase Console Anda ke dalam kotak yang tersedia.
+5. Klik **💾 Simpan & Hubungkan**. Indikator di bilah atas akan berubah menjadi 🟢 **Cloud**.
+6. Klik tombol **📤 Unggah Data Lokal ke Cloud Firestore** untuk memigrasikan seluruh 126 data riwayat awal ke database cloud dalam sekali klik!
+
+#### Cara B: Mengedit File `firebase-config.js`
+Buka file `firebase-config.js` pada repositori ini dan isi nilainya:
+```javascript
+window.FIREBASE_CONFIG = {
+  apiKey: "AIzaSy...",
+  authDomain: "speedguard-puninar.firebaseapp.com",
+  projectId: "speedguard-puninar",
+  storageBucket: "speedguard-puninar.appspot.com",
+  messagingSenderId: "...",
+  appId: "..."
+};
+```
+
+---
+
 ## 🚀 Panduan Deploy ke GitHub Pages (1-Klik Gratis)
 
 Aplikasi ini 100% siap dijalankan di GitHub Pages:
@@ -145,6 +190,9 @@ D:\FAJAR Apps\GitHub\
 ├── favicon.ico              # Ikon ICO kompatibilitas browser
 ├── manifest.json            # Web App Manifest PWA
 ├── chart.umd.min.js         # Pustaka Chart.js lokal (offline support)
+├── firebase-config.js       # File konfigurasi Google Firebase Cloud
+├── firestore.rules          # Aturan keamanan database Firestore
+├── storage.rules            # Aturan keamanan penyimpanan foto Storage
 ├── index.html               # File aplikasi lengkap (HTML, CSS, JS, database awal)
 └── tools/                   # Skrip utilitas pengolahan data riwayat
     ├── README.md            # Dokumentasi modul utilitas

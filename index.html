@@ -19,6 +19,11 @@
 <!-- jsPDF for PDF -->
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.1/dist/jspdf.plugin.autotable.min.js"></script>
+<!-- Firebase SDK v10 (Compat) -->
+<script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-storage-compat.js"></script>
+<script src="firebase-config.js"></script>
 <style>
 /* ============================================================
    VARIABLES & RESET
@@ -1023,6 +1028,121 @@ body.dark-mode .repeat-title { color: #FFB74D; }
 body.dark-mode .repeat-item { color: #E5E7EB; }
 body.dark-mode .app-info-box { background: #14281B; border-color: #1F4A2C; color: #A7F3D0; }
 body.dark-mode .btn-danger-outline { background: transparent; }
+
+/* ============================================================
+   FIREBASE CLOUD STATUS & MODAL STYLES
+   ============================================================ */
+.cloud-pill {
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  border-radius: 18px;
+  padding: 4px 9px;
+  font-size: 10px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  color: #fff;
+  user-select: none;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.cloud-pill:hover {
+  background: rgba(255, 255, 255, 0.28);
+  transform: translateY(-1px);
+}
+.cloud-pill:active { transform: scale(0.96); }
+.cp-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #F59E0B;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.25);
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+.cp-dot.online {
+  background: #10B981;
+  box-shadow: 0 0 8px #10B981;
+}
+.cp-dot.syncing {
+  background: #3B82F6;
+  animation: pulseSync 0.8s infinite alternate;
+}
+@keyframes pulseSync {
+  from { opacity: 0.4; transform: scale(0.85); }
+  to { opacity: 1; transform: scale(1.2); }
+}
+.cp-text { font-size: 10px; letter-spacing: 0.3px; }
+
+/* Firebase Config Modal */
+.fb-status-banner {
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+.fb-status-banner.online {
+  background: #E8F5E9;
+  border: 1px solid #A5D6A7;
+  color: #1B5E20;
+}
+.fb-status-banner.local {
+  background: #FFF3E0;
+  border: 1px solid #FFE082;
+  color: #E65100;
+}
+.fb-status-banner .fsb-icon { font-size: 22px; flex-shrink: 0; }
+.fb-status-banner .fsb-title { font-weight: 800; font-size: 13px; margin-bottom: 2px; }
+.fb-tab-bar {
+  display: flex;
+  background: var(--bg);
+  border-radius: 10px;
+  padding: 3px;
+  margin-bottom: 12px;
+  border: 1px solid var(--border);
+}
+.fb-tab {
+  flex: 1;
+  text-align: center;
+  padding: 7px;
+  font-size: 11.5px;
+  font-weight: 700;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 8px;
+  color: var(--text2);
+  transition: all 0.15s ease;
+}
+.fb-tab.active {
+  background: var(--card);
+  color: var(--primary);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+}
+.fb-raw-json {
+  width: 100%;
+  height: 110px;
+  font-family: monospace;
+  font-size: 11px;
+  padding: 8px 10px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  background: #FAFAFA;
+  color: var(--text);
+  resize: vertical;
+  line-height: 1.4;
+}
+body.dark-mode .cloud-pill { background: rgba(0, 0, 0, 0.35); border-color: rgba(255, 255, 255, 0.15); }
+body.dark-mode .fb-raw-json { background: #111827; border-color: #374151; color: #F9FAFB; }
+body.dark-mode .fb-status-banner.online { background: #14281B; border-color: #1F4A2C; color: #A7F3D0; }
+body.dark-mode .fb-status-banner.local { background: #26180B; border-color: #4D3319; color: #FFB74D; }
 </style>
 </head>
 <body>
@@ -1044,6 +1164,10 @@ body.dark-mode .btn-danger-outline { background: transparent; }
     </div>
   </div>
   <div class="header-actions">
+    <div class="cloud-pill" id="cloudPill" onclick="handleCloudPillClick()" title="Status Koneksi Database: Klik untuk info">
+      <span class="cp-dot" id="cpDot"></span>
+      <span class="cp-text" id="cpText">Lokal</span>
+    </div>
     <div id="userBadgeArea"></div>
     <button class="icon-btn" onclick="toggleTheme()" title="Mode Gelap/Terang" id="themeBtn">🌙</button>
   </div>
@@ -1678,6 +1802,95 @@ body.dark-mode .btn-danger-outline { background: transparent; }
   </div>
 </div>
 
+<!-- Firebase Cloud Config Modal (Admin & Petugas) -->
+<div class="modal-overlay" id="firebaseConfigModal" onclick="closeAuthModalOnOverlay(event, 'firebaseConfigModal')">
+  <div class="modal-box" style="max-width:480px;max-height:88vh;display:flex;flex-direction:column;padding:20px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1.5px solid var(--border);padding-bottom:12px;margin-bottom:12px">
+      <div>
+        <div style="font-size:16px;font-weight:900;color:var(--text);display:flex;align-items:center;gap:6px">
+          <span>🔥</span> Koneksi Cloud Firebase
+        </div>
+        <div style="font-size:11.5px;color:var(--text2);margin-top:2px">
+          Sinkronisasi Firestore & penyimpanan foto lintas perangkat
+        </div>
+      </div>
+      <button onclick="closeModal('firebaseConfigModal')" style="border:none;background:none;font-size:18px;cursor:pointer;color:var(--text2);padding:2px 6px">✕</button>
+    </div>
+
+    <div style="overflow-y:auto;flex:1;padding-right:2px;">
+      <!-- Status Banner -->
+      <div id="fbStatusBanner" class="fb-status-banner local">
+        <div class="fsb-icon" id="fsbIcon">🟡</div>
+        <div>
+          <div class="fsb-title" id="fsbTitle">Mode Penyimpanan Lokal</div>
+          <div id="fsbDesc">Data tersimpan di peramban perangkat ini. Hubungkan Firebase untuk sinkronisasi cloud real-time.</div>
+        </div>
+      </div>
+
+      <!-- Quick Tab Switcher -->
+      <div class="fb-tab-bar">
+        <button type="button" class="fb-tab active" id="fbTabPaste" onclick="switchFbTab('paste')">📋 Tempel Config (Cepat)</button>
+        <button type="button" class="fb-tab" id="fbTabManual" onclick="switchFbTab('manual')">⚙️ Input Manual</button>
+      </div>
+
+      <!-- Panel Paste JSON -->
+      <div id="fbPanelPaste">
+        <label style="display:block;font-size:11px;font-weight:800;color:var(--text2);margin-bottom:5px">
+          SALIN-TEMPEL DARI FIREBASE CONSOLE:
+        </label>
+        <textarea id="fbPasteInput" class="fb-raw-json" placeholder='const firebaseConfig = {&#10;  apiKey: "AIzaSy...",&#10;  authDomain: "speedguard-puninar.firebaseapp.com",&#10;  projectId: "speedguard-puninar",&#10;  storageBucket: "speedguard-puninar.appspot.com",&#10;  ...&#10;};'></textarea>
+        <div style="font-size:10.5px;color:var(--text3);margin-top:4px;line-height:1.3">
+          💡 Anda dapat langsung menempel seluruh kode <code>const firebaseConfig = {...}</code> atau format JSON dari Firebase Console.
+        </div>
+      </div>
+
+      <!-- Panel Manual -->
+      <div id="fbPanelManual" style="display:none;flex-direction:column;gap:8px;">
+        <div class="auth-input-group" style="margin-bottom:0">
+          <label class="auth-label">API Key</label>
+          <input type="text" id="fbApiKey" class="auth-input" placeholder="AIzaSy..." style="padding-left:12px" />
+        </div>
+        <div class="auth-input-group" style="margin-bottom:0">
+          <label class="auth-label">Project ID</label>
+          <input type="text" id="fbProjectId" class="auth-input" placeholder="speedguard-puninar" style="padding-left:12px" />
+        </div>
+        <div class="auth-input-group" style="margin-bottom:0">
+          <label class="auth-label">Storage Bucket</label>
+          <input type="text" id="fbStorageBucket" class="auth-input" placeholder="speedguard-puninar.appspot.com" style="padding-left:12px" />
+        </div>
+        <div class="auth-input-group" style="margin-bottom:0">
+          <label class="auth-label">Auth Domain (Opsional)</label>
+          <input type="text" id="fbAuthDomain" class="auth-input" placeholder="speedguard-puninar.firebaseapp.com" style="padding-left:12px" />
+        </div>
+      </div>
+
+      <!-- Cloud Actions & Migration -->
+      <div style="margin-top:16px;border-top:1px solid var(--border);padding-top:14px;">
+        <div style="font-size:11.5px;font-weight:800;color:var(--text2);margin-bottom:8px">MIGRASI DATA KE CLOUD:</div>
+        <button type="button" class="btn-primary" id="btnMigrateToCloud" onclick="migrateLocalDataToFirestore()" style="margin-top:0;padding:10px;font-size:12px;display:flex;align-items:center;justify-content:center;gap:6px;">
+          <span>📤</span> <span id="btnMigrateTxt">Unggah Data Lokal ke Cloud Firestore</span>
+        </button>
+        <div style="font-size:10px;color:var(--text3);margin-top:4px">
+          Mengunggah seluruh data pelanggaran lokal yang ada di browser ini ke Cloud Firestore.
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Footer Actions -->
+    <div style="margin-top:14px;border-top:1px solid var(--border);padding-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+      <button type="button" class="btn-primary" onclick="saveFirebaseConfigFromModal()" style="flex:1.5;margin-top:0;padding:11px;font-size:13px">
+        💾 Simpan & Hubungkan
+      </button>
+      <button type="button" class="btn-secondary" onclick="disconnectFirebaseConfig()" style="flex:1;margin-top:0;padding:11px;font-size:12px;color:var(--red)" title="Kembali ke mode penyimpanan lokal">
+        🔌 Mode Lokal
+      </button>
+      <button type="button" class="btn-secondary" onclick="closeModal('firebaseConfigModal')" style="flex:0.8;margin-top:0;padding:11px;font-size:12px">
+        Tutup
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- Toast -->
 <div class="toast" id="toast"></div>
 
@@ -1819,6 +2032,401 @@ const INITIAL = [
   {"id": 125, "date": "2026-08-13", "name": "WILLY SAHPUTRA", "area": "Area sisi selatan wh3", "speed": 39, "dept": "Sosco", "nik": "3175062603910005", "plat": "B 3760 TAK", "vehicle": "MOTOR", "status": "Baru", "remark": ""},
   {"id": 126, "date": "2026-08-27", "name": "ABDUL MUSTOFA", "area": "Area sisi selatan wh3", "speed": 38, "dept": "NAVYA (POS 1 YUSEN)", "nik": "9996", "plat": "B 4217 UAS", "vehicle": "MOTOR", "status": "Baru", "remark": ""},
 ];
+
+/* ============================================================
+   FIREBASE CLOUD INTEGRATION & DATA LAYER (HYBRID)
+   ============================================================ */
+const FIREBASE_STORAGE_CONFIG_KEY = 'speedguard_firebase_config_v1';
+let isFirebaseReady = false;
+let db = null;
+let fbStorage = null;
+let unsubscribeViolations = null;
+
+function getFirebaseConfig(){
+  try {
+    const saved = localStorage.getItem(FIREBASE_STORAGE_CONFIG_KEY);
+    if(saved){
+      const parsed = JSON.parse(saved);
+      if(parsed && parsed.apiKey && parsed.projectId) return parsed;
+    }
+  } catch(e){}
+  if(window.FIREBASE_CONFIG && window.FIREBASE_CONFIG.apiKey && window.FIREBASE_CONFIG.projectId){
+    return window.FIREBASE_CONFIG;
+  }
+  return null;
+}
+
+function updateCloudPill(status, text){
+  const pill = document.getElementById('cloudPill');
+  const dot = document.getElementById('cpDot');
+  const txt = document.getElementById('cpText');
+  if(!pill || !dot || !txt) return;
+
+  dot.className = 'cp-dot';
+  if(status === 'online'){
+    dot.classList.add('online');
+    txt.textContent = text || 'Cloud';
+    pill.title = '🟢 Cloud Firestore Aktif: Data tersinkronisasi real-time lintas perangkat. Klik untuk info.';
+  } else if(status === 'syncing'){
+    dot.classList.add('syncing');
+    txt.textContent = text || 'Sync...';
+    pill.title = '🔵 Menghubungkan ke Cloud...';
+  } else {
+    txt.textContent = text || 'Lokal';
+    pill.title = '🟡 Mode Lokal: Data tersimpan di memori browser ini. Klik untuk hubungkan Firebase.';
+  }
+}
+
+function handleCloudPillClick(){
+  const role = getCurrentRole();
+  if(role === 'admin'){
+    openFirebaseConfigModal();
+  } else {
+    if(isFirebaseReady){
+      toast('🟢 Terhubung ke Google Cloud Firestore (Sinkronisasi Multi-Device Aktif)');
+    } else {
+      toast('🟡 Mode Lokal Browser. Hubungkan Firebase untuk mengaktifkan cloud.');
+    }
+  }
+}
+
+function handleMenuFirebaseConfig(){
+  closeUserDropdown();
+  openFirebaseConfigModal();
+}
+
+function initFirebaseConnection(){
+  const config = getFirebaseConfig();
+  if(!config){
+    isFirebaseReady = false;
+    updateCloudPill('local', 'Lokal');
+    updateFirebaseModalBanner(false);
+    return;
+  }
+
+  if(typeof firebase === 'undefined' || !firebase.initializeApp){
+    console.warn('Firebase SDK belum termuat atau perangkat offline.');
+    isFirebaseReady = false;
+    updateCloudPill('local', 'Lokal');
+    updateFirebaseModalBanner(false);
+    return;
+  }
+
+  try {
+    updateCloudPill('syncing', 'Konek...');
+    if(!firebase.apps.length){
+      firebase.initializeApp(config);
+    }
+    db = firebase.firestore();
+    if(firebase.storage){
+      fbStorage = firebase.storage();
+    }
+
+    // Enable offline persistence
+    db.enablePersistence({ synchronizeTabs: true }).catch(err => {
+      console.log('Catatan persistence Firestore:', err.code);
+    });
+
+    isFirebaseReady = true;
+    updateCloudPill('online', 'Cloud');
+    updateFirebaseModalBanner(true, config.projectId);
+    subscribeToCloudViolations();
+  } catch(err){
+    console.error('Inisialisasi Firebase gagal:', err);
+    isFirebaseReady = false;
+    updateCloudPill('local', 'Lokal');
+    updateFirebaseModalBanner(false);
+    toast('⚠️ Gagal terhubung ke Firebase: ' + err.message);
+  }
+}
+
+function subscribeToCloudViolations(){
+  if(!db) return;
+  if(unsubscribeViolations) unsubscribeViolations();
+
+  unsubscribeViolations = db.collection('violations').onSnapshot(snapshot => {
+    if(snapshot.empty){
+      if(violations.length === 0){
+        loadData();
+      }
+      return;
+    }
+
+    const cloudData = [];
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      cloudData.push({
+        id: data.id || parseInt(doc.id) || doc.id,
+        date: data.date || '',
+        speed: data.speed || 0,
+        name: data.name || '',
+        area: data.area || '',
+        dept: data.dept || '',
+        nik: data.nik || '-',
+        plat: data.plat || '',
+        vehicle: data.vehicle || 'MOTOR',
+        status: data.status || 'Baru',
+        remark: data.remark || '',
+        photo: data.photo || null,
+        statusDate: data.statusDate || null
+      });
+    });
+
+    cloudData.sort((a,b) => new Date(b.date) - new Date(a.date));
+    violations = cloudData;
+    
+    const maxId = violations.reduce((max, v) => (typeof v.id === 'number' && v.id > max ? v.id : max), 0);
+    nextId = Math.max(maxId + 1, 127);
+
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ data: violations, nextId }));
+    } catch(e){}
+
+    updateBadge();
+    if(currentScreen === 'dashboard') renderDashboard();
+    else if(currentScreen === 'data') renderList();
+    else if(currentScreen === 'stats') renderStats();
+  }, err => {
+    console.error('Error snapshot Firestore:', err);
+    toast('⚠️ Gangguan koneksi Cloud: ' + err.message);
+  });
+}
+
+async function saveViolationToCloud(record, isEdit){
+  toast('⏳ Menyimpan ke Google Cloud...');
+  try {
+    if(record.photo && record.photo.startsWith('data:image/') && fbStorage){
+      const storageRef = fbStorage.ref();
+      const photoName = `violations/${record.id}_${Date.now()}.jpg`;
+      const photoRef = storageRef.child(photoName);
+      
+      const uploadSnap = await photoRef.putString(record.photo, 'data_url');
+      const downloadURL = await uploadSnap.ref.getDownloadURL();
+      record.photo = downloadURL;
+    }
+
+    await db.collection('violations').doc(String(record.id)).set(record);
+    toast(isEdit ? '✅ Data berhasil diperbarui di Cloud!' : '✅ Data baru berhasil disimpan di Cloud!');
+    showScreen('data');
+  } catch(err){
+    console.error('Gagal simpan ke Firebase:', err);
+    toast('⚠️ Gagal simpan ke Cloud: ' + err.message + '. Menyimpan secara lokal.');
+    fallbackSaveLocal(record, isEdit);
+  }
+}
+
+function fallbackSaveLocal(record, isEdit){
+  if(isEdit){
+    const idx = violations.findIndex(x => x.id === record.id);
+    if(idx !== -1) violations[idx] = record;
+  } else {
+    violations.push(record);
+  }
+  persist();
+  showScreen('data');
+}
+
+async function migrateLocalDataToFirestore(){
+  if(!isFirebaseReady || !db){
+    toast('⚠️ Firebase belum terhubung! Simpan konfigurasi terlebih dahulu.');
+    return;
+  }
+
+  const listToMigrate = violations.length > 0 ? violations : INITIAL;
+  const count = listToMigrate.length;
+
+  if(!confirm(`Yakin ingin mengunggah ${count} data pelanggaran ke Cloud Firestore?`)){
+    return;
+  }
+
+  const btnTxt = document.getElementById('btnMigrateTxt');
+  if(btnTxt) btnTxt.textContent = `Mengunggah (0/${count})...`;
+
+  try {
+    let uploaded = 0;
+    const chunkSize = 400;
+    for(let i = 0; i < listToMigrate.length; i += chunkSize){
+      const batch = db.batch();
+      const chunk = listToMigrate.slice(i, i + chunkSize);
+      chunk.forEach(v => {
+        const docRef = db.collection('violations').doc(String(v.id));
+        batch.set(docRef, { ...v });
+      });
+      await batch.commit();
+      uploaded += chunk.length;
+      if(btnTxt) btnTxt.textContent = `Mengunggah (${uploaded}/${count})...`;
+    }
+
+    if(btnTxt) btnTxt.textContent = '✅ Migrasi Berhasil!';
+    toast(`🎉 Berhasil memigrasikan ${uploaded} data ke Cloud Firestore!`);
+    setTimeout(() => {
+      if(btnTxt) btnTxt.textContent = 'Unggah Data Lokal ke Cloud Firestore';
+      closeModal('firebaseConfigModal');
+    }, 1500);
+  } catch(err){
+    console.error('Migrasi error:', err);
+    if(btnTxt) btnTxt.textContent = 'Gagal Mengunggah';
+    toast('❌ Gagal migrasi: ' + err.message);
+  }
+}
+
+function openFirebaseConfigModal(){
+  const modal = document.getElementById('firebaseConfigModal');
+  if(!modal) return;
+
+  const config = getFirebaseConfig();
+  if(config){
+    updateFirebaseModalBanner(isFirebaseReady, config.projectId);
+    const kInp = document.getElementById('fbApiKey');
+    const pInp = document.getElementById('fbProjectId');
+    const sInp = document.getElementById('fbStorageBucket');
+    const aInp = document.getElementById('fbAuthDomain');
+    const rawInp = document.getElementById('fbPasteInput');
+    if(kInp) kInp.value = config.apiKey || '';
+    if(pInp) pInp.value = config.projectId || '';
+    if(sInp) sInp.value = config.storageBucket || '';
+    if(aInp) aInp.value = config.authDomain || '';
+    if(rawInp) rawInp.value = JSON.stringify(config, null, 2);
+  } else {
+    updateFirebaseModalBanner(false);
+  }
+  modal.classList.add('show');
+}
+
+function updateFirebaseModalBanner(isOnline, projectId){
+  const banner = document.getElementById('fbStatusBanner');
+  const icon = document.getElementById('fsbIcon');
+  const title = document.getElementById('fsbTitle');
+  const desc = document.getElementById('fsbDesc');
+  if(!banner) return;
+
+  if(isOnline){
+    banner.className = 'fb-status-banner online';
+    if(icon) icon.textContent = '🟢';
+    if(title) title.textContent = 'Terhubung ke Cloud Firestore';
+    if(desc) desc.textContent = `Project: ${esc(projectId || 'Aktif')} · Sinkronisasi real-time & penyimpanan foto aktif.`;
+  } else {
+    banner.className = 'fb-status-banner local';
+    if(icon) icon.textContent = '🟡';
+    if(title) title.textContent = 'Mode Penyimpanan Lokal (Offline)';
+    if(desc) desc.textContent = 'Data tersimpan di peramban ini. Tempel konfigurasi Firebase di bawah untuk mengaktifkan cloud.';
+  }
+}
+
+function switchFbTab(tab){
+  const tabPaste = document.getElementById('fbTabPaste');
+  const tabManual = document.getElementById('fbTabManual');
+  const panelPaste = document.getElementById('fbPanelPaste');
+  const panelManual = document.getElementById('fbPanelManual');
+
+  if(tab === 'paste'){
+    if(tabPaste) tabPaste.classList.add('active');
+    if(tabManual) tabManual.classList.remove('active');
+    if(panelPaste) panelPaste.style.display = 'block';
+    if(panelManual) panelManual.style.display = 'none';
+  } else {
+    if(tabManual) tabManual.classList.add('active');
+    if(tabPaste) tabPaste.classList.remove('active');
+    if(panelManual) panelManual.style.display = 'flex';
+    if(panelPaste) panelPaste.style.display = 'none';
+  }
+}
+
+function parsePastedFirebaseConfig(rawText){
+  if(!rawText) return null;
+  let str = rawText.trim();
+  
+  const firstBrace = str.indexOf('{');
+  const lastBrace = str.lastIndexOf('}');
+  if(firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace){
+    str = str.substring(firstBrace, lastBrace + 1);
+  }
+
+  try {
+    return JSON.parse(str);
+  } catch(e){
+    try {
+      const jsonSafe = str
+        .replace(/([{,]\s*)([a-zA-Z0-9_]+)\s*:/g, '$1"$2":')
+        .replace(/'/g, '"')
+        .replace(/,\s*}/g, '}');
+      return JSON.parse(jsonSafe);
+    } catch(err2){
+      const getVal = (key) => {
+        const match = str.match(new RegExp(`${key}\\s*:\\s*["']([^"']+)["']`));
+        return match ? match[1] : '';
+      };
+      const apiKey = getVal('apiKey');
+      const projectId = getVal('projectId');
+      if(apiKey && projectId){
+        return {
+          apiKey,
+          projectId,
+          authDomain: getVal('authDomain'),
+          storageBucket: getVal('storageBucket'),
+          messagingSenderId: getVal('messagingSenderId'),
+          appId: getVal('appId')
+        };
+      }
+      return null;
+    }
+  }
+}
+
+function saveFirebaseConfigFromModal(){
+  const tabPaste = document.getElementById('fbTabPaste');
+  const tabPasteActive = tabPaste ? tabPaste.classList.contains('active') : true;
+  let config = null;
+
+  if(tabPasteActive){
+    const raw = (document.getElementById('fbPasteInput').value || '').trim();
+    if(!raw){
+      toast('⚠️ Tempel konfigurasi Firebase terlebih dahulu!');
+      return;
+    }
+    config = parsePastedFirebaseConfig(raw);
+    if(!config || !config.apiKey || !config.projectId){
+      toast('❌ Format konfigurasi tidak valid! Pastikan mengandung apiKey dan projectId.');
+      return;
+    }
+  } else {
+    const apiKey = (document.getElementById('fbApiKey').value || '').trim();
+    const projectId = (document.getElementById('fbProjectId').value || '').trim();
+    const storageBucket = (document.getElementById('fbStorageBucket').value || '').trim();
+    const authDomain = (document.getElementById('fbAuthDomain').value || '').trim();
+
+    if(!apiKey || !projectId){
+      toast('⚠️ API Key dan Project ID wajib diisi!');
+      return;
+    }
+    config = { apiKey, projectId, storageBucket, authDomain };
+  }
+
+  try {
+    localStorage.setItem(FIREBASE_STORAGE_CONFIG_KEY, JSON.stringify(config));
+    toast('✅ Konfigurasi disimpan! Menghubungkan ke Cloud Firestore...');
+    closeModal('firebaseConfigModal');
+    initFirebaseConnection();
+  } catch(e){
+    toast('❌ Gagal menyimpan konfigurasi: ' + e.message);
+  }
+}
+
+function disconnectFirebaseConfig(){
+  if(!confirm('Apakah Anda yakin ingin memutuskan koneksi Cloud Firebase dan beralih ke Mode Lokal?')){
+    return;
+  }
+  localStorage.removeItem(FIREBASE_STORAGE_CONFIG_KEY);
+  if(unsubscribeViolations) unsubscribeViolations();
+  isFirebaseReady = false;
+  db = null;
+  fbStorage = null;
+  updateCloudPill('local', 'Lokal');
+  updateFirebaseModalBanner(false);
+  loadData();
+  closeModal('firebaseConfigModal');
+  toast('🔌 Koneksi diputuskan. Aplikasi berjalan dalam Mode Lokal.');
+}
 
 /* ============================================================
    STORE
@@ -2007,6 +2615,15 @@ function renderUserDropdownContent(){
           <div class="ud-item-title">Kelola Petugas</div>
           <div class="ud-item-desc">Tambah, edit & hapus akun</div>
         </div>
+      </button>
+
+      <button class="ud-item" onclick="handleMenuFirebaseConfig()">
+        <div class="ud-item-icon-box amber">🔥</div>
+        <div class="ud-item-text">
+          <div class="ud-item-title">Koneksi Firebase Cloud</div>
+          <div class="ud-item-desc">${isFirebaseReady ? 'Firestore & Storage aktif' : 'Atur database cloud'}</div>
+        </div>
+        <span class="ud-item-badge" style="${isFirebaseReady ? 'background:#E8F5E9;color:#2E7D32' : 'background:#FFF3E0;color:#E65100'}">${isFirebaseReady ? 'Online' : 'Lokal'}</span>
       </button>
       ` : ''}
 
@@ -3269,24 +3886,28 @@ function saveViolation(){
   if(!plat){toast('⚠️ No. Polisi wajib diisi!');return;}
 
   const eid=document.getElementById('editId').value;
-  if(eid){
-    const idx=violations.findIndex(x=>x.id===parseInt(eid));
-    if(idx!==-1){
-      violations[idx]={
-        id:parseInt(eid),date,speed,name,area,dept,nik,plat,vehicle,status,remark,
-        photo: currentPhotoData || null
-      };
+  const targetId = eid ? parseInt(eid) : (nextId++);
+  const record = {
+    id: targetId, date, speed, name, area, dept, nik, plat, vehicle, status, remark,
+    photo: currentPhotoData || null
+  };
+
+  if(isFirebaseReady && db){
+    saveViolationToCloud(record, !!eid);
+  } else {
+    if(eid){
+      const idx=violations.findIndex(x=>x.id===targetId);
+      if(idx!==-1){
+        violations[idx]=record;
+      }
+      toast('✅ Data berhasil diperbarui!');
+    }else{
+      violations.push(record);
+      toast('✅ Data baru berhasil disimpan!');
     }
-    toast('✅ Data berhasil diperbarui!');
-  }else{
-    violations.push({
-      id:nextId++,date,speed,name,area,dept,nik,plat,vehicle,status,remark,
-      photo: currentPhotoData || null
-    });
-    toast('✅ Data baru berhasil disimpan!');
+    persist();
+    showScreen('data');
   }
-  persist();
-  showScreen('data');
 }
 
 /* ============================================================
@@ -3313,9 +3934,23 @@ function confirmStatusChange(id){
       if(nextStatus==='Selesai'){
         v.statusDate=todayISO();
       }
-      persist();
-      renderList();
-      toast(`✅ Status "${v.name}" diubah ke ${v.status}`);
+      if(isFirebaseReady && db){
+        db.collection('violations').doc(String(id)).update({
+          status: nextStatus,
+          statusDate: v.statusDate || null
+        }).then(() => {
+          toast(`✅ Status "${v.name}" diubah ke ${v.status} di Cloud`);
+        }).catch(err => {
+          console.error('Update cloud error:', err);
+          persist();
+          renderList();
+          toast(`✅ Status diubah secara lokal`);
+        });
+      } else {
+        persist();
+        renderList();
+        toast(`✅ Status "${v.name}" diubah ke ${v.status}`);
+      }
     },
     'Ya, Ubah Status',
     'btn-confirm-modal safe'
@@ -3332,14 +3967,37 @@ function cycleStatus(id){
 function confirmDelete(id){
   const v=violations.find(x=>x.id===id);
   showConfirmModal('🗑️','Hapus Data',`Hapus pelanggaran "${v?v.name:''}"?`,()=>{
-    violations=violations.filter(x=>x.id!==id);
-    persist();renderList();toast('🗑️ Data dihapus');
+    if(isFirebaseReady && db){
+      db.collection('violations').doc(String(id)).delete().then(() => {
+        toast('🗑️ Data berhasil dihapus dari Cloud');
+      }).catch(err => {
+        console.error('Delete cloud error:', err);
+        violations=violations.filter(x=>x.id!==id);
+        persist();renderList();toast('🗑️ Data dihapus secara lokal');
+      });
+    } else {
+      violations=violations.filter(x=>x.id!==id);
+      persist();renderList();toast('🗑️ Data dihapus');
+    }
   });
 }
 
 function confirmClearAll(){
   showConfirmModal('⚠️','Hapus Semua Data!','Seluruh data akan dihapus permanen. Tidak bisa dibatalkan!',()=>{
-    violations=[];nextId=1;persist();renderList();toast('🗑️ Semua data dihapus');
+    if(isFirebaseReady && db){
+      toast('⏳ Menghapus seluruh data dari Cloud...');
+      const batch = db.batch();
+      violations.forEach(v => {
+        batch.delete(db.collection('violations').doc(String(v.id)));
+      });
+      batch.commit().then(() => {
+        violations=[];nextId=1;persist();renderList();toast('🗑️ Semua data Cloud dihapus');
+      }).catch(err => {
+        toast('❌ Gagal hapus data cloud: ' + err.message);
+      });
+    } else {
+      violations=[];nextId=1;persist();renderList();toast('🗑️ Semua data dihapus');
+    }
   });
 }
 
@@ -4328,6 +4986,7 @@ function toast(msg){
    ============================================================ */
 initTheme();
 loadData();
+initFirebaseConnection();
 getUsers();
 updateAuthUI();
 renderDashboard();
