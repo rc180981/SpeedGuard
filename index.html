@@ -2215,7 +2215,13 @@ function fallbackSaveLocal(record, isEdit){
 
 async function migrateLocalDataToFirestore(){
   if(!isFirebaseReady || !db){
-    toast('⚠️ Firebase belum terhubung! Simpan konfigurasi terlebih dahulu.');
+    saveFirebaseConfigFromModal();
+    if(!isFirebaseReady || !db){
+      initFirebaseConnection();
+    }
+  }
+  if(!isFirebaseReady || !db){
+    toast('⚠️ Firebase belum terhubung! Klik "Simpan & Hubungkan" terlebih dahulu.');
     return;
   }
 

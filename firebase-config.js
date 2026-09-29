@@ -1,22 +1,14 @@
 /**
  * SpeedGuard - Konfigurasi Firebase Cloud Firestore & Storage
- * -------------------------------------------------------------
- * Panduan Pengisian:
- * 1. Buka Firebase Console: https://console.firebase.google.com/
- * 2. Buat / Pilih project (contoh: speedguard-puninar)
- * 3. Tambahkan Web App (ikon </>)
- * 4. Salin objek firebaseConfig dan tempelkan nilai di bawah ini:
- * 
- * CATATAN:
- * Anda juga dapat memasukkan konfigurasi ini langsung melalui menu
- * "⚙️ Pengaturan Cloud Firebase" di dalam aplikasi (Login sebagai Admin).
+ * PT Puninar Jaya - Area Puninar Nagrak
  */
 
 window.FIREBASE_CONFIG = {
-  apiKey: "",
-  authDomain: "",
-  projectId: "",
-  storageBucket: "",
-  messagingSenderId: "",
-  appId: ""
+  apiKey: "AIzaSyDY52hHqmHuLTxhd6opbJY1lXNjCZW8DfA",
+  authDomain: "speedguard-2f1e6.firebaseapp.com",
+  projectId: "speedguard-2f1e6",
+  storageBucket: "speedguard-2f1e6.firebasestorage.app",
+  messagingSenderId: "526005391288",
+  appId: "1:526005391288:web:b8b4293965a6b9619bc94d",
+  measurementId: "G-BM5V5NMJNL"
 };
