@@ -3607,7 +3607,7 @@ function renderList(){
             📷 Lihat Foto Bukti
           </span>
         </div>` : ''}
-        ${!isNonKaryawan ? `<div class="v-detail" style="grid-column:span 2">📄 No. Surat: <strong style="color:var(--blue)">${suratNo}</strong></div>` : ''}
+        ${!isNonKaryawan && !isDone ? `<div class="v-detail" style="grid-column:span 2">📄 No. Surat: <strong style="color:var(--blue)">${suratNo}</strong></div>` : ''}
         ${v.remark?`<div class="v-detail" style="grid-column:span 2">📝 <strong>${esc(v.remark)}</strong></div>`:''}
       </div>
       <div class="v-card-status">
@@ -3639,8 +3639,8 @@ function renderList(){
             <button class="v-action status-act" style="color:var(--green);cursor:not-allowed" onclick="toast('🔒 Status Selesai terkunci (View Only)')">🔒 Selesai</button>
           ` : `
             <button class="v-action status-act" onclick="confirmStatusChange(${v.id})">🔄 Status</button>
+            <button class="v-action surat" onclick="showSurat(${v.id})">📄 Surat</button>
           `}
-          <button class="v-action surat" onclick="showSurat(${v.id})">📄 Surat</button>
         ` : `
           ${isDone ? `
             <button class="v-action status-act" style="color:var(--green);cursor:not-allowed" onclick="toast('🔒 Status Sudah Ditindak terkunci (View Only)')">🔒 Sudah Ditindak</button>
@@ -4378,6 +4378,8 @@ function showSurat(id){
     toast('⚠️ Surat STPK hanya diterbitkan untuk Karyawan Puninar!');
     return;
   }
+  const officerUser = getCurrentUser();
+  const officerName = officerUser ? (officerUser.name || officerUser.username || 'Safety Officer') : 'Safety Officer';
   const no=violations.indexOf(v)+1;
   const now=new Date().toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'});
   const selisih=v.speed-LIMIT_KMH;
@@ -4416,7 +4418,8 @@ function showSurat(id){
         <div>
           <p>Mengetahui,</p>
           <div style="height:50px;border-bottom:1px solid #999;margin-bottom:4px"></div>
-          <p><strong>Safety Officer</strong></p>
+          <p><strong>${esc(officerName)}</strong></p>
+          <p style="font-size:10px;color:#666;margin-top:2px">Petugas Safety / Administrator</p>
         </div>
         <div>
           <p>Yang Menerima,</p>
