@@ -331,20 +331,32 @@ body.dark-mode .status-date-badge{background:#14281B;border-color:#1F4A2C;color:
 /* ============================================================
    SCREEN: FORM
    ============================================================ */
-.form-card{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
-.form-title{font-size:15px;font-weight:900;color:var(--primary);margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--yellow)}
-.fg{margin-bottom:13px}
-.fg label{display:block;font-size:10.5px;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px}
+.form-card{background:var(--card);border-radius:var(--radius);padding:18px 16px;box-shadow:var(--shadow)}
+.form-title{font-size:15px;font-weight:900;color:var(--primary);margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--yellow);display:flex;align-items:center;gap:6px}
+.form-sec-head{
+  font-size:11.5px;font-weight:800;color:var(--primary);
+  text-transform:uppercase;letter-spacing:.5px;
+  margin:16px 0 12px;padding-bottom:4px;
+  border-bottom:1.5px solid var(--yellow);
+  display:flex;align-items:center;gap:6px;
+}
+.form-sec-head:first-of-type{margin-top:0}
+.fg{margin-bottom:14px}
+.fg label{display:block;font-size:11px;font-weight:800;color:var(--text);letter-spacing:.2px;margin-bottom:6px;line-height:1.2}
 .fg input,.fg select,.fg textarea{
-  width:100%;padding:10px 12px;border:1.5px solid var(--border);
-  border-radius:var(--radius3);font-size:14px;background:#FAFAFA;outline:none;
+  width:100%;padding:10.5px 12px;border:1.5px solid var(--border);
+  border-radius:var(--radius3);font-size:13.5px;background:#FAFAFA;outline:none;
   transition:border-color .2s,box-shadow .2s,background .2s;color:var(--text);
+  font-family:inherit;
 }
 .fg input:focus,.fg select:focus,.fg textarea:focus{
   border-color:var(--primary);box-shadow:0 0 0 3px rgba(230,81,0,.12);background:#fff;
 }
 .fg textarea{resize:vertical;min-height:72px}
 .fg-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:400px){
+  .fg-row{grid-template-columns:1fr;gap:0}
+}
 .speed-inp{border-color:var(--red-light)!important;background:#FFF8F8!important}
 .speed-inp:focus{box-shadow:0 0 0 3px rgba(198,40,40,.12)!important}
 .input-hint{font-size:10px;color:var(--text3);margin-top:3px}
@@ -1237,7 +1249,7 @@ body.dark-mode .fb-status-banner.local { background: #26180B; border-color: #4D3
       <input type="hidden" id="editId"/>
 
       <!-- SECTION 1: WAKTU & LOKASI KEJADIAN -->
-      <div style="font-size:11px;font-weight:800;color:var(--primary);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;padding-bottom:4px;border-bottom:1.5px solid var(--yellow)">
+      <div class="form-sec-head">
         📍 1. Waktu & Lokasi Kejadian
       </div>
 
@@ -1247,14 +1259,14 @@ body.dark-mode .fb-status-banner.local { background: #26180B; border-color: #4D3
           <input type="date" id="f-date" required/>
         </div>
         <div class="fg">
-          <label>⏰ Waktu (Jam:Menit) <span style="color:var(--red)">*</span></label>
+          <label>⏰ Waktu <span style="color:var(--red)">*</span></label>
           <input type="time" id="f-time" required/>
         </div>
       </div>
 
       <div class="fg-row">
         <div class="fg">
-          <label>🚨 Kecepatan (KM/JAM) <span style="color:var(--red)">*</span></label>
+          <label>🚨 Kecepatan <span style="color:var(--red)">*</span></label>
           <input type="number" id="f-speed" min="1" max="250" placeholder="cth: 41" class="speed-inp" oninput="onSpeedInput(this)" required/>
           <div class="speed-indicator">
             <div class="si-chip warn" onclick="setSpeed(21)">21 KM/J</div>
@@ -1278,7 +1290,7 @@ body.dark-mode .fb-status-banner.local { background: #26180B; border-color: #4D3
       </div>
 
       <!-- SECTION 2: IDENTITAS PELANGGAR -->
-      <div style="font-size:11px;font-weight:800;color:var(--primary);text-transform:uppercase;letter-spacing:.5px;margin:14px 0 10px;padding-bottom:4px;border-bottom:1.5px solid var(--yellow)">
+      <div class="form-sec-head">
         👤 2. Identitas Pelanggar
       </div>
 
@@ -1291,8 +1303,9 @@ body.dark-mode .fb-status-banner.local { background: #26180B; border-color: #4D3
           </select>
         </div>
         <div class="fg" id="fg-action-taken" style="display:none">
-          <label>⚡ Sudah dilakukan tindakan <span style="color:var(--red)">*</span></label>
+          <label>⚡ Sudah ditindak <span style="color:var(--red)">*</span></label>
           <select id="f-action-taken">
+            <option value="" disabled selected>-- Pilih Status --</option>
             <option value="Belum">🔴 Belum</option>
             <option value="Sudah">🟢 Sudah</option>
           </select>
@@ -1312,17 +1325,17 @@ body.dark-mode .fb-status-banner.local { background: #26180B; border-color: #4D3
 
       <div class="fg-row">
         <div class="fg">
-          <label>🏢 Bagian / Karyawan <span style="font-size:9.5px;color:var(--text3);font-weight:600">(Opsional)</span></label>
-          <input type="text" id="f-dept" placeholder="cth: DRIVER WB, ELUX"/>
+          <label>🏢 Bagian / Karyawan <span style="color:var(--red)">*</span></label>
+          <input type="text" id="f-dept" placeholder="cth: DRIVER WB, ELUX" required/>
         </div>
         <div class="fg">
-          <label>🪪 No NIK / NPK / SIM <span style="font-size:9.5px;color:var(--text3);font-weight:600">(Opsional)</span></label>
-          <input type="text" id="f-nik" placeholder="Nomor identitas"/>
+          <label>🪪 No NIK / NPK / SIM <span style="color:var(--red)">*</span></label>
+          <input type="text" id="f-nik" placeholder="Nomor identitas NIK/NPK/SIM" required/>
         </div>
       </div>
 
       <!-- SECTION 3: KENDARAAN -->
-      <div style="font-size:11px;font-weight:800;color:var(--primary);text-transform:uppercase;letter-spacing:.5px;margin:14px 0 10px;padding-bottom:4px;border-bottom:1.5px solid var(--yellow)">
+      <div class="form-sec-head">
         🚘 3. Data Kendaraan
       </div>
 
@@ -1345,7 +1358,9 @@ body.dark-mode .fb-status-banner.local { background: #26180B; border-color: #4D3
       </div>
 
       <!-- SECTION 4: DOKUMENTASI & STATUS -->
-      <div style="font-size:11px;font-weight:800;color:var(--primary);text-transform:uppercase;letter-spacing:.5px;margin:14px 0 10px;padding-bottom:4px;border-bottom:1.5px solid var(--yellow)">
+      <div class="form-sec-head">
+        📷 4. Dokumentasi & Status Penanganan
+      </div>
         📷 4. Dokumentasi & Status Penanganan
       </div>
 
@@ -3989,7 +4004,7 @@ function clearForm(){
   const offTypeInp = document.getElementById('f-offender-type');
   const actTakenInp = document.getElementById('f-action-taken');
   if(offTypeInp) offTypeInp.value = 'Karyawan Puninar';
-  if(actTakenInp) actTakenInp.value = 'Belum';
+  if(actTakenInp) actTakenInp.value = '';
   onOffenderTypeChange('Karyawan Puninar');
   removePhoto();
   const notice = document.getElementById('autofillNotice');
@@ -4007,15 +4022,15 @@ function editViolation(id){
   document.getElementById('f-speed').value=v.speed;
   document.getElementById('f-name').value=v.name;
   document.getElementById('f-area').value=v.area;
-  document.getElementById('f-dept').value=v.dept || '';
-  document.getElementById('f-nik').value=v.nik || '';
+  document.getElementById('f-dept').value=(v.dept && v.dept !== '-') ? v.dept : '';
+  document.getElementById('f-nik').value=(v.nik && v.nik !== '-') ? v.nik : '';
   document.getElementById('f-plat').value=v.plat;
   document.getElementById('f-vehicle').value=v.vehicle;
   document.getElementById('f-status').value=v.status;
   document.getElementById('f-remark').value=v.remark || '';
 
   const offType = v.offenderType || 'Karyawan Puninar';
-  const actTaken = v.actionTaken || 'Belum';
+  const actTaken = v.actionTaken || '';
   const offTypeInp = document.getElementById('f-offender-type');
   const actTakenInp = document.getElementById('f-action-taken');
   if(offTypeInp) offTypeInp.value = offType;
@@ -4049,7 +4064,7 @@ function saveViolation(e){
   const name   =document.getElementById('f-name').value.trim().toUpperCase();
   const area   =document.getElementById('f-area').value;
   const dept   =document.getElementById('f-dept').value.trim();
-  const nik    =document.getElementById('f-nik').value.trim()||'-';
+  const nik    =document.getElementById('f-nik').value.trim();
   const plat   =document.getElementById('f-plat').value.trim().toUpperCase();
   const vehicle=document.getElementById('f-vehicle').value;
   const status =document.getElementById('f-status').value;
@@ -4058,16 +4073,18 @@ function saveViolation(e){
   const offenderTypeInp = document.getElementById('f-offender-type');
   const actionTakenInp  = document.getElementById('f-action-taken');
   const offenderType = offenderTypeInp ? offenderTypeInp.value : 'Karyawan Puninar';
-  const actionTaken  = offenderType === 'Non Karyawan' ? (actionTakenInp ? actionTakenInp.value : 'Belum') : 'Belum';
+  const actionTaken  = offenderType === 'Non Karyawan' ? (actionTakenInp ? actionTakenInp.value : '') : '';
 
   // Validasi Pengisian Mandatori
   if(!date){toast('⚠️ Tanggal wajib diisi!');return;}
-  if(!time){toast('⚠️ Waktu (Jam:Menit) wajib diisi!');return;}
+  if(!time){toast('⚠️ Waktu wajib diisi!');return;}
   if(isNaN(speed)||speed<1){toast('⚠️ Kecepatan wajib diisi & valid!');return;}
   if(!area){toast('⚠️ Area Speedgun wajib diisi!');return;}
   if(!offenderType){toast('⚠️ Status Pelanggar wajib diisi!');return;}
-  if(offenderType === 'Non Karyawan' && !actionTaken){toast('⚠️ Pilihan tindakan untuk Non Karyawan wajib diisi!');return;}
+  if(offenderType === 'Non Karyawan' && !actionTaken){toast('⚠️ Status Sudah Ditindak untuk Non Karyawan wajib diisi!');return;}
   if(!name){toast('⚠️ Nama pelanggar wajib diisi!');return;}
+  if(!dept){toast('⚠️ Bagian / Karyawan wajib diisi!');return;}
+  if(!nik || nik === '-'){toast('⚠️ No NIK / NPK / SIM wajib diisi!');return;}
   if(!plat){toast('⚠️ No. Polisi wajib diisi!');return;}
   if(!vehicle){toast('⚠️ Jenis Kendaraan wajib diisi!');return;}
   if(!status){toast('⚠️ Status Penanganan wajib diisi!');return;}
