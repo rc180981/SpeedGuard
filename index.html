@@ -1251,14 +1251,28 @@ body.dark-mode .fb-status-banner.local { background: #26180B; border-color: #4D3
         </div>
       </div>
 
-      <div class="fg">
-        <label>🚨 Kecepatan <span style="color:var(--red)">*</span></label>
-        <input type="number" id="f-speed" min="1" max="250" placeholder="cth: 41" class="speed-inp" oninput="onSpeedInput(this)" required/>
-        <div class="speed-indicator">
-          <div class="si-chip warn" onclick="setSpeed(21)">21 KM/J</div>
-          <div class="si-chip warn" onclick="setSpeed(30)">30 KM/J</div>
-          <div class="si-chip danger" onclick="setSpeed(40)">40 KM/J</div>
-          <div class="si-chip danger" onclick="setSpeed(50)">50 KM/J</div>
+      <div class="fg-row">
+        <div class="fg">
+          <label>🚨 Kecepatan <span style="color:var(--red)">*</span></label>
+          <input type="number" id="f-speed" min="1" max="250" placeholder="cth: 41" class="speed-inp" oninput="onSpeedInput(this)" required/>
+          <div class="speed-indicator">
+            <div class="si-chip warn" onclick="setSpeed(21)">21 KM/J</div>
+            <div class="si-chip warn" onclick="setSpeed(30)">30 KM/J</div>
+            <div class="si-chip danger" onclick="setSpeed(40)">40 KM/J</div>
+            <div class="si-chip danger" onclick="setSpeed(50)">50 KM/J</div>
+          </div>
+        </div>
+        <div class="fg">
+          <label>📍 Area Speedgun <span style="color:var(--red)">*</span></label>
+          <select id="f-area" required>
+            <option value="Area sisi selatan wh3">Area Sisi Selatan WH3</option>
+            <option value="Area sisi selatan wh4">Area Sisi Selatan WH4</option>
+            <option value="Area sisi utara wh3">Area Sisi Utara WH3</option>
+            <option value="Area sisi utara wh4">Area Sisi Utara WH4</option>
+            <option value="Area pintu masuk">Area Pintu Masuk</option>
+            <option value="Area parkir">Area Parkir</option>
+            <option value="Lainnya">Lainnya…</option>
+          </select>
         </div>
       </div>
 
@@ -1271,19 +1285,6 @@ body.dark-mode .fb-status-banner.local { background: #26180B; border-color: #4D3
         <div class="autofill-notice" id="autofillNotice">
           <span>✨</span> <span id="autofillNoticeTxt">Data terisi otomatis dari riwayat sebelumnya</span>
         </div>
-      </div>
-
-      <div class="fg">
-        <label>📍 Area Speedgun <span style="color:var(--red)">*</span></label>
-        <select id="f-area" required>
-          <option value="Area sisi selatan wh3">Area Sisi Selatan WH3</option>
-          <option value="Area sisi selatan wh4">Area Sisi Selatan WH4</option>
-          <option value="Area sisi utara wh3">Area Sisi Utara WH3</option>
-          <option value="Area sisi utara wh4">Area Sisi Utara WH4</option>
-          <option value="Area pintu masuk">Area Pintu Masuk</option>
-          <option value="Area parkir">Area Parkir</option>
-          <option value="Lainnya">Lainnya…</option>
-        </select>
       </div>
 
       <div class="fg-row">
@@ -1366,7 +1367,7 @@ body.dark-mode .fb-status-banner.local { background: #26180B; border-color: #4D3
         </div>
       </div>
 
-      <div class="fg">
+      <div class="fg" id="fg-status">
         <label>📋 Status Penanganan <span style="color:var(--red)">*</span></label>
         <select id="f-status" required>
           <option value="Baru">🔵 Baru</option>
@@ -3936,9 +3937,14 @@ function downloadPhotoModal(){
 }
 
 function onOffenderTypeChange(val){
-  const fg = document.getElementById('fg-action-taken');
-  if(fg){
-    fg.style.display = (val === 'Non Karyawan') ? 'block' : 'none';
+  const fgAction = document.getElementById('fg-action-taken');
+  const fgStatus = document.getElementById('fg-status');
+  if(val === 'Non Karyawan'){
+    if(fgAction) fgAction.style.display = 'block';
+    if(fgStatus) fgStatus.style.display = 'none';
+  } else {
+    if(fgAction) fgAction.style.display = 'none';
+    if(fgStatus) fgStatus.style.display = 'block';
   }
 }
 
@@ -4036,13 +4042,16 @@ function saveViolation(e){
   const nik    =document.getElementById('f-nik').value.trim();
   const plat   =document.getElementById('f-plat').value.trim().toUpperCase();
   const vehicle=document.getElementById('f-vehicle').value;
-  const status =document.getElementById('f-status').value;
+  let status   =document.getElementById('f-status').value;
   const remark =document.getElementById('f-remark').value.trim();
 
   const offenderTypeInp = document.getElementById('f-offender-type');
   const actionTakenInp  = document.getElementById('f-action-taken');
   const offenderType = offenderTypeInp ? offenderTypeInp.value : 'Karyawan Puninar';
   const actionTaken  = offenderType === 'Non Karyawan' ? (actionTakenInp ? actionTakenInp.value : '') : '';
+  if (offenderType === 'Non Karyawan') {
+    status = (actionTaken === 'Sudah') ? 'Selesai' : 'Baru';
+  }
 
   // Validasi Pengisian Mandatori
   if(!date){toast('⚠️ Tanggal wajib diisi!');return;}
@@ -4056,7 +4065,7 @@ function saveViolation(e){
   if(!nik || nik === '-'){toast('⚠️ No NIK / NPK / SIM wajib diisi!');return;}
   if(!plat){toast('⚠️ No. Polisi wajib diisi!');return;}
   if(!vehicle){toast('⚠️ Jenis Kendaraan wajib diisi!');return;}
-  if(!status){toast('⚠️ Status Penanganan wajib diisi!');return;}
+  if(offenderType === 'Karyawan Puninar' && !status){toast('⚠️ Status Penanganan wajib diisi!');return;}
 
   const eid=document.getElementById('editId').value;
   const targetId = eid ? parseInt(eid) : (nextId++);
