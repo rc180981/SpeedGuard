@@ -1045,11 +1045,49 @@ body.dark-mode .btn-danger-outline { background: transparent; }
   color: #111827;
   color-scheme: light;
 }
+
+input[type="date"], input[type="time"], .scm-date-input {
+  color-scheme: light;
+}
+
+body.dark-mode input[type="date"],
+body.dark-mode input[type="time"],
 body.dark-mode .scm-date-input {
-  background: #111827;
-  color: #F9FAFB;
-  border-color: #374151;
-  color-scheme: dark;
+  background-color: #111827 !important;
+  color: #F9FAFB !important;
+  -webkit-text-fill-color: #F9FAFB !important;
+  border-color: #374151 !important;
+  color-scheme: dark !important;
+}
+
+body.dark-mode input[type="date"]::-webkit-datetime-edit,
+body.dark-mode input[type="date"]::-webkit-datetime-edit-fields-wrapper,
+body.dark-mode input[type="date"]::-webkit-datetime-edit-text,
+body.dark-mode input[type="date"]::-webkit-datetime-edit-month-field,
+body.dark-mode input[type="date"]::-webkit-datetime-edit-day-field,
+body.dark-mode input[type="date"]::-webkit-datetime-edit-year-field,
+body.dark-mode input[type="time"]::-webkit-datetime-edit,
+body.dark-mode input[type="time"]::-webkit-datetime-edit-fields-wrapper,
+body.dark-mode input[type="time"]::-webkit-datetime-edit-text,
+body.dark-mode input[type="time"]::-webkit-datetime-edit-hour-field,
+body.dark-mode input[type="time"]::-webkit-datetime-edit-minute-field,
+body.dark-mode .scm-date-input::-webkit-datetime-edit,
+body.dark-mode .scm-date-input::-webkit-datetime-edit-fields-wrapper,
+body.dark-mode .scm-date-input::-webkit-datetime-edit-text,
+body.dark-mode .scm-date-input::-webkit-datetime-edit-month-field,
+body.dark-mode .scm-date-input::-webkit-datetime-edit-day-field,
+body.dark-mode .scm-date-input::-webkit-datetime-edit-year-field {
+  color: #F9FAFB !important;
+  -webkit-text-fill-color: #F9FAFB !important;
+  opacity: 1 !important;
+}
+
+body.dark-mode input[type="date"]::-webkit-calendar-picker-indicator,
+body.dark-mode input[type="time"]::-webkit-calendar-picker-indicator,
+body.dark-mode .scm-date-input::-webkit-calendar-picker-indicator {
+  filter: invert(1) brightness(1.8) !important;
+  opacity: 0.9 !important;
+  cursor: pointer;
 }
 
 /* ============================================================
