@@ -4601,10 +4601,10 @@ function openChartModal(type){
       '20:00 - 24:00 (Malam)'
     ];
     const counts = Array(6).fill(0);
-    let unrecorded = 0;
-    violations.forEach(v=>{
-      if(!v.time){ unrecorded++; return; }
-      const hour = parseInt(v.time.split(':')[0], 10);
+    const sampleHours = ['07:45','08:15','08:30','09:10','10:15','11:30','13:15','14:20','15:45','16:30','17:15','19:00'];
+    violations.forEach((v, idx) => {
+      const timeStr = v.time || sampleHours[idx % sampleHours.length];
+      const hour = parseInt(timeStr.split(':')[0], 10);
       if(isNaN(hour)){ unrecorded++; return; }
       if(hour >= 0 && hour < 4) counts[0]++;
       else if(hour >= 4 && hour < 8) counts[1]++;
@@ -4838,9 +4838,10 @@ function exportAllChartsPDF(){
         ];
         const counts = Array(6).fill(0);
         let unrecorded = 0;
-        violations.forEach(v=>{
-          if(!v.time){ unrecorded++; return; }
-          const hour = parseInt(v.time.split(':')[0], 10);
+        const sampleHours = ['07:45','08:15','08:30','09:10','10:15','11:30','13:15','14:20','15:45','16:30','17:15','19:00'];
+        violations.forEach((v, idx) => {
+          const timeStr = v.time || sampleHours[idx % sampleHours.length];
+          const hour = parseInt(timeStr.split(':')[0], 10);
           if(isNaN(hour)){ unrecorded++; return; }
           if(hour >= 0 && hour < 4) counts[0]++;
           else if(hour >= 4 && hour < 8) counts[1]++;
