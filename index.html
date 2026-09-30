@@ -1236,14 +1236,26 @@ body.dark-mode .fb-status-banner.local { background: #26180B; border-color: #4D3
       <div class="form-title" id="formTitle">➕ Tambah Pelanggaran Baru</div>
       <input type="hidden" id="editId"/>
 
+      <!-- SECTION 1: WAKTU & LOKASI KEJADIAN -->
+      <div style="font-size:11px;font-weight:800;color:var(--primary);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;padding-bottom:4px;border-bottom:1.5px solid var(--yellow)">
+        📍 1. Waktu & Lokasi Kejadian
+      </div>
+
       <div class="fg-row">
         <div class="fg">
-          <label>📅 Hari / Tanggal</label>
+          <label>📅 Tanggal <span style="color:var(--red)">*</span></label>
           <input type="date" id="f-date" required/>
         </div>
         <div class="fg">
-          <label>🚨 Kecepatan (KM/JAM)</label>
-          <input type="number" id="f-speed" min="1" max="250" placeholder="cth: 41" class="speed-inp" oninput="onSpeedInput(this)"/>
+          <label>⏰ Waktu (Jam:Menit) <span style="color:var(--red)">*</span></label>
+          <input type="time" id="f-time" required/>
+        </div>
+      </div>
+
+      <div class="fg-row">
+        <div class="fg">
+          <label>🚨 Kecepatan (KM/JAM) <span style="color:var(--red)">*</span></label>
+          <input type="number" id="f-speed" min="1" max="250" placeholder="cth: 41" class="speed-inp" oninput="onSpeedInput(this)" required/>
           <div class="speed-indicator">
             <div class="si-chip warn" onclick="setSpeed(21)">21 KM/J</div>
             <div class="si-chip warn" onclick="setSpeed(30)">30 KM/J</div>
@@ -1251,12 +1263,46 @@ body.dark-mode .fb-status-banner.local { background: #26180B; border-color: #4D3
             <div class="si-chip danger" onclick="setSpeed(50)">50 KM/J</div>
           </div>
         </div>
+        <div class="fg">
+          <label>📍 Area Speedgun <span style="color:var(--red)">*</span></label>
+          <select id="f-area" required>
+            <option value="Area sisi selatan wh3">Area Sisi Selatan WH3</option>
+            <option value="Area sisi selatan wh4">Area Sisi Selatan WH4</option>
+            <option value="Area sisi utara wh3">Area Sisi Utara WH3</option>
+            <option value="Area sisi utara wh4">Area Sisi Utara WH4</option>
+            <option value="Area pintu masuk">Area Pintu Masuk</option>
+            <option value="Area parkir">Area Parkir</option>
+            <option value="Lainnya">Lainnya…</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- SECTION 2: IDENTITAS PELANGGAR -->
+      <div style="font-size:11px;font-weight:800;color:var(--primary);text-transform:uppercase;letter-spacing:.5px;margin:14px 0 10px;padding-bottom:4px;border-bottom:1.5px solid var(--yellow)">
+        👤 2. Identitas Pelanggar
+      </div>
+
+      <div class="fg-row">
+        <div class="fg">
+          <label>🏷️ Status Pelanggar <span style="color:var(--red)">*</span></label>
+          <select id="f-offender-type" onchange="onOffenderTypeChange(this.value)">
+            <option value="Karyawan Puninar">🏢 Karyawan Puninar</option>
+            <option value="Non Karyawan">👤 Non Karyawan</option>
+          </select>
+        </div>
+        <div class="fg" id="fg-action-taken" style="display:none">
+          <label>⚡ Sudah dilakukan tindakan <span style="color:var(--red)">*</span></label>
+          <select id="f-action-taken">
+            <option value="Belum">🔴 Belum</option>
+            <option value="Sudah">🟢 Sudah</option>
+          </select>
+        </div>
       </div>
 
       <div class="fg">
-        <label>👤 Nama Pelanggar</label>
+        <label>👤 Nama Pelanggar <span style="color:var(--red)">*</span></label>
         <div class="autocomplete-wrap">
-          <input type="text" id="f-name" placeholder="Ketik nama pelanggar (rekomendasi otomatis)..." autocomplete="off" oninput="onNameInput(this)" onblur="onNameBlur()" onkeydown="onNameKeydown(event)"/>
+          <input type="text" id="f-name" placeholder="Ketik nama pelanggar (rekomendasi otomatis)..." autocomplete="off" oninput="onNameInput(this)" onblur="onNameBlur()" onkeydown="onNameKeydown(event)" required/>
           <div class="autocomplete-dropdown" id="nameSuggestDropdown"></div>
         </div>
         <div class="autofill-notice" id="autofillNotice">
@@ -1264,38 +1310,30 @@ body.dark-mode .fb-status-banner.local { background: #26180B; border-color: #4D3
         </div>
       </div>
 
-      <div class="fg">
-        <label>📍 Area Speedgun</label>
-        <select id="f-area">
-          <option value="Area sisi selatan wh3">Area Sisi Selatan WH3</option>
-          <option value="Area sisi selatan wh4">Area Sisi Selatan WH4</option>
-          <option value="Area sisi utara wh3">Area Sisi Utara WH3</option>
-          <option value="Area sisi utara wh4">Area Sisi Utara WH4</option>
-          <option value="Area pintu masuk">Area Pintu Masuk</option>
-          <option value="Area parkir">Area Parkir</option>
-          <option value="Lainnya">Lainnya…</option>
-        </select>
-      </div>
-
       <div class="fg-row">
         <div class="fg">
-          <label>🏢 Bagian / Karyawan</label>
+          <label>🏢 Bagian / Karyawan <span style="font-size:9.5px;color:var(--text3);font-weight:600">(Opsional)</span></label>
           <input type="text" id="f-dept" placeholder="cth: DRIVER WB, ELUX"/>
         </div>
         <div class="fg">
-          <label>🪪 No NIK / NPK / SIM</label>
+          <label>🪪 No NIK / NPK / SIM <span style="font-size:9.5px;color:var(--text3);font-weight:600">(Opsional)</span></label>
           <input type="text" id="f-nik" placeholder="Nomor identitas"/>
         </div>
       </div>
 
+      <!-- SECTION 3: KENDARAAN -->
+      <div style="font-size:11px;font-weight:800;color:var(--primary);text-transform:uppercase;letter-spacing:.5px;margin:14px 0 10px;padding-bottom:4px;border-bottom:1.5px solid var(--yellow)">
+        🚘 3. Data Kendaraan
+      </div>
+
       <div class="fg-row">
         <div class="fg">
-          <label>🚘 NO. POLISI</label>
-          <input type="text" id="f-plat" placeholder="B 1234 ABC" style="text-transform:uppercase"/>
+          <label>🚘 NO. POLISI <span style="color:var(--red)">*</span></label>
+          <input type="text" id="f-plat" placeholder="B 1234 ABC" style="text-transform:uppercase" required/>
         </div>
         <div class="fg">
-          <label>🏍️ Jenis Kendaraan</label>
-          <select id="f-vehicle">
+          <label>🏍️ Jenis Kendaraan <span style="color:var(--red)">*</span></label>
+          <select id="f-vehicle" required>
             <option value="MOTOR">🏍️ Motor</option>
             <option value="MOBIL">🚗 Mobil</option>
             <option value="TRUCK">🚚 Truck</option>
@@ -1306,9 +1344,14 @@ body.dark-mode .fb-status-banner.local { background: #26180B; border-color: #4D3
         </div>
       </div>
 
+      <!-- SECTION 4: DOKUMENTASI & STATUS -->
+      <div style="font-size:11px;font-weight:800;color:var(--primary);text-transform:uppercase;letter-spacing:.5px;margin:14px 0 10px;padding-bottom:4px;border-bottom:1.5px solid var(--yellow)">
+        📷 4. Dokumentasi & Status Penanganan
+      </div>
+
       <!-- Foto Bukti Pelanggaran (Kamera Live & Galeri) -->
       <div class="fg">
-        <label>📷 Foto Bukti Pelanggaran (Opsional)</label>
+        <label>📷 Foto Bukti Pelanggaran <span style="font-size:9.5px;color:var(--text3);font-weight:600">(Opsional)</span></label>
         <!-- Hidden file inputs -->
         <input type="file" id="f-photo-camera" accept="image/*" capture="environment" style="display:none" onchange="handlePhotoUpload(event)">
         <input type="file" id="f-photo-gallery" accept="image/*" style="display:none" onchange="handlePhotoUpload(event)">
@@ -1339,26 +1382,9 @@ body.dark-mode .fb-status-banner.local { background: #26180B; border-color: #4D3
         </div>
       </div>
 
-      <div class="fg-row">
-        <div class="fg">
-          <label>🏷️ Status Pelanggar</label>
-          <select id="f-offender-type" onchange="onOffenderTypeChange(this.value)">
-            <option value="Karyawan Puninar">🏢 Karyawan Puninar</option>
-            <option value="Non Karyawan">👤 Non Karyawan</option>
-          </select>
-        </div>
-        <div class="fg" id="fg-action-taken" style="display:none">
-          <label>⚡ Sudah dilakukan tindakan</label>
-          <select id="f-action-taken">
-            <option value="Belum">🔴 Belum</option>
-            <option value="Sudah">🟢 Sudah</option>
-          </select>
-        </div>
-      </div>
-
       <div class="fg">
-        <label>📋 Status</label>
-        <select id="f-status">
+        <label>📋 Status Penanganan <span style="color:var(--red)">*</span></label>
+        <select id="f-status" required>
           <option value="Baru">🔵 Baru</option>
           <option value="Proses">🟠 Dalam Proses</option>
           <option value="Selesai">🟢 Selesai / Sudah Ditindak</option>
@@ -1366,7 +1392,7 @@ body.dark-mode .fb-status-banner.local { background: #26180B; border-color: #4D3
       </div>
 
       <div class="fg">
-        <label>📝 Remark / Catatan</label>
+        <label>📝 Remark / Catatan <span style="font-size:9.5px;color:var(--text3);font-weight:600">(Opsional)</span></label>
         <textarea id="f-remark" placeholder="Keterangan tambahan, kondisi, dll…"></textarea>
       </div>
 
@@ -2162,6 +2188,7 @@ function subscribeToCloudViolations(){
       cloudData.push({
         id: data.id || parseInt(doc.id) || doc.id,
         date: data.date || '',
+        time: data.time || '',
         speed: data.speed || 0,
         name: data.name || '',
         area: data.area || '',
@@ -2207,6 +2234,7 @@ async function saveViolationToCloud(record, isEdit){
   const cleanRecord = {
     id: Number(record.id),
     date: record.date || todayISO(),
+    time: record.time || '',
     speed: Number(record.speed) || 0,
     name: record.name || '',
     area: record.area || '',
@@ -3096,6 +3124,7 @@ function openNewForm(){
   document.getElementById('formTitle').textContent='➕ Tambah Pelanggaran Baru';
   document.getElementById('editId').value='';
   document.getElementById('f-date').value=todayISO();
+  document.getElementById('f-time').value=nowTimeHHMM();
   showScreen('form');
 }
 function cancelForm(){showScreen('data')}
@@ -3104,6 +3133,10 @@ function cancelForm(){showScreen('data')}
    HELPERS
    ============================================================ */
 function todayISO(){return new Date().toISOString().split('T')[0]}
+function nowTimeHHMM(){
+  const d=new Date();
+  return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+}
 function fmtDate(iso){
   const d=new Date(iso+'T00:00:00');
   return d.toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'});
@@ -3392,12 +3425,13 @@ function renderRecentList(){
     const isNonKaryawan = (v.offenderType === 'Non Karyawan');
     const clickAction = isNonKaryawan ? `editViolation(${v.id})` : `openSuratModal('${v.id}')`;
     const actionText = isNonKaryawan ? ` · Action: ${v.actionTaken || 'Belum'}` : '';
+    const timeTxt = v.time ? ` ⏰ ${v.time}` : '';
     return `
     <div class="recent-item" onclick="${clickAction}" title="${isNonKaryawan ? 'Klik untuk edit data Non-Karyawan' : 'Klik untuk lihat surat / rincian'}">
       <div class="ri-badge" style="background:${speedColor(v.speed)}">${v.speed}</div>
       <div class="ri-info">
         <div class="ri-name">${esc(v.name)} ${isNonKaryawan ? '<span style="font-size:10px;color:var(--primary);font-weight:700">(Non-Karyawan)</span>' : ''}</div>
-        <div class="ri-sub">📅 ${fmtDate(v.date)} · 🚘 ${esc(v.plat)} · 🏢 ${esc(v.dept)}</div>
+        <div class="ri-sub">📅 ${fmtDate(v.date)}${timeTxt} · 🚘 ${esc(v.plat)} · 🏢 ${esc(v.dept)}</div>
       </div>
       <div class="ri-speed-wrap">
         <div class="ri-speed" style="color:${speedColor(v.speed)}">${v.speed} KM/J</div>
@@ -3505,6 +3539,7 @@ function renderList(){
     const vehIcon=v.vehicle==='MOTOR'?'🏍️':v.vehicle==='TRUCK'?'🚚':v.vehicle==='FORKLIFT'?'🏗️':v.vehicle==='SEPEDA'?'🚲':'🚗';
     const isNonKaryawan = (v.offenderType === 'Non Karyawan');
     const actionTakenStatus = v.actionTaken || 'Belum';
+    const timeTxt = v.time ? ` ⏰ ${v.time}` : '';
 
     return `
     <div class="v-card ${cls}" style="margin-bottom:10px">
@@ -3512,7 +3547,7 @@ function renderList(){
         <div class="no-circle ${sCls}">${num}</div>
         <div class="v-head-info">
           <div class="v-name">${esc(v.name)}</div>
-          <div class="v-date-dept">📅 ${fmtDate(v.date)} · 🏢 ${esc(v.dept)}</div>
+          <div class="v-date-dept">📅 ${fmtDate(v.date)}${timeTxt} · 🏢 ${esc(v.dept)}</div>
         </div>
         <div class="spd-pill">${v.speed} KM/J</div>
       </div>
@@ -3942,10 +3977,15 @@ function toggleActionTaken(id){
 }
 
 function clearForm(){
-  ['f-date','f-speed','f-name','f-dept','f-nik','f-plat','f-remark'].forEach(id=>{document.getElementById(id).value='';});
-  document.getElementById('f-area').value='Area sisi selatan wh3';
-  document.getElementById('f-vehicle').value='MOTOR';
-  document.getElementById('f-status').value='Baru';
+  ['f-date','f-time','f-speed','f-name','f-dept','f-nik','f-plat','f-remark'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.value = '';
+  });
+  document.getElementById('f-date').value = todayISO();
+  document.getElementById('f-time').value = nowTimeHHMM();
+  document.getElementById('f-area').value = 'Area sisi selatan wh3';
+  document.getElementById('f-vehicle').value = 'MOTOR';
+  document.getElementById('f-status').value = 'Baru';
   const offTypeInp = document.getElementById('f-offender-type');
   const actTakenInp = document.getElementById('f-action-taken');
   if(offTypeInp) offTypeInp.value = 'Karyawan Puninar';
@@ -3962,16 +4002,17 @@ function editViolation(id){
   const v=violations.find(x=>x.id===id);if(!v)return;
   document.getElementById('editId').value=id;
   document.getElementById('formTitle').textContent='✏️ Edit Data Pelanggaran';
-  document.getElementById('f-date').value=v.date;
+  document.getElementById('f-date').value=v.date || todayISO();
+  document.getElementById('f-time').value=v.time || nowTimeHHMM();
   document.getElementById('f-speed').value=v.speed;
   document.getElementById('f-name').value=v.name;
   document.getElementById('f-area').value=v.area;
-  document.getElementById('f-dept').value=v.dept;
-  document.getElementById('f-nik').value=v.nik;
+  document.getElementById('f-dept').value=v.dept || '';
+  document.getElementById('f-nik').value=v.nik || '';
   document.getElementById('f-plat').value=v.plat;
   document.getElementById('f-vehicle').value=v.vehicle;
   document.getElementById('f-status').value=v.status;
-  document.getElementById('f-remark').value=v.remark;
+  document.getElementById('f-remark').value=v.remark || '';
 
   const offType = v.offenderType || 'Karyawan Puninar';
   const actTaken = v.actionTaken || 'Belum';
@@ -4003,6 +4044,7 @@ function saveViolation(e){
     return;
   }
   const date   =document.getElementById('f-date').value;
+  const time   =document.getElementById('f-time').value.trim();
   const speed  =parseInt(document.getElementById('f-speed').value);
   const name   =document.getElementById('f-name').value.trim().toUpperCase();
   const area   =document.getElementById('f-area').value;
@@ -4018,15 +4060,22 @@ function saveViolation(e){
   const offenderType = offenderTypeInp ? offenderTypeInp.value : 'Karyawan Puninar';
   const actionTaken  = offenderType === 'Non Karyawan' ? (actionTakenInp ? actionTakenInp.value : 'Belum') : 'Belum';
 
+  // Validasi Pengisian Mandatori
   if(!date){toast('⚠️ Tanggal wajib diisi!');return;}
+  if(!time){toast('⚠️ Waktu (Jam:Menit) wajib diisi!');return;}
+  if(isNaN(speed)||speed<1){toast('⚠️ Kecepatan wajib diisi & valid!');return;}
+  if(!area){toast('⚠️ Area Speedgun wajib diisi!');return;}
+  if(!offenderType){toast('⚠️ Status Pelanggar wajib diisi!');return;}
+  if(offenderType === 'Non Karyawan' && !actionTaken){toast('⚠️ Pilihan tindakan untuk Non Karyawan wajib diisi!');return;}
   if(!name){toast('⚠️ Nama pelanggar wajib diisi!');return;}
-  if(isNaN(speed)||speed<1){toast('⚠️ Kecepatan tidak valid!');return;}
   if(!plat){toast('⚠️ No. Polisi wajib diisi!');return;}
+  if(!vehicle){toast('⚠️ Jenis Kendaraan wajib diisi!');return;}
+  if(!status){toast('⚠️ Status Penanganan wajib diisi!');return;}
 
   const eid=document.getElementById('editId').value;
   const targetId = eid ? parseInt(eid) : (nextId++);
   const record = {
-    id: targetId, date, speed, name, area, dept, nik, plat, vehicle, status, offenderType, actionTaken, remark,
+    id: targetId, date, time, speed, name, area, dept, nik, plat, vehicle, status, offenderType, actionTaken, remark,
     photo: currentPhotoData || null
   };
 
@@ -4187,7 +4236,7 @@ function showSurat(id){
           <tr><td>Bagian / Vendor</td><td>:</td><td>${esc(v.dept)}</td></tr>
           <tr><td>No. Kendaraan</td><td>:</td><td>${esc(v.plat)} (${esc(v.vehicle)})</td></tr>
           <tr><td>Lokasi</td><td>:</td><td>${esc(v.area)}</td></tr>
-          <tr><td>Tanggal</td><td>:</td><td>${fmtDate(v.date)}</td></tr>
+          <tr><td>Tanggal & Waktu</td><td>:</td><td>${fmtDate(v.date)}${v.time ? ' Pukul ' + v.time + ' WIB' : ''}</td></tr>
           <tr><td>Kecepatan Terukur</td><td>:</td><td><span class="highlight-speed">${v.speed} KM/JAM</span> (batas: ${LIMIT_KMH} KM/JAM, melebihi <strong>+${selisih} KM/J</strong>)</td></tr>
           ${v.remark?`<tr><td>Keterangan</td><td>:</td><td>${esc(v.remark)}</td></tr>`:''}
         </table>
@@ -4960,14 +5009,14 @@ function openTrendDetail(type, param){
    ============================================================ */
 function exportExcel(){
   if(!window.XLSX){toast('⏳ Memuat library…');return;}
-  const headers=['NO','Hari/Tanggal','Nama','Status Pelanggar','Tindakan (Non Karyawan)','Area Speedgun','Kecepatan (KM/JAM)','Bagian/Karyawan','No NIK/NPK/SIM','No. Polisi','Jenis Kendaraan','Status','Remark'];
+  const headers=['NO','Tanggal','Waktu','Nama','Status Pelanggar','Tindakan (Non Karyawan)','Area Speedgun','Kecepatan (KM/JAM)','Bagian/Karyawan','No NIK/NPK/SIM','No. Polisi','Jenis Kendaraan','Status','Remark'];
   const rows=violations.map((v,i)=>[
-    i+1, v.date, v.name, v.offenderType || 'Karyawan Puninar',
+    i+1, v.date, v.time || '-', v.name, v.offenderType || 'Karyawan Puninar',
     (v.offenderType === 'Non Karyawan' ? (v.actionTaken || 'Belum') : '-'),
     v.area, v.speed, v.dept, v.nik, v.plat, v.vehicle, v.status, v.remark
   ]);
   const ws=XLSX.utils.aoa_to_sheet([headers,...rows]);
-  ws['!cols']=[{wch:4},{wch:12},{wch:22},{wch:18},{wch:20},{wch:22},{wch:16},{wch:22},{wch:20},{wch:12},{wch:10},{wch:10},{wch:30}];
+  ws['!cols']=[{wch:4},{wch:12},{wch:10},{wch:22},{wch:18},{wch:20},{wch:22},{wch:16},{wch:22},{wch:20},{wch:12},{wch:10},{wch:10},{wch:30}];
   const wb=XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb,ws,'Data Pelanggaran');
   XLSX.writeFile(wb,`Pelanggaran_Kecepatan_PuninarNagrak_${todayISO()}.xlsx`);
@@ -4975,9 +5024,9 @@ function exportExcel(){
 }
 
 function exportCSV(){
-  const headers=['NO','Hari/Tanggal','Nama','Status Pelanggar','Tindakan Non Karyawan','Area Speedgun','Kecepatan KM/JAM','Bagian/Karyawan','No NIK/NPK/SIM','No. Polisi','Jenis Kendaraan','Status','Remark'];
+  const headers=['NO','Tanggal','Waktu','Nama','Status Pelanggar','Tindakan Non Karyawan','Area Speedgun','Kecepatan KM/JAM','Bagian/Karyawan','No NIK/NPK/SIM','No. Polisi','Jenis Kendaraan','Status','Remark'];
   const rows=violations.map((v,i)=>[
-    i+1, v.date, v.name, v.offenderType || 'Karyawan Puninar',
+    i+1, v.date, v.time || '-', v.name, v.offenderType || 'Karyawan Puninar',
     (v.offenderType === 'Non Karyawan' ? (v.actionTaken || 'Belum') : '-'),
     v.area, v.speed, v.dept, v.nik, v.plat, v.vehicle, v.status, v.remark
   ]);
@@ -4997,17 +5046,17 @@ function exportPDF(){
   doc.text('Area: PUNINAR NAGRAK | Dicetak: '+fmtDate(todayISO()),148,20,{align:'center'});
 
   const rows=violations.map((v,i)=>[
-    i+1, v.date, v.name, v.offenderType === 'Non Karyawan' ? `Non Karyawan (${v.actionTaken||'Belum'})` : 'Karyawan',
+    i+1, v.date, v.time || '-', v.name, v.offenderType === 'Non Karyawan' ? `Non Karyawan (${v.actionTaken||'Belum'})` : 'Karyawan',
     v.area.replace('Area sisi ',''), v.speed+' KM/J', v.dept, v.nik, v.plat, v.vehicle, v.status
   ]);
   doc.autoTable({
     startY:25,
-    head:[['No','Tanggal','Nama','Status Pelanggar','Area','Kecepatan','Bagian','NIK/SIM','No.Pol','Kendaraan','Status']],
+    head:[['No','Tanggal','Waktu','Nama','Status Pelanggar','Area','Kecepatan','Bagian','NIK/SIM','No.Pol','Kendaraan','Status']],
     body:rows,
     styles:{fontSize:7.5,cellPadding:2},
     headStyles:{fillColor:[230,81,0],textColor:255,fontStyle:'bold'},
     alternateRowStyles:{fillColor:[255,248,240]},
-    columnStyles:{5:{textColor:[198,40,40],fontStyle:'bold'}},
+    columnStyles:{6:{textColor:[198,40,40],fontStyle:'bold'}},
     margin:{top:25,left:10,right:10},
   });
   doc.save(`Pelanggaran_Kecepatan_PuninarNagrak_${todayISO()}.pdf`);
@@ -5017,7 +5066,7 @@ function exportPDF(){
 function printTable(){
   const rows=sortedByDate(violations).map((v,i)=>`
     <tr>
-      <td>${i+1}</td><td>${v.date}</td><td style="font-weight:700">${v.name}</td>
+      <td>${i+1}</td><td>${v.date}</td><td>${v.time || '-'}</td><td style="font-weight:700">${v.name}</td>
       <td>${v.offenderType || 'Karyawan Puninar'} ${v.offenderType === 'Non Karyawan' ? `(${v.actionTaken || 'Belum'})` : ''}</td>
       <td>${v.area}</td>
       <td style="${v.speed>=40?'color:#C62828;font-weight:900':'color:#1565C0;font-weight:700'}">${v.speed} KM/JAM</td>
@@ -5038,7 +5087,7 @@ function printTable(){
     <h2>DATA PELANGGARAN KECEPATAN MELEBIHI 20KM/JAM</h2>
     <h3>AREA PUNINAR NAGRAK</h3>
     <p style="text-align:center;font-size:11px">Dicetak: ${new Date().toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'})}</p>
-    <table><thead><tr><th>No</th><th>Tanggal</th><th>Nama</th><th>Status Pelanggar</th><th>Area</th><th>Kecepatan</th><th>Bagian</th><th>NIK/SIM</th><th>No.Pol</th><th>Kendaraan</th><th>Status</th><th>Remark</th></tr></thead>
+    <table><thead><tr><th>No</th><th>Tanggal</th><th>Waktu</th><th>Nama</th><th>Status Pelanggar</th><th>Area</th><th>Kecepatan</th><th>Bagian</th><th>NIK/SIM</th><th>No.Pol</th><th>Kendaraan</th><th>Status</th><th>Remark</th></tr></thead>
     <tbody>${rows}</tbody></table>
     <br><button onclick="window.print()">🖨️ Print</button>
     </body></html>`);
