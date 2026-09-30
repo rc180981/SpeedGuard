@@ -1448,16 +1448,6 @@ body.dark-mode .fb-status-banner.local { background: #26180B; border-color: #4D3
           <div class="cc-hint">📊 Buka Diagram ›</div>
         </div>
 
-        <div class="cc-box c4" onclick="openChartModal('day')">
-          <div class="cc-top">
-            <span class="cc-icon">📆</span>
-            <span class="cc-badge" id="ccBadgeDay">7 Hari</span>
-          </div>
-          <div class="cc-title">Distribusi Hari Kejadian</div>
-          <div class="cc-sub" id="ccSubDay">Senin s/d Minggu</div>
-          <div class="cc-hint">📊 Buka Diagram ›</div>
-        </div>
-
         <div class="cc-box c5" onclick="openChartModal('time')">
           <div class="cc-top">
             <span class="cc-icon">⏰</span>
@@ -4869,16 +4859,6 @@ function exportAllChartsPDF(){
       color: [46, 125, 50],
       data: groupCount(violations, v=>v.area)
         .sort((a,b)=>b[1]-a[1])
-    },
-    {
-      title: 'Distribusi Hari Kejadian',
-      color: [106, 27, 154],
-      data: (() => {
-        const days = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
-        const byDay = Array(7).fill(0);
-        violations.forEach(v=>{ byDay[new Date(v.date+'T00:00:00').getDay()]++; });
-        return days.map((d,i)=>[d, byDay[i]]);
-      })()
     },
     {
       title: 'Distribusi Jam Kejadian',
