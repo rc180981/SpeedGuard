@@ -1339,6 +1339,23 @@ body.dark-mode .fb-status-banner.local { background: #26180B; border-color: #4D3
         </div>
       </div>
 
+      <div class="fg-row">
+        <div class="fg">
+          <label>🏷️ Status Pelanggar</label>
+          <select id="f-offender-type" onchange="onOffenderTypeChange(this.value)">
+            <option value="Karyawan Puninar">🏢 Karyawan Puninar</option>
+            <option value="Non Karyawan">👤 Non Karyawan</option>
+          </select>
+        </div>
+        <div class="fg" id="fg-action-taken" style="display:none">
+          <label>⚡ Sudah dilakukan tindakan</label>
+          <select id="f-action-taken">
+            <option value="Belum">🔴 Belum</option>
+            <option value="Sudah">🟢 Sudah</option>
+          </select>
+        </div>
+      </div>
+
       <div class="fg">
         <label>📋 Status</label>
         <select id="f-status">
@@ -2153,6 +2170,8 @@ function subscribeToCloudViolations(){
         plat: data.plat || '',
         vehicle: data.vehicle || 'MOTOR',
         status: data.status || 'Baru',
+        offenderType: data.offenderType || 'Karyawan Puninar',
+        actionTaken: data.actionTaken || 'Belum',
         remark: data.remark || '',
         photo: data.photo || null,
         statusDate: data.statusDate || null
@@ -3309,18 +3328,23 @@ function renderRecentList(){
     container.innerHTML = `<div style="text-align:center;padding:24px 10px;color:var(--text3);font-size:12.5px">Belum ada catatan pelanggaran.</div>`;
     return;
   }
-  container.innerHTML = recent.map((v) => `
-    <div class="recent-item" onclick="openSuratModal('${v.id}')" title="Klik untuk lihat surat / rincian">
+  container.innerHTML = recent.map((v) => {
+    const isNonKaryawan = (v.offenderType === 'Non Karyawan');
+    const clickAction = isNonKaryawan ? `editViolation(${v.id})` : `openSuratModal('${v.id}')`;
+    const actionText = isNonKaryawan ? ` · Action: ${v.actionTaken || 'Belum'}` : '';
+    return `
+    <div class="recent-item" onclick="${clickAction}" title="${isNonKaryawan ? 'Klik untuk edit data Non-Karyawan' : 'Klik untuk lihat surat / rincian'}">
       <div class="ri-badge" style="background:${speedColor(v.speed)}">${v.speed}</div>
       <div class="ri-info">
-        <div class="ri-name">${esc(v.name)}</div>
+        <div class="ri-name">${esc(v.name)} ${isNonKaryawan ? '<span style="font-size:10px;color:var(--primary);font-weight:700">(Non-Karyawan)</span>' : ''}</div>
         <div class="ri-sub">📅 ${fmtDate(v.date)} · 🚘 ${esc(v.plat)} · 🏢 ${esc(v.dept)}</div>
       </div>
       <div class="ri-speed-wrap">
         <div class="ri-speed" style="color:${speedColor(v.speed)}">${v.speed} KM/J</div>
-        <div style="font-size:10px;font-weight:800;color:${v.status==='Selesai'?'var(--green)':v.status==='Proses'?'var(--primary)':'var(--blue)'};margin-top:2px">${v.status}</div>
+        <div style="font-size:10px;font-weight:800;color:${v.status==='Selesai'?'var(--green)':v.status==='Proses'?'var(--primary)':'var(--blue)'};margin-top:2px">${v.status}${actionText}</div>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 function filterRepeatViolator(name){
@@ -3419,6 +3443,9 @@ function renderList(){
     const sCls=statusCls(v.status);
     const suratNo=toSuratNo(num, v.date);
     const vehIcon=v.vehicle==='MOTOR'?'🏍️':v.vehicle==='TRUCK'?'🚚':v.vehicle==='FORKLIFT'?'🏗️':v.vehicle==='SEPEDA'?'🚲':'🚗';
+    const isNonKaryawan = (v.offenderType === 'Non Karyawan');
+    const actionTakenStatus = v.actionTaken || 'Belum';
+
     return `
     <div class="v-card ${cls}" style="margin-bottom:10px">
       <div class="v-card-head">
@@ -3434,13 +3461,16 @@ function renderList(){
         <div class="v-detail">${vehIcon} <strong>${esc(v.vehicle)}</strong></div>
         <div class="v-detail">📍 <strong>${esc(v.area)}</strong></div>
         <div class="v-detail">🪪 <strong>${esc(v.nik)}</strong></div>
+        <div class="v-detail" style="grid-column:span 2">
+          🏷️ Status Pelanggar: <strong style="${isNonKaryawan ? 'color:var(--primary)' : ''}">${esc(v.offenderType || 'Karyawan Puninar')}</strong>
+        </div>
         ${v.photo ? `
         <div class="v-detail" style="grid-column:span 2;display:flex;align-items:center;gap:6px">
           <span class="v-photo-badge" onclick="openPhotoModalById(${v.id})" title="Lihat Foto Bukti Pelanggaran">
             📷 Lihat Foto Bukti
           </span>
         </div>` : ''}
-        <div class="v-detail" style="grid-column:span 2">📄 No. Surat: <strong style="color:var(--blue)">${suratNo}</strong></div>
+        ${!isNonKaryawan ? `<div class="v-detail" style="grid-column:span 2">📄 No. Surat: <strong style="color:var(--blue)">${suratNo}</strong></div>` : ''}
         ${v.remark?`<div class="v-detail" style="grid-column:span 2">📝 <strong>${esc(v.remark)}</strong></div>`:''}
       </div>
       <div class="v-card-status">
@@ -3448,11 +3478,18 @@ function renderList(){
           ${v.status==='Baru'?'🔵':v.status==='Proses'?'🟠':'🟢'} ${v.status}
         </span>
         ${v.status==='Selesai'?`<span class="status-date-badge">✅ Ditindak: ${fmtDate(v.statusDate || v.date)}</span>`:''}
+        ${isNonKaryawan ? `
+          <span class="status-badge" onclick="toggleActionTaken(${v.id})" style="background:${actionTakenStatus==='Sudah'?'#E8F5E9':'#FFEBEE'};color:${actionTakenStatus==='Sudah'?'#2E7D32':'#C62828'};border:1px solid ${actionTakenStatus==='Sudah'?'#C8E6C9':'#FFCDD2'}" title="Klik untuk ubah status tindakan">
+            ${actionTakenStatus==='Sudah'?'✅':'🔴'} Tindakan: ${actionTakenStatus}
+          </span>
+        ` : ''}
       </div>
       <div class="v-card-footer">
         <button class="v-action edit"   onclick="editViolation(${v.id})">✏️ Edit</button>
         <button class="v-action status-act" onclick="confirmStatusChange(${v.id})">🔄 Status</button>
-        <button class="v-action surat"  onclick="showSurat(${v.id})">📄 Surat</button>
+        ${!isNonKaryawan 
+          ? `<button class="v-action surat"  onclick="showSurat(${v.id})">📄 Surat</button>` 
+          : `<button class="v-action status-act" style="color:${actionTakenStatus==='Sudah'?'var(--green)':'var(--red)'}" onclick="toggleActionTaken(${v.id})">${actionTakenStatus==='Sudah'?'✅ Action: Sudah':'🔴 Action: Belum'}</button>`}
       </div>
     </div>`;
   }).join('');
@@ -3819,11 +3856,41 @@ function downloadPhotoModal(){
   document.body.removeChild(a);
 }
 
+function onOffenderTypeChange(val){
+  const fg = document.getElementById('fg-action-taken');
+  if(fg){
+    fg.style.display = (val === 'Non Karyawan') ? 'block' : 'none';
+  }
+}
+
+function toggleActionTaken(id){
+  const v = violations.find(x => x.id === id);
+  if(!v) return;
+  const nextAction = v.actionTaken === 'Sudah' ? 'Belum' : 'Sudah';
+  v.actionTaken = nextAction;
+  if(isFirebaseReady && db){
+    db.collection('violations').doc(String(id)).update({ actionTaken: nextAction }).then(() => {
+      toast(`✅ Status Tindakan "${v.name}" diubah ke: ${nextAction}`);
+    }).catch(() => {
+      persist(); renderList(); toast(`✅ Status Tindakan "${v.name}" diubah ke: ${nextAction}`);
+    });
+  } else {
+    persist();
+    renderList();
+    toast(`✅ Status Tindakan "${v.name}" diubah ke: ${nextAction}`);
+  }
+}
+
 function clearForm(){
   ['f-date','f-speed','f-name','f-dept','f-nik','f-plat','f-remark'].forEach(id=>{document.getElementById(id).value='';});
   document.getElementById('f-area').value='Area sisi selatan wh3';
   document.getElementById('f-vehicle').value='MOTOR';
   document.getElementById('f-status').value='Baru';
+  const offTypeInp = document.getElementById('f-offender-type');
+  const actTakenInp = document.getElementById('f-action-taken');
+  if(offTypeInp) offTypeInp.value = 'Karyawan Puninar';
+  if(actTakenInp) actTakenInp.value = 'Belum';
+  onOffenderTypeChange('Karyawan Puninar');
   removePhoto();
   const notice = document.getElementById('autofillNotice');
   if(notice) notice.classList.remove('show');
@@ -3845,6 +3912,14 @@ function editViolation(id){
   document.getElementById('f-vehicle').value=v.vehicle;
   document.getElementById('f-status').value=v.status;
   document.getElementById('f-remark').value=v.remark;
+
+  const offType = v.offenderType || 'Karyawan Puninar';
+  const actTaken = v.actionTaken || 'Belum';
+  const offTypeInp = document.getElementById('f-offender-type');
+  const actTakenInp = document.getElementById('f-action-taken');
+  if(offTypeInp) offTypeInp.value = offType;
+  if(actTakenInp) actTakenInp.value = actTaken;
+  onOffenderTypeChange(offType);
 
   if(v.photo){
     currentPhotoData = v.photo;
@@ -3873,6 +3948,11 @@ function saveViolation(){
   const status =document.getElementById('f-status').value;
   const remark =document.getElementById('f-remark').value.trim();
 
+  const offenderTypeInp = document.getElementById('f-offender-type');
+  const actionTakenInp  = document.getElementById('f-action-taken');
+  const offenderType = offenderTypeInp ? offenderTypeInp.value : 'Karyawan Puninar';
+  const actionTaken  = offenderType === 'Non Karyawan' ? (actionTakenInp ? actionTakenInp.value : 'Belum') : 'Belum';
+
   if(!date){toast('⚠️ Tanggal wajib diisi!');return;}
   if(!name){toast('⚠️ Nama pelanggar wajib diisi!');return;}
   if(isNaN(speed)||speed<1){toast('⚠️ Kecepatan tidak valid!');return;}
@@ -3881,7 +3961,7 @@ function saveViolation(){
   const eid=document.getElementById('editId').value;
   const targetId = eid ? parseInt(eid) : (nextId++);
   const record = {
-    id: targetId, date, speed, name, area, dept, nik, plat, vehicle, status, remark,
+    id: targetId, date, speed, name, area, dept, nik, plat, vehicle, status, offenderType, actionTaken, remark,
     photo: currentPhotoData || null
   };
 
@@ -4019,6 +4099,10 @@ function closeModal(id){
    ============================================================ */
 function showSurat(id){
   const v=violations.find(x=>x.id===id);if(!v)return;
+  if(v.offenderType === 'Non Karyawan'){
+    toast('⚠️ Surat STPK hanya diterbitkan untuk Karyawan Puninar!');
+    return;
+  }
   const no=violations.indexOf(v)+1;
   const now=new Date().toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'});
   const selisih=v.speed-LIMIT_KMH;
@@ -4811,11 +4895,14 @@ function openTrendDetail(type, param){
    ============================================================ */
 function exportExcel(){
   if(!window.XLSX){toast('⏳ Memuat library…');return;}
-  const headers=['NO','Hari/Tanggal','Nama','Area Speedgun','Kecepatan (KM/JAM)','Bagian/Karyawan','No NIK/NPK/SIM','No. Polisi','Jenis Kendaraan','Status','Remark'];
-  const rows=violations.map((v,i)=>[i+1,v.date,v.name,v.area,v.speed,v.dept,v.nik,v.plat,v.vehicle,v.status,v.remark]);
+  const headers=['NO','Hari/Tanggal','Nama','Status Pelanggar','Tindakan (Non Karyawan)','Area Speedgun','Kecepatan (KM/JAM)','Bagian/Karyawan','No NIK/NPK/SIM','No. Polisi','Jenis Kendaraan','Status','Remark'];
+  const rows=violations.map((v,i)=>[
+    i+1, v.date, v.name, v.offenderType || 'Karyawan Puninar',
+    (v.offenderType === 'Non Karyawan' ? (v.actionTaken || 'Belum') : '-'),
+    v.area, v.speed, v.dept, v.nik, v.plat, v.vehicle, v.status, v.remark
+  ]);
   const ws=XLSX.utils.aoa_to_sheet([headers,...rows]);
-  // Column widths
-  ws['!cols']=[{wch:4},{wch:12},{wch:22},{wch:22},{wch:16},{wch:22},{wch:20},{wch:12},{wch:10},{wch:10},{wch:30}];
+  ws['!cols']=[{wch:4},{wch:12},{wch:22},{wch:18},{wch:20},{wch:22},{wch:16},{wch:22},{wch:20},{wch:12},{wch:10},{wch:10},{wch:30}];
   const wb=XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb,ws,'Data Pelanggaran');
   XLSX.writeFile(wb,`Pelanggaran_Kecepatan_PuninarNagrak_${todayISO()}.xlsx`);
@@ -4823,8 +4910,12 @@ function exportExcel(){
 }
 
 function exportCSV(){
-  const headers=['NO','Hari/Tanggal','Nama','Area Speedgun','Kecepatan KM/JAM','Bagian/Karyawan','No NIK/NPK/SIM','No. Polisi','Jenis Kendaraan','Status','Remark'];
-  const rows=violations.map((v,i)=>[i+1,v.date,v.name,v.area,v.speed,v.dept,v.nik,v.plat,v.vehicle,v.status,v.remark]);
+  const headers=['NO','Hari/Tanggal','Nama','Status Pelanggar','Tindakan Non Karyawan','Area Speedgun','Kecepatan KM/JAM','Bagian/Karyawan','No NIK/NPK/SIM','No. Polisi','Jenis Kendaraan','Status','Remark'];
+  const rows=violations.map((v,i)=>[
+    i+1, v.date, v.name, v.offenderType || 'Karyawan Puninar',
+    (v.offenderType === 'Non Karyawan' ? (v.actionTaken || 'Belum') : '-'),
+    v.area, v.speed, v.dept, v.nik, v.plat, v.vehicle, v.status, v.remark
+  ]);
   const csv='\uFEFF'+[headers,...rows].map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
   downloadBlob(new Blob([csv],{type:'text/csv;charset=utf-8;'}),`Pelanggaran_${todayISO()}.csv`);
   toast('📄 CSV berhasil diunduh!');
@@ -4840,15 +4931,18 @@ function exportPDF(){
   doc.setFontSize(10);doc.setFont('helvetica','normal');
   doc.text('Area: PUNINAR NAGRAK | Dicetak: '+fmtDate(todayISO()),148,20,{align:'center'});
 
-  const rows=violations.map((v,i)=>[i+1,v.date,v.name,v.area.replace('Area sisi ',''),v.speed+' KM/J',v.dept,v.nik,v.plat,v.vehicle,v.status]);
+  const rows=violations.map((v,i)=>[
+    i+1, v.date, v.name, v.offenderType === 'Non Karyawan' ? `Non Karyawan (${v.actionTaken||'Belum'})` : 'Karyawan',
+    v.area.replace('Area sisi ',''), v.speed+' KM/J', v.dept, v.nik, v.plat, v.vehicle, v.status
+  ]);
   doc.autoTable({
     startY:25,
-    head:[['No','Tanggal','Nama','Area','Kecepatan','Bagian','NIK/SIM','No.Pol','Kendaraan','Status']],
+    head:[['No','Tanggal','Nama','Status Pelanggar','Area','Kecepatan','Bagian','NIK/SIM','No.Pol','Kendaraan','Status']],
     body:rows,
-    styles:{fontSize:8,cellPadding:2},
+    styles:{fontSize:7.5,cellPadding:2},
     headStyles:{fillColor:[230,81,0],textColor:255,fontStyle:'bold'},
     alternateRowStyles:{fillColor:[255,248,240]},
-    columnStyles:{4:{textColor:[198,40,40],fontStyle:'bold'}},
+    columnStyles:{5:{textColor:[198,40,40],fontStyle:'bold'}},
     margin:{top:25,left:10,right:10},
   });
   doc.save(`Pelanggaran_Kecepatan_PuninarNagrak_${todayISO()}.pdf`);
@@ -4859,6 +4953,7 @@ function printTable(){
   const rows=sortedByDate(violations).map((v,i)=>`
     <tr>
       <td>${i+1}</td><td>${v.date}</td><td style="font-weight:700">${v.name}</td>
+      <td>${v.offenderType || 'Karyawan Puninar'} ${v.offenderType === 'Non Karyawan' ? `(${v.actionTaken || 'Belum'})` : ''}</td>
       <td>${v.area}</td>
       <td style="${v.speed>=40?'color:#C62828;font-weight:900':'color:#1565C0;font-weight:700'}">${v.speed} KM/JAM</td>
       <td>${v.dept}</td><td>${v.nik}</td><td>${v.plat}</td><td>${v.vehicle}</td>
@@ -4878,7 +4973,7 @@ function printTable(){
     <h2>DATA PELANGGARAN KECEPATAN MELEBIHI 20KM/JAM</h2>
     <h3>AREA PUNINAR NAGRAK</h3>
     <p style="text-align:center;font-size:11px">Dicetak: ${new Date().toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'})}</p>
-    <table><thead><tr><th>No</th><th>Tanggal</th><th>Nama</th><th>Area</th><th>Kecepatan</th><th>Bagian</th><th>NIK/SIM</th><th>No.Pol</th><th>Kendaraan</th><th>Status</th><th>Remark</th></tr></thead>
+    <table><thead><tr><th>No</th><th>Tanggal</th><th>Nama</th><th>Status Pelanggar</th><th>Area</th><th>Kecepatan</th><th>Bagian</th><th>NIK/SIM</th><th>No.Pol</th><th>Kendaraan</th><th>Status</th><th>Remark</th></tr></thead>
     <tbody>${rows}</tbody></table>
     <br><button onclick="window.print()">🖨️ Print</button>
     </body></html>`);
