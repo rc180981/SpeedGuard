@@ -3580,6 +3580,7 @@ function renderList(){
     const vehIcon=v.vehicle==='MOTOR'?'🏍️':v.vehicle==='TRUCK'?'🚚':v.vehicle==='FORKLIFT'?'🏗️':v.vehicle==='SEPEDA'?'🚲':'🚗';
     const isNonKaryawan = Boolean(v.offenderType && v.offenderType.toLowerCase().includes('non'));
     const actionTakenStatus = v.actionTaken || 'Belum';
+    const isDone = isNonKaryawan ? (actionTakenStatus === 'Sudah' || v.status === 'Selesai') : (v.status === 'Selesai');
     const timeTxt = v.time ? ` ⏰ ${v.time}` : '';
 
     return `
@@ -3611,23 +3612,41 @@ function renderList(){
       </div>
       <div class="v-card-status">
         ${!isNonKaryawan ? `
-          <span class="status-badge ${sCls}" onclick="confirmStatusChange(${v.id})" style="cursor:pointer" title="Klik untuk ubah status">
-            ${v.status==='Baru'?'🔵':v.status==='Proses'?'🟠':'🟢'} ${v.status}
-          </span>
-          ${v.status==='Selesai'?`<span class="status-date-badge">✅ Ditindak: ${fmtDate(v.statusDate || v.date)}</span>`:''}
+          ${isDone ? `
+            <span class="status-badge status-selesai" style="cursor:default" title="Status Selesai - Terkunci (View Only)">🟢 Selesai 🔒</span>
+            <span class="status-date-badge">✅ Ditindak: ${fmtDate(v.statusDate || v.date)}</span>
+          ` : `
+            <span class="status-badge ${sCls}" onclick="confirmStatusChange(${v.id})" style="cursor:pointer" title="Klik untuk ubah status">
+              ${v.status==='Baru'?'🔵':'🟠'} ${v.status}
+            </span>
+          `}
         ` : `
-          <span class="status-badge" style="background:${actionTakenStatus==='Sudah'?'#E8F5E9':'#FFEBEE'};color:${actionTakenStatus==='Sudah'?'#2E7D32':'#C62828'};border:1px solid ${actionTakenStatus==='Sudah'?'#C8E6C9':'#FFCDD2'}" onclick="toggleActionTaken(${v.id})" title="Klik untuk ubah status tindakan">
-            ${actionTakenStatus==='Sudah'?'✅':'🔴'} ${actionTakenStatus==='Sudah'?'Sudah':'Belum'} Ditindak
-          </span>
+          ${isDone ? `
+            <span class="status-badge" style="background:#E8F5E9;color:#2E7D32;border:1px solid #C8E6C9;cursor:default" title="Sudah Ditindak - Terkunci (View Only)">
+              ✅ Sudah Ditindak 🔒
+            </span>
+          ` : `
+            <span class="status-badge" style="background:#FFEBEE;color:#C62828;border:1px solid #FFCDD2;cursor:pointer" onclick="toggleActionTaken(${v.id})" title="Klik untuk ubah status tindakan">
+              🔴 Belum Ditindak
+            </span>
+          `}
         `}
       </div>
       <div class="v-card-footer">
-        <button class="v-action edit"   onclick="editViolation(${v.id})">✏️ Edit</button>
+        <button class="v-action edit" onclick="editViolation(${v.id})">${isDone ? '👁️ Lihat' : '✏️ Edit'}</button>
         ${!isNonKaryawan ? `
-          <button class="v-action status-act" onclick="confirmStatusChange(${v.id})">🔄 Status</button>
-          <button class="v-action surat"  onclick="showSurat(${v.id})">📄 Surat</button>
+          ${isDone ? `
+            <button class="v-action status-act" style="color:var(--green);cursor:not-allowed" onclick="toast('🔒 Status Selesai terkunci (View Only)')">🔒 Selesai</button>
+          ` : `
+            <button class="v-action status-act" onclick="confirmStatusChange(${v.id})">🔄 Status</button>
+          `}
+          <button class="v-action surat" onclick="showSurat(${v.id})">📄 Surat</button>
         ` : `
-          <button class="v-action status-act" style="color:${actionTakenStatus==='Sudah'?'var(--green)':'var(--red)'}" onclick="toggleActionTaken(${v.id})">${actionTakenStatus==='Sudah'?'✅ Sudah Ditindak':'🔴 Belum Ditindak'}</button>
+          ${isDone ? `
+            <button class="v-action status-act" style="color:var(--green);cursor:not-allowed" onclick="toast('🔒 Status Sudah Ditindak terkunci (View Only)')">🔒 Sudah Ditindak</button>
+          ` : `
+            <button class="v-action status-act" style="color:var(--red)" onclick="toggleActionTaken(${v.id})">🔴 Belum Ditindak</button>
+          `}
         `}
       </div>
     </div>`;
@@ -4008,14 +4027,68 @@ function onOffenderTypeChange(val){
   }
 }
 
+function setFormReadOnly(readOnly, isSelesaiMessage){
+  const fieldIds = ['f-date','f-time','f-speed','f-name','f-area','f-dept','f-nik','f-plat','f-vehicle','f-offender-type','f-action-taken','f-status','f-remark'];
+  fieldIds.forEach(id => {
+    const el = document.getElementById(id);
+    if(el) {
+      el.disabled = readOnly;
+      if(readOnly) el.style.backgroundColor = 'var(--bg)';
+      else el.style.backgroundColor = '';
+    }
+  });
+
+  const speedChips = document.querySelectorAll('.si-chip');
+  speedChips.forEach(c => {
+    c.style.pointerEvents = readOnly ? 'none' : 'auto';
+    c.style.opacity = readOnly ? '0.6' : '1';
+  });
+
+  const photoDropzone = document.getElementById('photoDropzone');
+  const photoWrap = document.getElementById('photoPreviewWrap');
+  if(photoDropzone) { photoDropzone.style.pointerEvents = readOnly ? 'none' : 'auto'; photoDropzone.style.opacity = readOnly ? '0.5' : '1'; }
+  if(photoWrap) {
+    const rmBtn = photoWrap.querySelector('.btn-remove-photo');
+    if(rmBtn) rmBtn.style.display = readOnly ? 'none' : 'block';
+  }
+
+  const saveBtn = document.querySelector('#violationForm button[type="submit"], .btn-submit-form');
+  if(saveBtn) {
+    saveBtn.style.display = readOnly ? 'none' : 'block';
+  }
+
+  let lockNotice = document.getElementById('formLockNotice');
+  const formCard = document.getElementById('formTitle')?.parentNode;
+  if(readOnly) {
+    if(!lockNotice && formCard) {
+      lockNotice = document.createElement('div');
+      lockNotice.id = 'formLockNotice';
+      lockNotice.style.cssText = 'background:#FFF3E0;color:#E65100;border:1.5px solid #FFE0B2;padding:10px 14px;border-radius:10px;font-size:12.5px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px';
+      formCard.insertBefore(lockNotice, formCard.firstChild);
+    }
+    if(lockNotice){
+      lockNotice.innerHTML = `🔒 ${isSelesaiMessage || 'Status Selesai - Data dikunci (View Only) dan tidak dapat diubah.'}`;
+      lockNotice.style.display = 'flex';
+    }
+  } else {
+    if(lockNotice) lockNotice.style.display = 'none';
+  }
+}
+
 function toggleActionTaken(id){
   const v = violations.find(x => x.id === id);
   if(!v) return;
-  const nextAction = v.actionTaken === 'Sudah' ? 'Belum' : 'Sudah';
+  const isNonKaryawan = Boolean(v.offenderType && v.offenderType.toLowerCase().includes('non'));
+  if(v.actionTaken === 'Sudah' || v.status === 'Selesai'){
+    toast('🔒 Status Sudah Ditindak / Selesai terkunci (View Only) & tidak dapat diubah lagi!');
+    return;
+  }
+  const nextAction = 'Sudah';
   v.actionTaken = nextAction;
-  v.status = nextAction === 'Sudah' ? 'Selesai' : 'Baru';
+  v.status = 'Selesai';
+  v.statusDate = todayISO();
   if(isFirebaseReady && db){
-    db.collection('violations').doc(String(id)).update({ actionTaken: nextAction, status: v.status }).then(() => {
+    db.collection('violations').doc(String(id)).update({ actionTaken: nextAction, status: 'Selesai', statusDate: v.statusDate }).then(() => {
       toast(`✅ Status Tindakan "${v.name}" diubah ke: ${nextAction}`);
       renderList();
     }).catch(() => {
@@ -4033,6 +4106,7 @@ function clearForm(){
     const el = document.getElementById(id);
     if(el) el.value = '';
   });
+  document.getElementById('editId').value = '';
   document.getElementById('f-date').value = todayISO();
   document.getElementById('f-time').value = nowTimeHHMM();
   document.getElementById('f-area').value = 'Area sisi selatan wh3';
@@ -4044,6 +4118,8 @@ function clearForm(){
   if(actTakenInp) actTakenInp.value = '';
   onOffenderTypeChange('Karyawan Puninar');
   removePhoto();
+  setFormReadOnly(false);
+  document.getElementById('formTitle').textContent = '➕ Tambah Data Pelanggaran Baru';
   const notice = document.getElementById('autofillNotice');
   if(notice) notice.classList.remove('show');
   const dropdown = document.getElementById('nameSuggestDropdown');
@@ -4053,7 +4129,6 @@ function clearForm(){
 function editViolation(id){
   const v=violations.find(x=>x.id===id);if(!v)return;
   document.getElementById('editId').value=id;
-  document.getElementById('formTitle').textContent='✏️ Edit Data Pelanggaran';
   document.getElementById('f-date').value=v.date || todayISO();
   document.getElementById('f-time').value=v.time || nowTimeHHMM();
   document.getElementById('f-speed').value=v.speed;
@@ -4081,6 +4156,17 @@ function editViolation(id){
     removePhoto();
   }
 
+  const isNonKaryawan = Boolean(offType && offType.toLowerCase().includes('non'));
+  const isDone = isNonKaryawan ? (actTaken === 'Sudah' || v.status === 'Selesai') : (v.status === 'Selesai');
+
+  if(isDone) {
+    document.getElementById('formTitle').textContent = '👁️ Lihat Data Pelanggaran (Status Selesai - View Only)';
+    setFormReadOnly(true, 'Status Selesai / Sudah Ditindak — Data dikunci & hanya dapat dilihat (View Only).');
+  } else {
+    document.getElementById('formTitle').textContent = '✏️ Edit Data Pelanggaran';
+    setFormReadOnly(false);
+  }
+
   const notice = document.getElementById('autofillNotice');
   if(notice) notice.classList.remove('show');
   const dropdown = document.getElementById('nameSuggestDropdown');
@@ -4095,6 +4181,19 @@ function saveViolation(e){
     openAuthPromptModal('form');
     return;
   }
+  const eid=document.getElementById('editId').value;
+  if(eid){
+    const targetV = violations.find(x => x.id === parseInt(eid));
+    if(targetV){
+      const isNon = Boolean(targetV.offenderType && targetV.offenderType.toLowerCase().includes('non'));
+      const isDone = isNon ? (targetV.actionTaken === 'Sudah' || targetV.status === 'Selesai') : (targetV.status === 'Selesai');
+      if(isDone){
+        toast('⛔ Status Selesai / Sudah Ditindak tidak dapat diubah (View Only)!');
+        return;
+      }
+    }
+  }
+
   const date   =document.getElementById('f-date').value;
   const time   =document.getElementById('f-time').value.trim();
   const speed  =parseInt(document.getElementById('f-speed').value);
@@ -4129,7 +4228,6 @@ function saveViolation(e){
   if(!vehicle){toast('⚠️ Jenis Kendaraan wajib diisi!');return;}
   if(offenderType === 'Karyawan Puninar' && !status){toast('⚠️ Status Penanganan wajib diisi!');return;}
 
-  const eid=document.getElementById('editId').value;
   const targetId = eid ? parseInt(eid) : (nextId++);
   const record = {
     id: targetId, date, time, speed, name, area, dept, nik, plat, vehicle, status, offenderType, actionTaken, remark,
@@ -4159,6 +4257,12 @@ function saveViolation(e){
    ============================================================ */
 function confirmStatusChange(id){
   const v=violations.find(x=>x.id===id);if(!v)return;
+  const isNonKaryawan = Boolean(v.offenderType && v.offenderType.toLowerCase().includes('non'));
+  const isDone = isNonKaryawan ? (v.actionTaken === 'Sudah' || v.status === 'Selesai') : (v.status === 'Selesai');
+  if(isDone){
+    toast('🔒 Status Selesai / Sudah Ditindak terkunci (View Only) & tidak dapat diubah lagi!');
+    return;
+  }
   const cycle={Baru:'Proses',Proses:'Selesai',Selesai:'Baru'};
   const nextStatus=cycle[v.status]||'Proses';
   const statusLabels={
