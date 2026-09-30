@@ -4546,6 +4546,13 @@ function closeStatsChartModal(e){
     closeModal('statsChartModal');
 }
 
+let activeTimeFilterDate = '';
+
+function setTimeChartDate(val){
+  activeTimeFilterDate = val;
+  openChartModal('time');
+}
+
 function openChartModal(type){
   const modalEl = document.getElementById('statsChartModal');
   const titleEl = document.getElementById('scmTitle');
@@ -4590,7 +4597,9 @@ function openChartModal(type){
     data = days.map((d,i)=>[d, byDay[i]]);
   } else if(type === 'time'){
     title = '⏰ Distribusi Jam Kejadian';
-    subtitle = `Statistik sebaran jam kejadian pelanggaran dalam rentang 24 jam.`;
+    subtitle = activeTimeFilterDate 
+      ? `Statistik sebaran 24 jam untuk tanggal: ${fmtDate(activeTimeFilterDate)}` 
+      : `Statistik sebaran jam kejadian pelanggaran dalam rentang 24 jam.`;
     color = '#F57C00';
     const slots = [
       '00:00 - 04:00 (Dini Hari)',
@@ -4603,7 +4612,11 @@ function openChartModal(type){
     const counts = Array(6).fill(0);
     let unrecorded = 0;
     const sampleHours = ['07:45','08:15','08:30','09:10','10:15','11:30','13:15','14:20','15:45','16:30','17:15','19:00'];
-    violations.forEach((v, idx) => {
+    const targetViolations = activeTimeFilterDate
+      ? violations.filter(v => v.date === activeTimeFilterDate)
+      : violations;
+
+    targetViolations.forEach((v, idx) => {
       const timeStr = v.time || sampleHours[idx % sampleHours.length];
       const hour = parseInt(timeStr.split(':')[0], 10);
       if(isNaN(hour)){ unrecorded++; return; }
@@ -4631,6 +4644,17 @@ function openChartModal(type){
 
   if(summaryEl){
     summaryEl.innerHTML = `
+      ${type === 'time' ? `
+        <div style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:8px 12px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
+          <div style="font-size:11.5px;font-weight:800;color:var(--text);display:flex;align-items:center;gap:6px">
+            <span>📆</span> Pilih Tanggal Kejadian:
+          </div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <input type="date" id="scmTimeDatePicker" value="${activeTimeFilterDate || ''}" style="padding:4px 8px;border-radius:6px;border:1px solid var(--border);font-size:12px;font-weight:700" onchange="setTimeChartDate(this.value)"/>
+            <button style="padding:4px 10px;border-radius:6px;border:none;background:var(--primary);color:#fff;font-size:11px;font-weight:800;cursor:pointer" onclick="setTimeChartDate('')">Semua Tanggal</button>
+          </div>
+        </div>
+      ` : ''}
       <div style="flex:1;min-width:110px;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:8px 12px;text-align:center">
         <div style="font-size:10px;color:var(--text2);font-weight:700">TOTAL DATA</div>
         <div style="font-size:17px;font-weight:900;color:var(--text);margin-top:2px">${totalCasesInCat}</div>
@@ -5077,8 +5101,12 @@ function openChartBarDetail(type, label, idx) {
   const sampleHours = ['07:45','08:15','08:30','09:10','10:15','11:30','13:15','14:20','15:45','16:30','17:15','19:00'];
 
   if (type === 'time') {
-    titleEl.innerHTML = `⏰ Rentang Jam: ${esc(label)}`;
-    filtered = sortedByDate(violations.filter((v, i) => {
+    const targetViolations = activeTimeFilterDate
+      ? violations.filter(v => v.date === activeTimeFilterDate)
+      : violations;
+    const dateLabel = activeTimeFilterDate ? ` (${fmtDate(activeTimeFilterDate)})` : '';
+    titleEl.innerHTML = `⏰ Rentang Jam: ${esc(label)}${dateLabel}`;
+    filtered = sortedByDate(targetViolations.filter((v, i) => {
       const timeStr = v.time || sampleHours[i % sampleHours.length];
       const hour = parseInt(timeStr.split(':')[0], 10);
       if (isNaN(hour)) return idx === 6;
@@ -5090,8 +5118,13 @@ function openChartBarDetail(type, label, idx) {
       if (idx === 5) return hour >= 20 && hour < 24;
       return false;
     }));
-    subEl.textContent = `Terdapat ${filtered.length} pelanggaran terdata pada rentang waktu ini.`;
-    viewBtn.onclick = () => { resetFilter(); showScreen('data'); closeModal('statsDetailModal'); };
+    subEl.textContent = `Terdapat ${filtered.length} pelanggaran terdata pada rentang waktu ini${activeTimeFilterDate ? ' tanggal ' + fmtDate(activeTimeFilterDate) : ''}.`;
+    viewBtn.onclick = () => {
+      resetFilter();
+      if (activeTimeFilterDate) activeFilters.month = [activeTimeFilterDate.slice(0, 7)];
+      showScreen('data');
+      closeModal('statsDetailModal');
+    };
   } else if (type === 'day') {
     titleEl.innerHTML = `📆 Kejadian Hari ${esc(label)}`;
     const days = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
