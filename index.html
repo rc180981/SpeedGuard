@@ -2181,7 +2181,10 @@ function subscribeToCloudViolations(){
     cloudData.sort((a,b) => new Date(b.date) - new Date(a.date));
     violations = cloudData;
     
-    const maxId = violations.reduce((max, v) => (typeof v.id === 'number' && v.id > max ? v.id : max), 0);
+    const maxId = violations.reduce((max, v) => {
+      const numId = parseInt(v.id, 10);
+      return (!isNaN(numId) && numId > max) ? numId : max;
+    }, 0);
     nextId = Math.max(maxId + 1, 127);
 
     try {
@@ -2200,24 +2203,61 @@ function subscribeToCloudViolations(){
 
 async function saveViolationToCloud(record, isEdit){
   toast('⏳ Menyimpan ke Google Cloud...');
-  try {
-    if(record.photo && record.photo.startsWith('data:image/') && fbStorage){
-      const storageRef = fbStorage.ref();
-      const photoName = `violations/${record.id}_${Date.now()}.jpg`;
-      const photoRef = storageRef.child(photoName);
-      
-      const uploadSnap = await photoRef.putString(record.photo, 'data_url');
-      const downloadURL = await uploadSnap.ref.getDownloadURL();
-      record.photo = downloadURL;
-    }
 
-    await db.collection('violations').doc(String(record.id)).set(record);
+  const cleanRecord = {
+    id: Number(record.id),
+    date: record.date || todayISO(),
+    speed: Number(record.speed) || 0,
+    name: record.name || '',
+    area: record.area || '',
+    dept: record.dept || '',
+    nik: record.nik || '-',
+    plat: record.plat || '',
+    vehicle: record.vehicle || 'MOTOR',
+    status: record.status || 'Baru',
+    offenderType: record.offenderType || 'Karyawan Puninar',
+    actionTaken: record.actionTaken || 'Belum',
+    remark: record.remark || '',
+    photo: record.photo || null,
+    statusDate: record.statusDate || null
+  };
+
+  // Safe photo upload attempt to Firebase Storage
+  if (cleanRecord.photo && cleanRecord.photo.startsWith('data:image/')) {
+    if (fbStorage) {
+      try {
+        const storageRef = fbStorage.ref();
+        const photoName = `violations/${cleanRecord.id}_${Date.now()}.jpg`;
+        const photoRef = storageRef.child(photoName);
+        const uploadSnap = await photoRef.putString(cleanRecord.photo, 'data_url');
+        const downloadURL = await uploadSnap.ref.getDownloadURL();
+        cleanRecord.photo = downloadURL;
+      } catch (storageErr) {
+        console.warn('Firebase Storage upload warning (menyimpan foto base64 di Firestore):', storageErr);
+        // Tetap simpan foto sebagai base64 terkompresi di Firestore agar foto tidak hilang
+      }
+    }
+  }
+
+  // Update memori lokal & cache secara instan agar UI responsif
+  if (isEdit) {
+    const idx = violations.findIndex(x => Number(x.id) === Number(cleanRecord.id));
+    if (idx !== -1) violations[idx] = cleanRecord;
+    else violations.unshift(cleanRecord);
+  } else {
+    violations.unshift(cleanRecord);
+  }
+  persist();
+
+  // Simpan ke Cloud Firestore
+  try {
+    await db.collection('violations').doc(String(cleanRecord.id)).set(cleanRecord, { merge: true });
     toast(isEdit ? '✅ Data berhasil diperbarui di Cloud!' : '✅ Data baru berhasil disimpan di Cloud!');
     showScreen('data');
-  } catch(err){
-    console.error('Gagal simpan ke Firebase:', err);
-    toast('⚠️ Gagal simpan ke Cloud: ' + err.message + '. Menyimpan secara lokal.');
-    fallbackSaveLocal(record, isEdit);
+  } catch (err) {
+    console.error('Gagal simpan ke Firestore:', err);
+    toast('⚠️ Gagal simpan ke Cloud: ' + err.message + '. Data tersimpan secara lokal.');
+    showScreen('data');
   }
 }
 
@@ -2449,10 +2489,23 @@ let violations = [];
 function loadData(){
   try{
     const r = localStorage.getItem(STORAGE_KEY);
-    if(r){const p=JSON.parse(r);nextId=p.nextId||127;violations=p.data||[];return;}
+    if(r){
+      const p=JSON.parse(r);
+      violations=p.data||[];
+      const maxId = violations.reduce((max, v) => {
+        const num = parseInt(v.id, 10);
+        return (!isNaN(num) && num > max) ? num : max;
+      }, 0);
+      nextId = Math.max(maxId + 1, 127);
+      return;
+    }
   }catch(e){}
   violations = INITIAL.map(d=>({...d}));
-  nextId = 127;
+  const maxId = violations.reduce((max, v) => {
+    const num = parseInt(v.id, 10);
+    return (!isNaN(num) && num > max) ? num : max;
+  }, 0);
+  nextId = Math.max(maxId + 1, 127);
   persist();
 }
 function persist(){
