@@ -3610,22 +3610,25 @@ function renderList(){
         ${v.remark?`<div class="v-detail" style="grid-column:span 2">📝 <strong>${esc(v.remark)}</strong></div>`:''}
       </div>
       <div class="v-card-status">
-        <span class="status-badge ${sCls}" onclick="confirmStatusChange(${v.id})" style="cursor:pointer" title="Klik untuk ubah status">
-          ${v.status==='Baru'?'🔵':v.status==='Proses'?'🟠':'🟢'} ${v.status}
-        </span>
-        ${v.status==='Selesai'?`<span class="status-date-badge">✅ Ditindak: ${fmtDate(v.statusDate || v.date)}</span>`:''}
-        ${isNonKaryawan ? `
-          <span class="status-badge" onclick="toggleActionTaken(${v.id})" style="background:${actionTakenStatus==='Sudah'?'#E8F5E9':'#FFEBEE'};color:${actionTakenStatus==='Sudah'?'#2E7D32':'#C62828'};border:1px solid ${actionTakenStatus==='Sudah'?'#C8E6C9':'#FFCDD2'}" title="Klik untuk ubah status tindakan">
-            ${actionTakenStatus==='Sudah'?'✅':'🔴'} Tindakan: ${actionTakenStatus}
+        ${!isNonKaryawan ? `
+          <span class="status-badge ${sCls}" onclick="confirmStatusChange(${v.id})" style="cursor:pointer" title="Klik untuk ubah status">
+            ${v.status==='Baru'?'🔵':v.status==='Proses'?'🟠':'🟢'} ${v.status}
           </span>
-        ` : ''}
+          ${v.status==='Selesai'?`<span class="status-date-badge">✅ Ditindak: ${fmtDate(v.statusDate || v.date)}</span>`:''}
+        ` : `
+          <span class="status-badge" style="background:${actionTakenStatus==='Sudah'?'#E8F5E9':'#FFEBEE'};color:${actionTakenStatus==='Sudah'?'#2E7D32':'#C62828'};border:1px solid ${actionTakenStatus==='Sudah'?'#C8E6C9':'#FFCDD2'}" onclick="toggleActionTaken(${v.id})" title="Klik untuk ubah status tindakan">
+            ${actionTakenStatus==='Sudah'?'✅':'🔴'} ${actionTakenStatus==='Sudah'?'Sudah':'Belum'} Ditindak
+          </span>
+        `}
       </div>
       <div class="v-card-footer">
         <button class="v-action edit"   onclick="editViolation(${v.id})">✏️ Edit</button>
-        <button class="v-action status-act" onclick="confirmStatusChange(${v.id})">🔄 Status</button>
-        ${!isNonKaryawan 
-          ? `<button class="v-action surat"  onclick="showSurat(${v.id})">📄 Surat</button>` 
-          : `<button class="v-action status-act" style="color:${actionTakenStatus==='Sudah'?'var(--green)':'var(--red)'}" onclick="toggleActionTaken(${v.id})">${actionTakenStatus==='Sudah'?'✅ Action: Sudah':'🔴 Action: Belum'}</button>`}
+        ${!isNonKaryawan ? `
+          <button class="v-action status-act" onclick="confirmStatusChange(${v.id})">🔄 Status</button>
+          <button class="v-action surat"  onclick="showSurat(${v.id})">📄 Surat</button>
+        ` : `
+          <button class="v-action status-act" style="color:${actionTakenStatus==='Sudah'?'var(--green)':'var(--red)'}" onclick="toggleActionTaken(${v.id})">${actionTakenStatus==='Sudah'?'✅ Sudah Ditindak':'🔴 Belum Ditindak'}</button>
+        `}
       </div>
     </div>`;
   }).join('');
