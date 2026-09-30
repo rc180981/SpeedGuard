@@ -334,21 +334,13 @@ body.dark-mode .status-date-badge{background:#14281B;border-color:#1F4A2C;color:
 /* ============================================================
    SCREEN: FORM
    ============================================================ */
-.form-card{background:var(--card);border-radius:var(--radius);padding:18px 16px;box-shadow:var(--shadow)}
-.form-title{font-size:15px;font-weight:900;color:var(--primary);margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--yellow);display:flex;align-items:center;gap:6px}
-.form-sec-head{
-  font-size:11.5px;font-weight:800;color:var(--primary);
-  text-transform:uppercase;letter-spacing:.5px;
-  margin:16px 0 12px;padding-bottom:4px;
-  border-bottom:1.5px solid var(--yellow);
-  display:flex;align-items:center;gap:6px;
-}
-.form-sec-head:first-of-type{margin-top:0}
-.fg{margin-bottom:14px}
-.fg label{display:block;font-size:11px;font-weight:800;color:var(--text);letter-spacing:.2px;margin-bottom:6px;line-height:1.2}
+.form-card{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
+.form-title{font-size:15px;font-weight:900;color:var(--primary);margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--yellow)}
+.fg{margin-bottom:13px}
+.fg label{display:block;font-size:10.5px;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px}
 .fg input,.fg select,.fg textarea{
-  width:100%;padding:10.5px 12px;border:1.5px solid var(--border);
-  border-radius:var(--radius3);font-size:13.5px;background:#FAFAFA;outline:none;
+  width:100%;padding:10px 12px;border:1.5px solid var(--border);
+  border-radius:var(--radius3);font-size:14px;background:#FAFAFA;outline:none;
   transition:border-color .2s,box-shadow .2s,background .2s;color:var(--text);
   font-family:inherit;
 }
@@ -357,9 +349,6 @@ body.dark-mode .status-date-badge{background:#14281B;border-color:#1F4A2C;color:
 }
 .fg textarea{resize:vertical;min-height:72px}
 .fg-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-@media(max-width:400px){
-  .fg-row{grid-template-columns:1fr;gap:0}
-}
 .speed-inp{border-color:var(--red-light)!important;background:#FFF8F8!important}
 .speed-inp:focus{box-shadow:0 0 0 3px rgba(198,40,40,.12)!important}
 .input-hint{font-size:10px;color:var(--text3);margin-top:3px}
@@ -1251,11 +1240,6 @@ body.dark-mode .fb-status-banner.local { background: #26180B; border-color: #4D3
       <div class="form-title" id="formTitle">➕ Tambah Pelanggaran Baru</div>
       <input type="hidden" id="editId"/>
 
-      <!-- SECTION 1: WAKTU & LOKASI KEJADIAN -->
-      <div class="form-sec-head">
-        📍 1. Waktu & Lokasi Kejadian
-      </div>
-
       <div class="fg-row">
         <div class="fg">
           <label>📅 Tanggal <span style="color:var(--red)">*</span></label>
@@ -1267,51 +1251,14 @@ body.dark-mode .fb-status-banner.local { background: #26180B; border-color: #4D3
         </div>
       </div>
 
-      <div class="fg-row">
-        <div class="fg">
-          <label>🚨 Kecepatan <span style="color:var(--red)">*</span></label>
-          <input type="number" id="f-speed" min="1" max="250" placeholder="cth: 41" class="speed-inp" oninput="onSpeedInput(this)" required/>
-          <div class="speed-indicator">
-            <div class="si-chip warn" onclick="setSpeed(21)">21 KM/J</div>
-            <div class="si-chip warn" onclick="setSpeed(30)">30 KM/J</div>
-            <div class="si-chip danger" onclick="setSpeed(40)">40 KM/J</div>
-            <div class="si-chip danger" onclick="setSpeed(50)">50 KM/J</div>
-          </div>
-        </div>
-        <div class="fg">
-          <label>📍 Area Speedgun <span style="color:var(--red)">*</span></label>
-          <select id="f-area" required>
-            <option value="Area sisi selatan wh3">Area Sisi Selatan WH3</option>
-            <option value="Area sisi selatan wh4">Area Sisi Selatan WH4</option>
-            <option value="Area sisi utara wh3">Area Sisi Utara WH3</option>
-            <option value="Area sisi utara wh4">Area Sisi Utara WH4</option>
-            <option value="Area pintu masuk">Area Pintu Masuk</option>
-            <option value="Area parkir">Area Parkir</option>
-            <option value="Lainnya">Lainnya…</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- SECTION 2: IDENTITAS PELANGGAR -->
-      <div class="form-sec-head">
-        👤 2. Identitas Pelanggar
-      </div>
-
-      <div class="fg-row">
-        <div class="fg">
-          <label>🏷️ Status Pelanggar <span style="color:var(--red)">*</span></label>
-          <select id="f-offender-type" onchange="onOffenderTypeChange(this.value)">
-            <option value="Karyawan Puninar">🏢 Karyawan Puninar</option>
-            <option value="Non Karyawan">👤 Non Karyawan</option>
-          </select>
-        </div>
-        <div class="fg" id="fg-action-taken" style="display:none">
-          <label>⚡ Sudah ditindak <span style="color:var(--red)">*</span></label>
-          <select id="f-action-taken">
-            <option value="" disabled selected>-- Pilih Status --</option>
-            <option value="Belum">🔴 Belum</option>
-            <option value="Sudah">🟢 Sudah</option>
-          </select>
+      <div class="fg">
+        <label>🚨 Kecepatan <span style="color:var(--red)">*</span></label>
+        <input type="number" id="f-speed" min="1" max="250" placeholder="cth: 41" class="speed-inp" oninput="onSpeedInput(this)" required/>
+        <div class="speed-indicator">
+          <div class="si-chip warn" onclick="setSpeed(21)">21 KM/J</div>
+          <div class="si-chip warn" onclick="setSpeed(30)">30 KM/J</div>
+          <div class="si-chip danger" onclick="setSpeed(40)">40 KM/J</div>
+          <div class="si-chip danger" onclick="setSpeed(50)">50 KM/J</div>
         </div>
       </div>
 
@@ -1326,6 +1273,19 @@ body.dark-mode .fb-status-banner.local { background: #26180B; border-color: #4D3
         </div>
       </div>
 
+      <div class="fg">
+        <label>📍 Area Speedgun <span style="color:var(--red)">*</span></label>
+        <select id="f-area" required>
+          <option value="Area sisi selatan wh3">Area Sisi Selatan WH3</option>
+          <option value="Area sisi selatan wh4">Area Sisi Selatan WH4</option>
+          <option value="Area sisi utara wh3">Area Sisi Utara WH3</option>
+          <option value="Area sisi utara wh4">Area Sisi Utara WH4</option>
+          <option value="Area pintu masuk">Area Pintu Masuk</option>
+          <option value="Area parkir">Area Parkir</option>
+          <option value="Lainnya">Lainnya…</option>
+        </select>
+      </div>
+
       <div class="fg-row">
         <div class="fg">
           <label>🏢 Bagian / Karyawan <span style="color:var(--red)">*</span></label>
@@ -1335,11 +1295,6 @@ body.dark-mode .fb-status-banner.local { background: #26180B; border-color: #4D3
           <label>🪪 No NIK / NPK / SIM <span style="color:var(--red)">*</span></label>
           <input type="text" id="f-nik" placeholder="Nomor identitas NIK/NPK/SIM" required/>
         </div>
-      </div>
-
-      <!-- SECTION 3: KENDARAAN -->
-      <div class="form-sec-head">
-        🚘 3. Data Kendaraan
       </div>
 
       <div class="fg-row">
@@ -1360,11 +1315,22 @@ body.dark-mode .fb-status-banner.local { background: #26180B; border-color: #4D3
         </div>
       </div>
 
-      <!-- SECTION 4: DOKUMENTASI & STATUS -->
-      <div class="form-sec-head">
-        📷 4. Dokumentasi & Status Penanganan
-      </div>
-        📷 4. Dokumentasi & Status Penanganan
+      <div class="fg-row">
+        <div class="fg">
+          <label>🏷️ Status Pelanggar <span style="color:var(--red)">*</span></label>
+          <select id="f-offender-type" onchange="onOffenderTypeChange(this.value)">
+            <option value="Karyawan Puninar">🏢 Karyawan Puninar</option>
+            <option value="Non Karyawan">👤 Non Karyawan</option>
+          </select>
+        </div>
+        <div class="fg" id="fg-action-taken" style="display:none">
+          <label>⚡ Sudah ditindak <span style="color:var(--red)">*</span></label>
+          <select id="f-action-taken">
+            <option value="" disabled selected>-- Pilih Status --</option>
+            <option value="Belum">🔴 Belum</option>
+            <option value="Sudah">🟢 Sudah</option>
+          </select>
+        </div>
       </div>
 
       <!-- Foto Bukti Pelanggaran (Kamera Live & Galeri) -->
