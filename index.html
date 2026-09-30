@@ -3578,7 +3578,7 @@ function renderList(){
     const sCls=statusCls(v.status);
     const suratNo=toSuratNo(num, v.date);
     const vehIcon=v.vehicle==='MOTOR'?'🏍️':v.vehicle==='TRUCK'?'🚚':v.vehicle==='FORKLIFT'?'🏗️':v.vehicle==='SEPEDA'?'🚲':'🚗';
-    const isNonKaryawan = (v.offenderType === 'Non Karyawan');
+    const isNonKaryawan = Boolean(v.offenderType && v.offenderType.toLowerCase().includes('non'));
     const actionTakenStatus = v.actionTaken || 'Belum';
     const timeTxt = v.time ? ` ⏰ ${v.time}` : '';
 
@@ -3998,7 +3998,8 @@ function downloadPhotoModal(){
 function onOffenderTypeChange(val){
   const fgAction = document.getElementById('fg-action-taken');
   const fgStatus = document.getElementById('fg-status');
-  if(val === 'Non Karyawan'){
+  const isNon = Boolean(val && val.toLowerCase().includes('non'));
+  if(isNon){
     if(fgAction) fgAction.style.display = 'block';
     if(fgStatus) fgStatus.style.display = 'none';
   } else {
@@ -4012,9 +4013,11 @@ function toggleActionTaken(id){
   if(!v) return;
   const nextAction = v.actionTaken === 'Sudah' ? 'Belum' : 'Sudah';
   v.actionTaken = nextAction;
+  v.status = nextAction === 'Sudah' ? 'Selesai' : 'Baru';
   if(isFirebaseReady && db){
-    db.collection('violations').doc(String(id)).update({ actionTaken: nextAction }).then(() => {
+    db.collection('violations').doc(String(id)).update({ actionTaken: nextAction, status: v.status }).then(() => {
       toast(`✅ Status Tindakan "${v.name}" diubah ke: ${nextAction}`);
+      renderList();
     }).catch(() => {
       persist(); renderList(); toast(`✅ Status Tindakan "${v.name}" diubah ke: ${nextAction}`);
     });
