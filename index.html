@@ -1370,8 +1370,8 @@ body.dark-mode .fb-status-banner.local { background: #26180B; border-color: #4D3
         <textarea id="f-remark" placeholder="Keterangan tambahan, kondisi, dll…"></textarea>
       </div>
 
-      <button class="btn-primary" onclick="saveViolation()">💾 SIMPAN DATA</button>
-      <button class="btn-secondary" onclick="cancelForm()">✖ Batal</button>
+      <button type="button" class="btn-primary" onclick="saveViolation(event)">💾 SIMPAN DATA</button>
+      <button type="button" class="btn-secondary" onclick="cancelForm()">✖ Batal</button>
     </div>
   </div>
 
@@ -2222,18 +2222,25 @@ async function saveViolationToCloud(record, isEdit){
     statusDate: record.statusDate || null
   };
 
-  // Safe photo upload attempt to Firebase Storage
+  // Safe photo upload attempt to Firebase Storage (with 3.5s timeout for mobile networks)
   if (cleanRecord.photo && cleanRecord.photo.startsWith('data:image/')) {
     if (fbStorage) {
       try {
-        const storageRef = fbStorage.ref();
-        const photoName = `violations/${cleanRecord.id}_${Date.now()}.jpg`;
-        const photoRef = storageRef.child(photoName);
-        const uploadSnap = await photoRef.putString(cleanRecord.photo, 'data_url');
-        const downloadURL = await uploadSnap.ref.getDownloadURL();
-        cleanRecord.photo = downloadURL;
+        const uploadPromise = (async () => {
+          const storageRef = fbStorage.ref();
+          const photoName = `violations/${cleanRecord.id}_${Date.now()}.jpg`;
+          const photoRef = storageRef.child(photoName);
+          const uploadSnap = await photoRef.putString(cleanRecord.photo, 'data_url');
+          return await uploadSnap.ref.getDownloadURL();
+        })();
+
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Storage upload timeout')), 3500)
+        );
+
+        cleanRecord.photo = await Promise.race([uploadPromise, timeoutPromise]);
       } catch (storageErr) {
-        console.warn('Firebase Storage upload warning (menyimpan foto base64 di Firestore):', storageErr);
+        console.warn('Firebase Storage upload warning (fallback base64 di Firestore):', storageErr);
         // Tetap simpan foto sebagai base64 terkompresi di Firestore agar foto tidak hilang
       }
     }
@@ -3820,11 +3827,11 @@ function handlePhotoUpload(event){
   reader.onload = function(e){
     const img = new Image();
     img.onload = function(){
-      // Kompresi via Canvas: dimensi maks 1000px, kualitas JPEG 0.75
+      // Kompresi via Canvas untuk Mobile & Web: dimensi maks 800px, kualitas JPEG 0.68 (~60-90KB)
       const canvas = document.createElement('canvas');
       let width = img.width;
       let height = img.height;
-      const maxDim = 1000;
+      const maxDim = 800;
 
       if(width > maxDim || height > maxDim){
         if(width > height){
@@ -3841,7 +3848,7 @@ function handlePhotoUpload(event){
       const ctx = canvas.getContext('2d');
       ctx.drawImage(img, 0, 0, width, height);
 
-      const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.75);
+      const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.68);
       currentPhotoData = compressedDataUrl;
       renderPhotoPreview(compressedDataUrl);
       toast('📷 Foto berhasil dimuat dan dikompresi!');
@@ -3989,7 +3996,12 @@ function editViolation(id){
   showScreen('form');
 }
 
-function saveViolation(){
+function saveViolation(e){
+  if(e && e.preventDefault) e.preventDefault();
+  if(getCurrentRole() === 'view'){
+    openAuthPromptModal('form');
+    return;
+  }
   const date   =document.getElementById('f-date').value;
   const speed  =parseInt(document.getElementById('f-speed').value);
   const name   =document.getElementById('f-name').value.trim().toUpperCase();
