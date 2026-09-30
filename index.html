@@ -1676,6 +1676,18 @@ body.dark-mode .fb-status-banner.local { background: #26180B; border-color: #4D3
       </div>
       <button onclick="closeModal('statsChartModal')" style="border:none;background:none;font-size:18px;cursor:pointer;color:var(--text2);padding:2px 6px">✕</button>
     </div>
+
+    <!-- Filter Tanggal Khusus Distribusi Jam -->
+    <div id="scmDateFilterBox" style="display:none;margin-bottom:12px;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:10px 12px;">
+      <div style="font-size:11.5px;font-weight:800;color:var(--text);margin-bottom:6px;display:flex;align-items:center;gap:6px">
+        <span>📆</span> Filter Tanggal Kejadian:
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;width:100%">
+        <input type="date" id="scmTimeDatePicker" style="flex:1;min-width:0;padding:6px 10px;border-radius:6px;border:1px solid var(--border);font-size:12px;font-weight:700;background:#fff;color:var(--text)" onchange="setTimeChartDate(this.value)"/>
+        <button style="padding:6px 12px;border-radius:6px;border:none;background:var(--primary);color:#fff;font-size:11.5px;font-weight:800;cursor:pointer;white-space:nowrap" onclick="setTimeChartDate('')">Semua Tanggal</button>
+      </div>
+    </div>
+
     <div id="scmSummary" style="margin-bottom:12px;display:flex;gap:8px;flex-wrap:wrap"></div>
     <div id="scmBody" style="overflow-y:auto;flex:1;padding-right:4px;"></div>
     <div style="margin-top:14px;border-top:1px solid var(--border);padding-top:12px;display:flex;gap:8px;">
@@ -4642,19 +4654,19 @@ function openChartModal(type){
   titleEl.innerHTML = title;
   subEl.textContent = subtitle;
 
+  const filterBox = document.getElementById('scmDateFilterBox');
+  const dateInp = document.getElementById('scmTimeDatePicker');
+  if (filterBox) {
+    if (type === 'time') {
+      filterBox.style.display = 'block';
+      if (dateInp) dateInp.value = activeTimeFilterDate || '';
+    } else {
+      filterBox.style.display = 'none';
+    }
+  }
+
   if(summaryEl){
     summaryEl.innerHTML = `
-      ${type === 'time' ? `
-        <div style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:8px 12px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
-          <div style="font-size:11.5px;font-weight:800;color:var(--text);display:flex;align-items:center;gap:6px">
-            <span>📆</span> Pilih Tanggal Kejadian:
-          </div>
-          <div style="display:flex;align-items:center;gap:6px">
-            <input type="date" id="scmTimeDatePicker" value="${activeTimeFilterDate || ''}" style="padding:4px 8px;border-radius:6px;border:1px solid var(--border);font-size:12px;font-weight:700" onchange="setTimeChartDate(this.value)"/>
-            <button style="padding:4px 10px;border-radius:6px;border:none;background:var(--primary);color:#fff;font-size:11px;font-weight:800;cursor:pointer" onclick="setTimeChartDate('')">Semua Tanggal</button>
-          </div>
-        </div>
-      ` : ''}
       <div style="flex:1;min-width:110px;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:8px 12px;text-align:center">
         <div style="font-size:10px;color:var(--text2);font-weight:700">TOTAL DATA</div>
         <div style="font-size:17px;font-weight:900;color:var(--text);margin-top:2px">${totalCasesInCat}</div>
