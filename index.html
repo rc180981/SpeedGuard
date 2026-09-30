@@ -6,6 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta http-equiv="Expires" content="0"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https://cdn.jsdelivr.net https://www.gstatic.com https://*.googleapis.com https://*.firebaseio.com https://*.firebasestorage.googleapis.com wss://*.firebaseio.com blob:; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://www.gstatic.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com; font-src 'self' https:;"/>
 <meta name="theme-color" content="#E65100"/>
 <meta name="mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
@@ -2545,8 +2546,8 @@ const USERS_STORAGE_KEY = 'speedguard_users_v1';
 const SESSION_STORAGE_KEY = 'speedguard_session_v1';
 
 const DEFAULT_USERS = [
-  { id: 1, username: 'admin', password: 'admin123', name: 'Administrator K3', role: 'admin', createdAt: '2026-09-01' },
-  { id: 2, username: 'petugas', password: 'petugas123', name: 'Petugas Patroli', role: 'petugas', createdAt: '2026-09-01' }
+  { id: 1, username: 'admin', password: 'admin123', _hashed: false, name: 'Administrator K3', role: 'admin', createdAt: '2026-09-01' },
+  { id: 2, username: 'petugas', password: 'petugas123', _hashed: false, name: 'Petugas Patroli', role: 'petugas', createdAt: '2026-09-01' }
 ];
 
 function getUsers(){
@@ -2565,6 +2566,35 @@ function saveUsers(users){
   try {
     localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
   } catch(e){}
+}
+
+/* ============================================================
+   PASSWORD HASHING (SHA-256 via Web Crypto API)
+   ============================================================ */
+async function hashPassword(plaintext){
+  try {
+    const encoded = new TextEncoder().encode(String(plaintext));
+    const hashBuffer = await crypto.subtle.digest('SHA-256', encoded);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  } catch(e){
+    // Fallback jika crypto.subtle tidak tersedia (HTTP non-secure)
+    console.warn('crypto.subtle tidak tersedia, gunakan HTTPS untuk keamanan penuh.');
+    return 'PLAIN:' + plaintext; // fallback mode
+  }
+}
+
+async function migrateAndHashPasswords(){
+  const users = getUsers();
+  let changed = false;
+  for(const user of users){
+    if(!user._hashed && user.password && !user.password.startsWith('PLAIN:')){
+      user.password = await hashPassword(user.password);
+      user._hashed = true;
+      changed = true;
+    }
+  }
+  if(changed) saveUsers(users);
 }
 
 function getCurrentSession(){
@@ -2592,13 +2622,29 @@ function getCurrentUser(){
   return getCurrentSession();
 }
 
-function loginUser(username, password){
+async function loginUser(username, password){
   const cleanU = (username || '').trim().toLowerCase();
   const cleanP = (password || '').trim();
+  if(!cleanU || !cleanP){
+    return { success: false, message: 'Username dan kata sandi wajib diisi!' };
+  }
   const users = getUsers();
-  const user = users.find(u => u.username.toLowerCase() === cleanU && u.password === cleanP);
+  const hashedInput = await hashPassword(cleanP);
+  // Support both hashed and legacy PLAIN: passwords for graceful migration
+  const user = users.find(u => {
+    if(u.username.toLowerCase() !== cleanU) return false;
+    if(u._hashed) return u.password === hashedInput;
+    // Legacy plaintext (belum di-hash) – akan di-migrate setelah login
+    return u.password === cleanP || u.password === 'PLAIN:' + cleanP;
+  });
   if(!user){
     return { success: false, message: 'Username atau kata sandi tidak cocok!' };
+  }
+  // Auto-migrate plaintext password setelah login berhasil
+  if(!user._hashed){
+    user.password = hashedInput;
+    user._hashed = true;
+    saveUsers(users);
   }
   const session = { id: user.id, username: user.username, name: user.name, role: user.role };
   saveSession(session);
@@ -2796,14 +2842,7 @@ function openLoginModal(){
   setTimeout(() => { if(uInput) uInput.focus(); }, 150);
 }
 
-function fillDemoLogin(username, password){
-  const uInput = document.getElementById('loginUsername');
-  const pInput = document.getElementById('loginPassword');
-  const err = document.getElementById('loginErrorMsg');
-  if(err) { err.textContent = ''; err.classList.remove('show'); }
-  if(uInput) uInput.value = username;
-  if(pInput) pInput.value = password;
-}
+// fillDemoLogin dihapus – tidak aman untuk mengekspos kredensial di UI publik
 
 function togglePasswordVisibility(inputId, btn){
   const input = document.getElementById(inputId);
@@ -2817,23 +2856,36 @@ function togglePasswordVisibility(inputId, btn){
   }
 }
 
-function handleLoginFormSubmit(e){
+async function handleLoginFormSubmit(e){
   e.preventDefault();
+  const submitBtn = e.target.querySelector('button[type="submit"]');
+  if(submitBtn) submitBtn.disabled = true;
   const u = document.getElementById('loginUsername').value;
   const p = document.getElementById('loginPassword').value;
   const err = document.getElementById('loginErrorMsg');
+  if(err) { err.textContent = ''; err.classList.remove('show'); }
 
-  const res = loginUser(u, p);
-  if(res.success){
-    closeModal('loginModal');
-    toast(`✅ Selamat datang, ${res.user.name} (${res.user.role.toUpperCase()})!`);
-  } else {
-    if(err){
-      err.textContent = res.message;
-      err.classList.add('show');
+  try {
+    const res = await loginUser(u, p);
+    if(res.success){
+      closeModal('loginModal');
+      toast(`✅ Selamat datang, ${res.user.name} (${res.user.role.toUpperCase()})!`);
     } else {
-      toast('⚠️ ' + res.message);
+      if(err){
+        err.textContent = res.message;
+        err.classList.add('show');
+      } else {
+        toast('⚠️ ' + res.message);
+      }
     }
+  } catch(ex){
+    console.error('Login error:', ex);
+    if(err){
+      err.textContent = 'Terjadi kesalahan sistem. Coba lagi.';
+      err.classList.add('show');
+    }
+  } finally {
+    if(submitBtn) submitBtn.disabled = false;
   }
 }
 
@@ -2956,7 +3008,7 @@ function openUserFormModal(mode, userId){
   setTimeout(() => nameInp.focus(), 150);
 }
 
-function handleUserFormSubmit(e){
+async function handleUserFormSubmit(e){
   e.preventDefault();
   if(getCurrentRole() !== 'admin'){
     toast('⛔ Akses ditolak!');
@@ -2986,11 +3038,13 @@ function handleUserFormSubmit(e){
       toast('⚠️ Kata sandi minimal 4 karakter!');
       return;
     }
+    const hashedPwd = await hashPassword(password);
     const newId = users.length ? Math.max(...users.map(u => u.id)) + 1 : 1;
     users.push({
       id: newId,
       username,
-      password,
+      password: hashedPwd,
+      _hashed: true,
       name,
       role,
       createdAt: todayISO()
@@ -3009,7 +3063,8 @@ function handleUserFormSubmit(e){
     target.name = name;
     target.role = role;
     if(password && password.length >= 4){
-      target.password = password;
+      target.password = await hashPassword(password);
+      target._hashed = true;
     }
     saveUsers(users);
 
@@ -3025,6 +3080,7 @@ function handleUserFormSubmit(e){
     toast(`✅ Akun "${name}" berhasil diperbarui!`);
   }
 }
+
 
 function confirmDeleteUser(userId){
   if(getCurrentRole() !== 'admin'){
@@ -4303,10 +4359,7 @@ function printSurat(){
 }
 
 function downloadSuratPDF(){
-  const {jsPDF}=window.jspdf;
-  const v=violations.find(x=>x.id===parseInt(document.getElementById('editId').value||
-    violations[violations.length-1]?.id));
-  // Use print instead as jsPDF text rendering for Bahasa characters is complex
+  // Gunakan printSurat() karena jsPDF sulit render karakter Bahasa Indonesia
   printSurat();
 }
 
@@ -5061,13 +5114,13 @@ function exportPDF(){
 function printTable(){
   const rows=sortedByDate(violations).map((v,i)=>`
     <tr>
-      <td>${i+1}</td><td>${v.date}</td><td>${v.time || '-'}</td><td style="font-weight:700">${v.name}</td>
-      <td>${v.offenderType || 'Karyawan Puninar'} ${v.offenderType === 'Non Karyawan' ? `(${v.actionTaken || 'Belum'})` : ''}</td>
-      <td>${v.area}</td>
+      <td>${i+1}</td><td>${esc(v.date)}</td><td>${esc(v.time || '-')}</td><td style="font-weight:700">${esc(v.name)}</td>
+      <td>${esc(v.offenderType || 'Karyawan Puninar')} ${v.offenderType === 'Non Karyawan' ? `(${esc(v.actionTaken || 'Belum')})` : ''}</td>
+      <td>${esc(v.area)}</td>
       <td style="${v.speed>=40?'color:#C62828;font-weight:900':'color:#1565C0;font-weight:700'}">${v.speed} KM/JAM</td>
-      <td>${v.dept}</td><td>${v.nik}</td><td>${v.plat}</td><td>${v.vehicle}</td>
-      <td style="${v.status==='Selesai'?'color:green':v.status==='Proses'?'color:darkorange':'color:steelblue'}">${v.status}</td>
-      <td>${v.remark}</td>
+      <td>${esc(v.dept)}</td><td>${esc(v.nik)}</td><td>${esc(v.plat)}</td><td>${esc(v.vehicle)}</td>
+      <td style="${v.status==='Selesai'?'color:green':v.status==='Proses'?'color:darkorange':'color:steelblue'}">${esc(v.status)}</td>
+      <td>${esc(v.remark)}</td>
     </tr>`).join('');
   const w=window.open('','_blank');
   w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Data Pelanggaran</title>
@@ -5127,11 +5180,30 @@ function restoreData(event){
   reader.onload=e=>{
     try{
       const p=JSON.parse(e.target.result);
-      violations=p.data||[];
+      // Validasi struktur backup
+      if(!p.data || !Array.isArray(p.data)){
+        toast('❌ File backup tidak valid! Struktur data tidak dikenali.');
+        return;
+      }
+      const isValid = p.data.every(item =>
+        item &&
+        typeof item.id !== 'undefined' &&
+        typeof item.date === 'string' &&
+        typeof item.name === 'string' &&
+        typeof item.speed === 'number'
+      );
+      if(!isValid){
+        toast('❌ Format data tidak sesuai SpeedGuard. Pastikan file backup yang benar.');
+        return;
+      }
+      violations=p.data;
       nextId=p.nextId||violations.length+1;
       persist();renderDashboard();renderList();
       toast(`✅ Restore berhasil! ${violations.length} data dimuat.`);
-    }catch{toast('❌ File tidak valid!');}
+    }catch(err){
+      console.error('Restore error:', err);
+      toast('❌ File tidak valid atau rusak!');
+    }
   };
   reader.readAsText(file);
   event.target.value='';
@@ -5185,6 +5257,7 @@ initTheme();
 loadData();
 initFirebaseConnection();
 getUsers();
+migrateAndHashPasswords(); // Hash password plaintext menjadi SHA-256 (berjalan sekali di background)
 updateAuthUI();
 renderDashboard();
 initSortRow();
