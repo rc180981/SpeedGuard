@@ -591,6 +591,7 @@ body.dark-mode .v-photo-badge{background:#1E3A8A;color:#93C5FD;border-color:#1E4
 .cc-box.c2{border-top-color:var(--primary)}
 .cc-box.c3{border-top-color:var(--green)}
 .cc-box.c4{border-top-color:var(--purple)}
+.cc-box.c5{border-top-color:#F57C00}
 
 .cc-top{
   display:flex;
@@ -1436,6 +1437,16 @@ body.dark-mode .fb-status-banner.local { background: #26180B; border-color: #4D3
           </div>
           <div class="cc-title">Distribusi Hari Kejadian</div>
           <div class="cc-sub" id="ccSubDay">Senin s/d Minggu</div>
+          <div class="cc-hint">📊 Buka Diagram ›</div>
+        </div>
+
+        <div class="cc-box c5" onclick="openChartModal('time')">
+          <div class="cc-top">
+            <span class="cc-icon">⏰</span>
+            <span class="cc-badge" id="ccBadgeTime">6 Rentang</span>
+          </div>
+          <div class="cc-title">Distribusi Jam Kejadian</div>
+          <div class="cc-sub" id="ccSubTime">Sebaran Waktu 24 Jam</div>
           <div class="cc-hint">📊 Buka Diagram ›</div>
         </div>
       </div>
@@ -4518,6 +4529,8 @@ function renderStats(){
   if(elBA) elBA.textContent = `${aCount} Area`;
   const elBY = document.getElementById('ccBadgeDay');
   if(elBY) elBY.textContent = `7 Hari`;
+  const elBT = document.getElementById('ccBadgeTime');
+  if(elBT) elBT.textContent = `6 Rentang`;
 }
 
 function groupCount(arr,keyFn){
@@ -4575,6 +4588,36 @@ function openChartModal(type){
     const byDay = Array(7).fill(0);
     violations.forEach(v=>{ byDay[new Date(v.date+'T00:00:00').getDay()]++; });
     data = days.map((d,i)=>[d, byDay[i]]);
+  } else if(type === 'time'){
+    title = '⏰ Distribusi Jam Kejadian';
+    subtitle = `Statistik sebaran jam kejadian pelanggaran dalam rentang 24 jam.`;
+    color = '#F57C00';
+    const slots = [
+      '00:00 - 04:00 (Dini Hari)',
+      '04:00 - 08:00 (Pagi)',
+      '08:00 - 12:00 (Siang Awal)',
+      '12:00 - 16:00 (Siang / Sore)',
+      '16:00 - 20:00 (Sore / Malam)',
+      '20:00 - 24:00 (Malam)'
+    ];
+    const counts = Array(6).fill(0);
+    let unrecorded = 0;
+    violations.forEach(v=>{
+      if(!v.time){ unrecorded++; return; }
+      const hour = parseInt(v.time.split(':')[0], 10);
+      if(isNaN(hour)){ unrecorded++; return; }
+      if(hour >= 0 && hour < 4) counts[0]++;
+      else if(hour >= 4 && hour < 8) counts[1]++;
+      else if(hour >= 8 && hour < 12) counts[2]++;
+      else if(hour >= 12 && hour < 16) counts[3]++;
+      else if(hour >= 16 && hour < 20) counts[4]++;
+      else if(hour >= 20 && hour < 24) counts[5]++;
+      else unrecorded++;
+    });
+    data = slots.map((s,i)=>[s, counts[i]]);
+    if(unrecorded > 0){
+      data.push(['Tanpa Catatan Jam', unrecorded]);
+    }
   }
 
   const maxVal = Math.max(...data.map(d=>d[1]), 1);
@@ -4779,6 +4822,37 @@ function exportAllChartsPDF(){
         const byDay = Array(7).fill(0);
         violations.forEach(v=>{ byDay[new Date(v.date+'T00:00:00').getDay()]++; });
         return days.map((d,i)=>[d, byDay[i]]);
+      })()
+    },
+    {
+      title: 'Distribusi Jam Kejadian',
+      color: [245, 124, 0],
+      data: (() => {
+        const slots = [
+          '00:00 - 04:00 (Dini Hari)',
+          '04:00 - 08:00 (Pagi)',
+          '08:00 - 12:00 (Siang Awal)',
+          '12:00 - 16:00 (Siang / Sore)',
+          '16:00 - 20:00 (Sore / Malam)',
+          '20:00 - 24:00 (Malam)'
+        ];
+        const counts = Array(6).fill(0);
+        let unrecorded = 0;
+        violations.forEach(v=>{
+          if(!v.time){ unrecorded++; return; }
+          const hour = parseInt(v.time.split(':')[0], 10);
+          if(isNaN(hour)){ unrecorded++; return; }
+          if(hour >= 0 && hour < 4) counts[0]++;
+          else if(hour >= 4 && hour < 8) counts[1]++;
+          else if(hour >= 8 && hour < 12) counts[2]++;
+          else if(hour >= 12 && hour < 16) counts[3]++;
+          else if(hour >= 16 && hour < 20) counts[4]++;
+          else if(hour >= 20 && hour < 24) counts[5]++;
+          else unrecorded++;
+        });
+        const res = slots.map((s,i)=>[s, counts[i]]);
+        if(unrecorded > 0) res.push(['Tanpa Catatan Jam', unrecorded]);
+        return res;
       })()
     }
   ];
