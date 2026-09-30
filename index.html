@@ -4647,11 +4647,12 @@ function openChartModal(type){
     bodyEl.innerHTML = `
       <div style="display:flex;flex-direction:column;gap:12px;padding:4px 0;">
         ${data.map(([label, count], idx)=>`
-          <div class="bar-row" style="margin-bottom:0">
+          <div class="bar-row" style="margin-bottom:0;cursor:pointer" onclick="openChartBarDetail('${type}', '${esc(label)}', ${idx})">
             <div class="bar-header">
               <div class="bar-lbl-wrap">
                 <span class="bar-rank">${idx+1}</span>
                 <span class="bar-lbl" title="${esc(label)}">${esc(label)}</span>
+                <span style="font-size:10.5px;color:var(--primary);font-weight:700;margin-left:6px">🔍 Detail ›</span>
               </div>
               <div class="bar-meta">
                 <span class="bar-num">${count}</span>
@@ -5043,6 +5044,95 @@ function openKpiDetail(type){
             </div>
             <div style="font-size:11px;color:var(--text2);margin-top:2px;">
               📅 ${fmtDate(v.date)} · 🚘 ${esc(v.plat)} (${esc(v.vehicle)})
+            </div>
+            <div style="font-size:11px;color:var(--text3);margin-top:1px;">
+              📍 ${esc(v.area)} · 🏢 ${esc(v.dept)}
+            </div>
+          </div>
+          <div style="text-align:right;flex-shrink:0;">
+            <div style="font-size:13px;font-weight:900;color:${speedColor(v.speed)}">
+              ${v.speed} KM/J
+            </div>
+            <div style="font-size:10px;font-weight:800;color:${v.status==='Selesai'?'var(--green)':v.status==='Proses'?'var(--primary)':'var(--blue)'};margin-top:2px;">
+              ${v.status}
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  document.getElementById('statsDetailModal').classList.add('show');
+}
+
+function openChartBarDetail(type, label, idx) {
+  const titleEl = document.getElementById('sdmTitle');
+  const subEl = document.getElementById('sdmSubtitle');
+  const bodyEl = document.getElementById('sdmBody');
+  const viewBtn = document.getElementById('sdmViewBtn');
+  if(viewBtn) viewBtn.textContent = 'Lihat di Menu Data';
+
+  let filtered = [];
+  const sampleHours = ['07:45','08:15','08:30','09:10','10:15','11:30','13:15','14:20','15:45','16:30','17:15','19:00'];
+
+  if (type === 'time') {
+    titleEl.innerHTML = `⏰ Rentang Jam: ${esc(label)}`;
+    filtered = sortedByDate(violations.filter((v, i) => {
+      const timeStr = v.time || sampleHours[i % sampleHours.length];
+      const hour = parseInt(timeStr.split(':')[0], 10);
+      if (isNaN(hour)) return idx === 6;
+      if (idx === 0) return hour >= 0 && hour < 4;
+      if (idx === 1) return hour >= 4 && hour < 8;
+      if (idx === 2) return hour >= 8 && hour < 12;
+      if (idx === 3) return hour >= 12 && hour < 16;
+      if (idx === 4) return hour >= 16 && hour < 20;
+      if (idx === 5) return hour >= 20 && hour < 24;
+      return false;
+    }));
+    subEl.textContent = `Terdapat ${filtered.length} pelanggaran terdata pada rentang waktu ini.`;
+    viewBtn.onclick = () => { resetFilter(); showScreen('data'); closeModal('statsDetailModal'); };
+  } else if (type === 'day') {
+    titleEl.innerHTML = `📆 Kejadian Hari ${esc(label)}`;
+    const days = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+    const dayIdx = days.indexOf(label);
+    filtered = sortedByDate(violations.filter(v => new Date(v.date + 'T00:00:00').getDay() === dayIdx));
+    subEl.textContent = `Terdapat ${filtered.length} kejadian pelanggaran pada hari ${label}.`;
+    viewBtn.onclick = () => { resetFilter(); showScreen('data'); closeModal('statsDetailModal'); };
+  } else if (type === 'dept') {
+    titleEl.innerHTML = `🏢 Bagian: ${esc(label)}`;
+    filtered = sortedByDate(violations.filter(v => (v.dept || 'Lainnya') === label));
+    subEl.textContent = `Terdapat ${filtered.length} kejadian pelanggaran dari bagian ${label}.`;
+    viewBtn.onclick = () => { resetFilter(); showScreen('data'); closeModal('statsDetailModal'); };
+  } else if (type === 'area') {
+    titleEl.innerHTML = `📍 Area: ${esc(label)}`;
+    filtered = sortedByDate(violations.filter(v => v.area === label));
+    subEl.textContent = `Terdapat ${filtered.length} kejadian pelanggaran di lokasi ${label}.`;
+    viewBtn.onclick = () => { resetFilter(); showScreen('data'); closeModal('statsDetailModal'); };
+  } else if (type === 'month') {
+    titleEl.innerHTML = `📅 Periode: ${esc(label)}`;
+    filtered = sortedByDate(violations.filter(v => fmtMonth(v.date.slice(0, 7)) === label));
+    subEl.textContent = `Terdapat ${filtered.length} kejadian pelanggaran pada bulan ${label}.`;
+    viewBtn.onclick = () => { resetFilter(); showScreen('data'); closeModal('statsDetailModal'); };
+  }
+
+  // Generate list items in modal
+  if (filtered.length === 0) {
+    bodyEl.innerHTML = `<div style="text-align:center;padding:30px 10px;color:var(--text2)">Tidak ada data untuk rincian ini.</div>`;
+  } else {
+    bodyEl.innerHTML = filtered.map((v, i) => {
+      const vIdx = violations.indexOf(violations.find(x => x.id === v.id)) + 1;
+      const timeTxt = v.time ? ` · ⏰ ${v.time} WIB` : '';
+      return `
+        <div style="background:var(--bg);border-radius:10px;padding:12px;margin-bottom:8px;border:1px solid var(--border);display:flex;align-items:center;gap:10px;">
+          <div style="width:34px;height:34px;border-radius:50%;background:${speedColor(v.speed)};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;flex-shrink:0;">
+            ${vIdx}
+          </div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-weight:800;font-size:13px;text-transform:uppercase;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+              ${esc(v.name)}
+            </div>
+            <div style="font-size:11px;color:var(--text2);margin-top:2px;">
+              📅 ${fmtDate(v.date)}${timeTxt} · 🚘 ${esc(v.plat)} (${esc(v.vehicle)})
             </div>
             <div style="font-size:11px;color:var(--text3);margin-top:1px;">
               📍 ${esc(v.area)} · 🏢 ${esc(v.dept)}
