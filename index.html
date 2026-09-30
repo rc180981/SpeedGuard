@@ -1035,6 +1035,23 @@ body.dark-mode .repeat-item { color: #E5E7EB; }
 body.dark-mode .app-info-box { background: #14281B; border-color: #1F4A2C; color: #A7F3D0; }
 body.dark-mode .btn-danger-outline { background: transparent; }
 
+.scm-date-input {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  font-size: 12px;
+  font-weight: 700;
+  background: #fff;
+  color: #111827;
+  color-scheme: light;
+}
+body.dark-mode .scm-date-input {
+  background: #111827;
+  color: #F9FAFB;
+  border-color: #374151;
+  color-scheme: dark;
+}
+
 /* ============================================================
    FIREBASE CLOUD STATUS & MODAL STYLES
    ============================================================ */
@@ -1683,7 +1700,7 @@ body.dark-mode .fb-status-banner.local { background: #26180B; border-color: #4D3
         <span>📆</span> Filter Tanggal Kejadian:
       </div>
       <div style="display:flex;align-items:center;gap:6px;width:100%">
-        <input type="date" id="scmTimeDatePicker" style="flex:1;min-width:0;padding:6px 10px;border-radius:6px;border:1px solid var(--border);font-size:12px;font-weight:700;background:#fff;color:var(--text)" onchange="setTimeChartDate(this.value)"/>
+        <input type="date" id="scmTimeDatePicker" class="scm-date-input" style="flex:1;min-width:0" onchange="setTimeChartDate(this.value)"/>
         <button style="padding:6px 12px;border-radius:6px;border:none;background:var(--primary);color:#fff;font-size:11.5px;font-weight:800;cursor:pointer;white-space:nowrap" onclick="setTimeChartDate('')">Semua Tanggal</button>
       </div>
     </div>
