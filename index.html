@@ -363,44 +363,110 @@ body.dark-mode .kpi-box.k4 .kpi-tag{background:#064E3B;color:#6EE7B7;border-colo
 }
 
 .chart-wrap{
-  background:var(--card);border-radius:var(--radius);padding:16px;
+  background:var(--card);border-radius:var(--radius);padding:16px 18px;
   border:1px solid var(--border);
-  box-shadow:var(--shadow);flex-shrink:0!important;min-height:380px;overflow:visible!important
+  box-shadow:var(--shadow-sm);flex-shrink:0!important;min-height:360px;overflow:visible!important;
+  border-top:3.5px solid var(--primary);
+  transition:box-shadow .2s ease;
 }
-.chart-header-row{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;gap:8px}
-.chart-subtitle{font-size:11px;color:var(--text2);margin-top:2px;font-weight:600}
-.chart-toggle-group{display:flex;background:var(--bg);border-radius:10px;padding:2px;border:1px solid var(--border);flex-shrink:0}
-.ctg-btn{border:none;background:transparent;padding:5px 12px;border-radius:8px;font-size:11px;font-weight:700;color:var(--text2);cursor:pointer;transition:all .15s}
-.ctg-btn.active{background:var(--card);color:var(--primary);box-shadow:0 1px 4px rgba(15,23,42,0.08)}
-.trend-stats-row{display:grid;grid-template-columns:repeat(3, 1fr);gap:10px;margin-bottom:14px}
-@media(max-width:480px){.trend-stats-row{grid-template-columns:repeat(3, 1fr);gap:6px}}
+.chart-header-row{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:14px;gap:10px;flex-wrap:wrap;
+}
+.chart-title-area{flex:1;min-width:160px}
+.chart-main-title{
+  font-size:14.5px;font-weight:900;color:var(--text);letter-spacing:-0.01em;
+  display:flex;align-items:center;gap:6px;margin-bottom:2px;
+}
+.chart-subtitle{font-size:11px;color:var(--text2);font-weight:600;line-height:1.25}
+.chart-controls{flex-shrink:0}
+.chart-toggle-group{
+  display:flex;background:var(--bg);border-radius:12px;
+  padding:3px;border:1px solid var(--border);gap:3px;
+}
+.ctg-btn{
+  border:none;background:transparent;padding:5px 12px;border-radius:9px;
+  font-size:11px;font-weight:800;color:var(--text2);cursor:pointer;
+  transition:all .18s cubic-bezier(0.16, 1, 0.3, 1);
+  display:inline-flex;align-items:center;gap:4px;line-height:1;
+}
+.ctg-btn:hover{color:var(--primary)}
+.ctg-btn.active{background:var(--card);color:var(--primary);box-shadow:0 1px 4px rgba(14,124,134,0.14)}
+
+.trend-stats-row{
+  display:grid;grid-template-columns:repeat(3, 1fr);gap:10px;margin-bottom:14px;
+}
 .ts-chip{
-  background:var(--bg);border-radius:12px;padding:10px 11px;
+  background:var(--bg);border-radius:14px;padding:11px 12px 10px;
   border:1px solid var(--border);display:flex;flex-direction:column;
-  cursor:pointer;user-select:none;transition:all .18s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow:var(--shadow-sm);position:relative;overflow:hidden;
+  justify-content:space-between;cursor:pointer;user-select:none;
+  transition:all .18s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow:0 1px 3px rgba(0,0,0,0.03);position:relative;overflow:hidden;
 }
-.ts-chip:hover{transform:translateY(-2px);box-shadow:var(--shadow);border-color:var(--primary)}
+.ts-chip:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(14,124,134,0.1);border-color:var(--primary)}
 .ts-chip:active{transform:scale(.97)}
-.ts-chip.c1{border-left:4px solid var(--primary);background:rgba(230,81,0,0.04)}
-.ts-chip.c2{border-left:4px solid var(--blue);background:rgba(21,101,192,0.04)}
-.ts-chip.c3{border-left:4px solid var(--green);background:rgba(46,125,50,0.04)}
-.ts-chip-lbl{font-size:9.5px;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:.3px;display:flex;align-items:center;gap:3px;word-break:break-word;overflow-wrap:break-word;line-height:1.2}
-.ts-chip-val{font-size:15px;font-weight:900;color:var(--text);margin-top:3px;line-height:1.2}
-.ts-chip.c1 .ts-chip-val{color:var(--primary)}
-.ts-chip.c2 .ts-chip-val{color:var(--blue)}
-.ts-chip.c3 .ts-chip-val{color:var(--green)}
-.ts-chip-hint{font-size:9px;font-weight:700;color:var(--text3);margin-top:4px;display:flex;align-items:center;gap:2px}
-.ts-chip:hover .ts-chip-hint{color:var(--primary)}
+.ts-chip.c1{border-left:3.5px solid #0E7C86;background:rgba(14,124,134,0.04)}
+.ts-chip.c2{border-left:3.5px solid #0284C7;background:rgba(2,132,199,0.04)}
+.ts-chip.c3{border-left:3.5px solid #059669;background:rgba(5,150,105,0.04)}
+
+.ts-chip-top{display:flex;align-items:center;justify-content:space-between;gap:4px}
+.ts-chip-lbl{
+  font-size:9.5px;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:.3px;
+  display:flex;align-items:center;gap:3px;word-break:break-word;overflow-wrap:break-word;line-height:1.2;
+}
+.ts-chip-arrow{font-size:11px;font-weight:800;color:var(--text3);opacity:.6;transition:transform .15s}
+.ts-chip:hover .ts-chip-arrow{opacity:1;transform:translateX(2px);color:var(--primary)}
+
+.ts-chip-main{margin-top:4px}
+.ts-chip-val{font-size:18px;font-weight:900;color:var(--text);line-height:1.1;letter-spacing:-0.02em}
+.ts-chip.c1 .ts-chip-val{color:#0E7C86}
+.ts-chip.c2 .ts-chip-val{color:#0284C7}
+.ts-chip.c3 .ts-chip-val{color:#059669}
+.ts-chip-sub{
+  font-size:10px;font-weight:700;color:var(--text3);margin-top:2px;
+  line-height:1.2;word-break:break-word;overflow-wrap:break-word;
+}
+.ts-chip:hover .ts-chip-sub{color:var(--text2)}
+
 body.dark-mode .chart-toggle-group{background:#0F172A;border-color:#223049}
 body.dark-mode .ctg-btn{color:#94A3B8}
 body.dark-mode .ctg-btn.active{background:#151E2E;color:var(--primary-light)}
 body.dark-mode .ts-chip{background:#0F172A;border-color:#223049}
-body.dark-mode .ts-chip.c1{background:rgba(230,81,0,0.12)}
-body.dark-mode .ts-chip.c2{background:rgba(21,101,192,0.12)}
-body.dark-mode .ts-chip.c3{background:rgba(46,125,50,0.12)}
-.chart-canvas-box{position:relative;width:100%;height:260px!important;min-height:260px!important;flex-shrink:0!important}
-.chart-canvas-box canvas{display:block!important;width:100%!important;height:260px!important;min-height:260px!important}
+body.dark-mode .ts-chip.c1{background:rgba(14,124,134,0.12)}
+body.dark-mode .ts-chip.c2{background:rgba(2,132,199,0.12)}
+body.dark-mode .ts-chip.c3{background:rgba(5,150,105,0.12)}
+body.dark-mode .ts-chip.c1 .ts-chip-val{color:#5EEAD4}
+body.dark-mode .ts-chip.c2 .ts-chip-val{color:#38BDF8}
+body.dark-mode .ts-chip.c3 .ts-chip-val{color:#6EE7B7}
+
+.chart-canvas-box{position:relative;width:100%;height:250px!important;min-height:250px!important;flex-shrink:0!important}
+.chart-canvas-box canvas{display:block!important;width:100%!important;height:250px!important;min-height:250px!important}
+
+@media(max-width:480px){
+  .chart-wrap{padding:13px 11px;min-height:320px}
+  .chart-header-row{gap:8px;margin-bottom:10px}
+  .chart-main-title{font-size:13.5px}
+  .chart-subtitle{font-size:10px}
+  .ctg-btn{padding:4px 9px;font-size:10.5px}
+  .trend-stats-row{gap:6px;margin-bottom:11px}
+  .ts-chip{padding:8px 7px 7px;border-radius:10px}
+  .ts-chip-lbl{font-size:8.5px;letter-spacing:0}
+  .ts-chip-arrow{display:none}
+  .ts-chip-val{font-size:16px;margin-top:2px}
+  .ts-chip-sub{font-size:9px;line-height:1.15}
+  .chart-canvas-box{height:210px!important;min-height:210px!important}
+  .chart-canvas-box canvas{height:210px!important;min-height:210px!important}
+}
+@media(max-width:360px){
+  .chart-wrap{padding:11px 9px}
+  .trend-stats-row{gap:4px}
+  .ts-chip{padding:6px 5px 6px;border-radius:8px}
+  .ts-chip-lbl{font-size:8px}
+  .ts-chip-val{font-size:14.5px}
+  .ts-chip-sub{font-size:8.5px}
+  .chart-canvas-box{height:190px!important;min-height:190px!important}
+  .chart-canvas-box canvas{height:190px!important;min-height:190px!important}
+}
 
 .recent-card{
   background:var(--card);border-radius:var(--radius);padding:16px;
@@ -412,7 +478,7 @@ body.dark-mode .ts-chip.c3{background:rgba(46,125,50,0.12)}
 .rl-label{font-size:10.5px;font-weight:700;color:var(--text2);margin-left:4px;margin-right:2px}
 .rl-btn{border:none;background:transparent;padding:3px 9px;border-radius:14px;font-size:11px;font-weight:800;color:var(--text2);cursor:pointer;transition:all .15s}
 .rl-btn:hover{color:var(--primary)}
-.rl-btn.active{background:var(--primary);color:#fff;box-shadow:0 1px 4px rgba(230,81,0,.3)}
+.rl-btn.active{background:var(--primary);color:#fff;box-shadow:0 1px 4px rgba(14,124,134,.3)}
 body.dark-mode .recent-limit-group{background:#0F172A;border-color:#223049}
 body.dark-mode .rl-btn{color:#94A3B8}
 body.dark-mode .rl-btn.active{background:var(--primary);color:#fff}
@@ -440,7 +506,7 @@ body.dark-mode .recent-item:hover{background:rgba(255,255,255,0.03)}
 .repeat-grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(180px, 1fr));gap:8px;margin-top:10px}
 @media(max-width:480px){.repeat-grid{grid-template-columns:repeat(auto-fill, minmax(140px, 1fr));gap:6px}}
 .repeat-item{display:flex;align-items:center;gap:8px;padding:8px 10px;background:#fff;border-radius:10px;border:1px solid #FFCC80;cursor:pointer;transition:all .15s;min-width:0}
-.repeat-item:hover{transform:translateY(-1px);box-shadow:0 2px 6px rgba(230,81,0,0.15);border-color:var(--primary)}
+.repeat-item:hover{transform:translateY(-1px);box-shadow:0 2px 6px rgba(14,124,134,0.15);border-color:var(--primary)}
 .repeat-item:active{transform:scale(.98)}
 .repeat-count{background:var(--red);color:#fff;border-radius:12px;padding:2px 7px;font-size:10.5px;font-weight:900;flex-shrink:0}
 .repeat-name{font-size:12px;font-weight:800;color:var(--text);flex:1;min-width:0;word-break:break-word;overflow-wrap:break-word;line-height:1.25}
@@ -1577,8 +1643,8 @@ body.dark-mode .fb-status-banner.local { background: #26180B; border-color: #4D3
     <div class="kpi-grid" id="kpiGrid"></div>
     <div class="chart-wrap">
       <div class="chart-header-row">
-        <div>
-          <div class="section-title" style="margin-bottom:2px">📈 Tren Pelanggaran per Bulan</div>
+        <div class="chart-title-area">
+          <div class="section-title chart-main-title">📈 Tren Pelanggaran per Bulan</div>
           <div class="chart-subtitle">Statistik & pola kejadian berkala</div>
         </div>
         <div class="chart-controls">
@@ -3678,25 +3744,41 @@ function renderDashboard(){
   const avgMonthly = vals.length ? (totalCases / vals.length).toFixed(1) : 0;
   const latestMonthKey = monthsSorted[monthsSorted.length - 1];
   const latestCount = latestMonthKey ? byMonth[latestMonthKey] : 0;
+  const latestMonthLabel = latestMonthKey ? fmtMonth(latestMonthKey) : '-';
 
   // Mini summary chips above chart
   const statsRow = document.getElementById('trendStatsRow');
   if(statsRow){
     statsRow.innerHTML = `
       <div class="ts-chip c1" onclick="openTrendDetail('peak')" title="Klik untuk rincian puncak kasus">
-        <span class="ts-chip-lbl">🏆 Puncak Kasus</span>
-        <span class="ts-chip-val">${maxCases} <span style="font-size:10.5px;font-weight:600">(${maxMonthLabel})</span></span>
-        <span class="ts-chip-hint">Lihat Rincian ›</span>
+        <div class="ts-chip-top">
+          <span class="ts-chip-lbl">🏆 Puncak</span>
+          <span class="ts-chip-arrow">›</span>
+        </div>
+        <div class="ts-chip-main">
+          <div class="ts-chip-val">${maxCases}</div>
+          <div class="ts-chip-sub">${maxMonthLabel}</div>
+        </div>
       </div>
       <div class="ts-chip c2" onclick="openTrendDetail('avg')" title="Klik untuk analisis rata-rata">
-        <span class="ts-chip-lbl">📊 Rata-Rata</span>
-        <span class="ts-chip-val">${avgMonthly} <span style="font-size:10.5px;font-weight:600">/ bln</span></span>
-        <span class="ts-chip-hint">Statistik ›</span>
+        <div class="ts-chip-top">
+          <span class="ts-chip-lbl">📊 Rata-Rata</span>
+          <span class="ts-chip-arrow">›</span>
+        </div>
+        <div class="ts-chip-main">
+          <div class="ts-chip-val">${avgMonthly}</div>
+          <div class="ts-chip-sub">Per bulan</div>
+        </div>
       </div>
       <div class="ts-chip c3" onclick="openTrendDetail('latest')" title="Klik untuk rincian bulan terakhir">
-        <span class="ts-chip-lbl">📅 Bulan Terakhir</span>
-        <span class="ts-chip-val">${latestCount} <span style="font-size:10.5px;font-weight:600">(${latestMonthKey?fmtMonth(latestMonthKey):'-'})</span></span>
-        <span class="ts-chip-hint">Lihat Kasus ›</span>
+        <div class="ts-chip-top">
+          <span class="ts-chip-lbl">📅 Terbaru</span>
+          <span class="ts-chip-arrow">›</span>
+        </div>
+        <div class="ts-chip-main">
+          <div class="ts-chip-val">${latestCount}</div>
+          <div class="ts-chip-sub">${latestMonthLabel}</div>
+        </div>
       </div>
     `;
   }
@@ -3706,42 +3788,42 @@ function renderDashboard(){
   if(canvas){
     const ctx = canvas.getContext('2d');
     const isDark = document.body.classList.contains('dark-mode');
-    const primaryColor = '#E65100';
-    const gridColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)';
-    const textColor = isDark ? '#9CA3AF' : '#6B7280';
+    const primaryColor = '#0E7C86';
+    const gridColor = isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.05)';
+    const textColor = isDark ? '#94A3B8' : '#64748B';
 
     const grad = ctx.createLinearGradient(0, 0, 0, 200);
     if(trendChartType === 'line'){
-      grad.addColorStop(0, 'rgba(230, 81, 0, 0.38)');
-      grad.addColorStop(0.7, 'rgba(230, 81, 0, 0.08)');
-      grad.addColorStop(1, 'rgba(230, 81, 0, 0.00)');
+      grad.addColorStop(0, 'rgba(14, 124, 134, 0.28)');
+      grad.addColorStop(0.7, 'rgba(14, 124, 134, 0.05)');
+      grad.addColorStop(1, 'rgba(14, 124, 134, 0.00)');
     }
 
     const dataset = trendChartType === 'line' ? {
       label: 'Jumlah Pelanggaran',
       data: vals,
-      borderColor: '#E65100',
-      borderWidth: 2.8,
+      borderColor: '#0E7C86',
+      borderWidth: 2.6,
       backgroundColor: grad,
       fill: true,
-      tension: 0.35,
+      tension: 0.32,
       pointBackgroundColor: '#FFFFFF',
-      pointBorderColor: '#E65100',
-      pointBorderWidth: 2.5,
-      pointRadius: 4.5,
-      pointHoverRadius: 7,
-      pointHoverBackgroundColor: '#E65100',
+      pointBorderColor: '#0E7C86',
+      pointBorderWidth: 2.2,
+      pointRadius: 4,
+      pointHoverRadius: 6.5,
+      pointHoverBackgroundColor: '#0E7C86',
       pointHoverBorderColor: '#FFFFFF',
       pointHoverBorderWidth: 2,
     } : {
       label: 'Jumlah Pelanggaran',
       data: vals,
-      backgroundColor: vals.map(v => v === maxCases ? '#E65100' : 'rgba(230, 81, 0, 0.65)'),
-      borderColor: '#E65100',
+      backgroundColor: vals.map(v => v === maxCases ? '#0E7C86' : 'rgba(14, 124, 134, 0.45)'),
+      borderColor: '#0E7C86',
       borderWidth: 1,
-      borderRadius: 7,
+      borderRadius: 6,
       borderSkipped: false,
-      hoverBackgroundColor: '#BF360C',
+      hoverBackgroundColor: '#094E55',
     };
 
     chartInstances['trendChart'] = new Chart(canvas, {
@@ -3828,15 +3910,15 @@ function renderDashboard(){
             if (val === maxCases && maxCases > 0) {
               const txt = `⭐ ${val}`;
               const tw = ctx.measureText(txt).width;
-              ctx.fillStyle = isDark ? '#374151' : '#FFF3E0';
-              ctx.strokeStyle = '#E65100';
+              ctx.fillStyle = isDark ? '#134E4A' : '#E6FFFA';
+              ctx.strokeStyle = '#0E7C86';
               ctx.lineWidth = 1;
               const rx = x - tw/2 - 4, ry = y - 13, rw = tw + 8, rh = 14;
               ctx.beginPath();
               if(ctx.roundRect) ctx.roundRect(rx, ry, rw, rh, 4); else ctx.rect(rx, ry, rw, rh);
               ctx.fill();
               ctx.stroke();
-              ctx.fillStyle = '#E65100';
+              ctx.fillStyle = '#0E7C86';
               ctx.fillText(txt, x, y);
             } else {
               ctx.fillStyle = isDark ? '#D1D5DB' : '#4B5563';
