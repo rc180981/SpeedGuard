@@ -783,13 +783,49 @@ body.dark-mode .data-summary-pill{background:#0C241B;color:#5EEAD4;border-color:
 .v-photo-badge:hover{background:#BAE6FD;color:#0284C7;transform:translateY(-1px)}
 .v-photo-badge:active{transform:scale(0.97)}
 
+/* Collapsible Extra Details (Minimized by default) */
+.v-card-extra{
+  display:none;
+  padding:0 14px 10px;
+  background:var(--card);
+}
+.v-card-extra.open{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  animation:fadeIn .18s ease;
+}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+
+.v-extra-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px 12px;
+  padding:9px 11px;
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:10px;
+}
+
 /* Status Bar & Actions */
 .v-card-status{
-  padding:6px 14px 11px;display:flex;align-items:center;
+  padding:4px 14px 10px;display:flex;align-items:center;justify-content:space-between;
   gap:8px;flex-wrap:wrap;background:var(--card);
 }
+.v-status-left{
+  display:flex;align-items:center;gap:6px;flex-wrap:wrap;
+}
+.v-toggle-details-btn{
+  background:transparent;border:none;color:var(--primary);
+  font-size:11px;font-weight:800;cursor:pointer;
+  padding:3px 6px;border-radius:6px;display:inline-flex;
+  align-items:center;gap:3px;transition:all .15s ease;
+}
+.v-toggle-details-btn:hover{background:rgba(14,124,134,0.08)}
+.v-toggle-details-btn:active{transform:scale(0.96)}
+
 .status-badge{
-  padding:4.5px 11px;border-radius:10px;font-size:11px;font-weight:800;letter-spacing:.2px;
+  padding:4px 10px;border-radius:10px;font-size:10.5px;font-weight:800;letter-spacing:.2px;
   cursor:pointer;transition:transform .15s ease, box-shadow .15s ease;user-select:none;
 }
 .status-badge:hover{transform:translateY(-1px);box-shadow:var(--shadow-sm)}
@@ -797,7 +833,7 @@ body.dark-mode .data-summary-pill{background:#0C241B;color:#5EEAD4;border-color:
 .status-baru{background:#E8F5F6;color:#0E7C86;border:1px solid #94CFD4}
 .status-proses{background:#FFFBEB;color:#92400E;border:1px solid #FDE68A}
 .status-selesai{background:#ECFDF5;color:#065F46;border:1px solid #A7F3D0}
-.status-date-badge{font-size:11px;font-weight:700;color:#065F46;background:#ECFDF5;padding:4px 9px;border-radius:10px;border:1px solid #A7F3D0;display:inline-flex;align-items:center;gap:4px}
+.status-date-badge{font-size:10.5px;font-weight:700;color:#065F46;background:#ECFDF5;padding:3.5px 8px;border-radius:10px;border:1px solid #A7F3D0;display:inline-flex;align-items:center;gap:3px}
 
 .v-card-footer{
   display:flex;border-top:1px solid var(--border);
@@ -821,6 +857,8 @@ body.dark-mode .data-summary-pill{background:#0C241B;color:#5EEAD4;border-color:
 body.dark-mode .v-card{background:#151E2E;border-color:#223049}
 body.dark-mode .v-card-head{background:#151E2E;border-bottom-color:#223049}
 body.dark-mode .v-card-body{background:#151E2E}
+body.dark-mode .v-card-extra{background:#151E2E}
+body.dark-mode .v-extra-grid{background:#0F172A;border-color:#223049}
 body.dark-mode .v-card-status{background:#151E2E}
 body.dark-mode .v-card-footer{background:#0F172A;border-top-color:#223049}
 body.dark-mode .v-action:not(:last-child){border-right-color:#223049}
@@ -4425,6 +4463,7 @@ function renderList(){
         </div>
       </div>
 
+      <!-- Core Information (Clean 2-Column Grid) -->
       <div class="v-card-body">
         <div class="v-cell">
           <span class="v-label">🚘 No. Polisi</span>
@@ -4434,61 +4473,73 @@ function renderList(){
           <span class="v-label">${vehIcon} Kendaraan</span>
           <span class="v-val">${esc(v.vehicle || '-')}</span>
         </div>
-        <div class="v-cell">
-          <span class="v-label">🪪 NIK / SIM</span>
-          <span class="v-val">${esc(v.nik || '-')}</span>
-        </div>
-
         <div class="v-cell span-2">
           <span class="v-label">📍 Area Kejadian</span>
           <span class="v-val">${esc(v.area || '-')}</span>
         </div>
-        <div class="v-cell">
-          <span class="v-label">🏷️ Status</span>
-          <span class="v-val ${isNonKaryawan ? 'text-highlight' : ''}">${esc(v.offenderType || 'Karyawan')}</span>
-        </div>
-
-        ${!isNonKaryawan && !isDone ? `
-        <div class="v-cell full-width">
-          <span class="v-label">📄 No. Surat Peringatan</span>
-          <span class="v-val text-highlight">${suratNo}</span>
-        </div>` : ''}
-
-        ${v.remark ? `
-        <div class="v-cell full-width">
-          <span class="v-label">📝 Catatan Petugas</span>
-          <span class="v-val">${esc(v.remark)}</span>
-        </div>` : ''}
-
-        ${v.photo ? `
-        <div class="v-cell full-width" style="margin-top:2px">
-          <span class="v-photo-badge" onclick="openPhotoModalById(${v.id})" title="Klik untuk lihat foto bukti">
-            📷 Foto Bukti Terlampir
-          </span>
-        </div>` : ''}
       </div>
 
+      <!-- Minimized / Expandable Additional Information -->
+      <div class="v-card-extra" id="extra-${v.id}">
+        <div class="v-extra-grid">
+          <div class="v-cell">
+            <span class="v-label">🪪 NIK / SIM</span>
+            <span class="v-val">${esc(v.nik || '-')}</span>
+          </div>
+          <div class="v-cell">
+            <span class="v-label">🏷️ Kategori</span>
+            <span class="v-val ${isNonKaryawan ? 'text-highlight' : ''}">${esc(v.offenderType || 'Karyawan')}</span>
+          </div>
+
+          ${!isNonKaryawan && !isDone ? `
+          <div class="v-cell full-width">
+            <span class="v-label">📄 No. Surat Peringatan</span>
+            <span class="v-val text-highlight">${suratNo}</span>
+          </div>` : ''}
+
+          ${v.remark ? `
+          <div class="v-cell full-width">
+            <span class="v-label">📝 Catatan Petugas</span>
+            <span class="v-val">${esc(v.remark)}</span>
+          </div>` : ''}
+
+          ${v.photo ? `
+          <div class="v-cell full-width" style="margin-top:2px">
+            <span class="v-photo-badge" onclick="openPhotoModalById(${v.id})" title="Klik untuk lihat foto bukti">
+              📷 Foto Bukti Terlampir
+            </span>
+          </div>` : ''}
+        </div>
+      </div>
+
+      <!-- Card Status Row with Expand / Minimize Button -->
       <div class="v-card-status">
-        ${!isNonKaryawan ? `
-          ${isDone ? `
-            <span class="status-badge status-selesai" style="cursor:default" title="Status Selesai - Terkunci (View Only)">🟢 Selesai 🔒</span>
-            <span class="status-date-badge">✅ Ditindak: ${fmtDate(v.statusDate || v.date)}</span>
+        <div class="v-status-left">
+          ${!isNonKaryawan ? `
+            ${isDone ? `
+              <span class="status-badge status-selesai" style="cursor:default" title="Status Selesai - Terkunci (View Only)">🟢 Selesai 🔒</span>
+              <span class="status-date-badge">✅ Ditindak: ${fmtDate(v.statusDate || v.date)}</span>
+            ` : `
+              <span class="status-badge ${sCls}" onclick="confirmStatusChange(${v.id})" style="cursor:pointer" title="Klik untuk ubah status">
+                ${v.status==='Baru'?'🔵 Status Baru':'🟠 Proses Tindakan'}
+              </span>
+            `}
           ` : `
-            <span class="status-badge ${sCls}" onclick="confirmStatusChange(${v.id})" style="cursor:pointer" title="Klik untuk ubah status">
-              ${v.status==='Baru'?'🔵 Status Baru':'🟠 Proses Tindakan'}
-            </span>
+            ${isDone ? `
+              <span class="status-badge" style="background:#ECFDF5;color:#065F46;border:1px solid #A7F3D0;cursor:default" title="Sudah Ditindak - Terkunci (View Only)">
+                ✅ Sudah Ditindak 🔒
+              </span>
+            ` : `
+              <span class="status-badge" style="background:#FFF1F2;color:#9F1239;border:1px solid #FECDD3;cursor:pointer" onclick="toggleActionTaken(${v.id})" title="Klik untuk ubah status tindakan">
+                🔴 Belum Ditindak
+              </span>
+            `}
           `}
-        ` : `
-          ${isDone ? `
-            <span class="status-badge" style="background:#ECFDF5;color:#065F46;border:1px solid #A7F3D0;cursor:default" title="Sudah Ditindak - Terkunci (View Only)">
-              ✅ Sudah Ditindak 🔒
-            </span>
-          ` : `
-            <span class="status-badge" style="background:#FFF1F2;color:#9F1239;border:1px solid #FECDD3;cursor:pointer" onclick="toggleActionTaken(${v.id})" title="Klik untuk ubah status tindakan">
-              🔴 Belum Ditindak
-            </span>
-          `}
-        `}
+        </div>
+
+        <button type="button" class="v-toggle-details-btn" id="btn-toggle-${v.id}" onclick="toggleCardExtra(${v.id})" title="Tampilkan/sembunyikan informasi tambahan">
+          <span id="txt-toggle-${v.id}">Lainnya ▾</span>
+        </button>
       </div>
 
       <div class="v-card-footer">
@@ -4522,6 +4573,16 @@ function renderList(){
       </div>
     </div>`;
   }).join('');
+}
+
+function toggleCardExtra(id){
+  const el = document.getElementById('extra-' + id);
+  const txt = document.getElementById('txt-toggle-' + id);
+  if(!el) return;
+  const isOpen = el.classList.toggle('open');
+  if(txt){
+    txt.textContent = isOpen ? 'Tutup ▴' : 'Lainnya ▾';
+  }
 }
 
 /* ============================================================
