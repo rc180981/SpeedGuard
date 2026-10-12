@@ -240,13 +240,13 @@ img{display:block}
 .kpi-box{
   background:var(--card);
   border-radius:16px;
-  padding:13px 14px;
+  padding:12px 13px;
   box-shadow:var(--shadow-sm);
   border:1px solid var(--border);
   display:flex;
   flex-direction:column;
   justify-content:space-between;
-  min-height:106px;
+  min-height:108px;
   min-width:0;
   position:relative;
   transition:transform .18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow .18s ease, border-color .18s ease;
@@ -258,21 +258,12 @@ img{display:block}
 .kpi-box:active{
   transform:scale(0.98);
 }
-.kpi-head{
+.kpi-top-row{
   display:flex;
   align-items:center;
   justify-content:space-between;
   gap:6px;
-}
-.kpi-lbl{
-  font-size:10.5px;
-  font-weight:800;
-  letter-spacing:.3px;
-  text-transform:uppercase;
-  line-height:1.2;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
+  margin-bottom:4px;
 }
 .kpi-icon{
   width:32px;
@@ -284,15 +275,24 @@ img{display:block}
   font-size:16px;
   flex-shrink:0;
 }
+.kpi-tag{
+  font-size:9.5px;
+  font-weight:800;
+  padding:2px 7.5px;
+  border-radius:8px;
+  letter-spacing:.3px;
+  text-transform:uppercase;
+  line-height:1;
+}
 .kpi-val{
   font-size:26px;
   font-weight:900;
   line-height:1;
   letter-spacing:-0.03em;
-  margin:8px 0 3px;
+  margin:2px 0 5px;
   display:flex;
   align-items:baseline;
-  gap:4px;
+  gap:3px;
 }
 .kpi-unit{
   font-size:11px;
@@ -300,49 +300,67 @@ img{display:block}
   letter-spacing:0;
   opacity:.85;
 }
+.kpi-lbl{
+  font-size:11.5px;
+  font-weight:800;
+  line-height:1.25;
+  color:var(--text);
+  white-space:normal;
+  word-break:break-word;
+}
 .kpi-sub{
-  font-size:10.5px;
+  font-size:10px;
   color:var(--text3);
   font-weight:600;
-  line-height:1.2;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
+  line-height:1.25;
+  white-space:normal;
+  word-break:break-word;
+  margin-top:2px;
 }
 
 /* Color Accents (Soft Cek Hidran & Safety Standards) */
 .kpi-box.k1{border-color:rgba(14,124,134,0.22)}
-.kpi-box.k1 .kpi-lbl{color:#0E7C86}
 .kpi-box.k1 .kpi-icon{background:#E6FFFA;color:#0E7C86;border:1px solid rgba(14,124,134,0.18)}
+.kpi-box.k1 .kpi-tag{background:#E6FFFA;color:#0E7C86;border:1px solid rgba(14,124,134,0.2)}
 
 .kpi-box.k2{border-color:rgba(225,29,72,0.22)}
-.kpi-box.k2 .kpi-lbl{color:#E11D48}
 .kpi-box.k2 .kpi-icon{background:#FFE4E6;color:#E11D48;border:1px solid rgba(225,29,72,0.18)}
+.kpi-box.k2 .kpi-tag{background:#FFE4E6;color:#E11D48;border:1px solid rgba(225,29,72,0.2)}
 
 .kpi-box.k3{border-color:rgba(217,119,6,0.24)}
-.kpi-box.k3 .kpi-lbl{color:#D97706}
 .kpi-box.k3 .kpi-icon{background:#FEF3C7;color:#D97706;border:1px solid rgba(217,119,6,0.2)}
+.kpi-box.k3 .kpi-tag{background:#FEF3C7;color:#D97706;border:1px solid rgba(217,119,6,0.25)}
 
 .kpi-box.k4{border-color:rgba(5,150,105,0.22)}
-.kpi-box.k4 .kpi-lbl{color:#059669}
 .kpi-box.k4 .kpi-icon{background:#D1FAE5;color:#059669;border:1px solid rgba(5,150,105,0.18)}
+.kpi-box.k4 .kpi-tag{background:#D1FAE5;color:#059669;border:1px solid rgba(5,150,105,0.2)}
 
 /* Dark mode accents */
 body.dark-mode .kpi-box.k1{border-color:rgba(14,124,134,0.35)}
-body.dark-mode .kpi-box.k1 .kpi-lbl{color:#5EEAD4}
 body.dark-mode .kpi-box.k1 .kpi-icon{background:#134E4A;color:#5EEAD4;border-color:rgba(94,234,212,0.2)}
+body.dark-mode .kpi-box.k1 .kpi-tag{background:#134E4A;color:#5EEAD4;border-color:rgba(94,234,212,0.3)}
 
 body.dark-mode .kpi-box.k2{border-color:rgba(225,29,72,0.35)}
-body.dark-mode .kpi-box.k2 .kpi-lbl{color:#FDA4AF}
 body.dark-mode .kpi-box.k2 .kpi-icon{background:#881337;color:#FDA4AF;border-color:rgba(253,164,175,0.2)}
+body.dark-mode .kpi-box.k2 .kpi-tag{background:#881337;color:#FDA4AF;border-color:rgba(253,164,175,0.3)}
 
 body.dark-mode .kpi-box.k3{border-color:rgba(217,119,6,0.35)}
-body.dark-mode .kpi-box.k3 .kpi-lbl{color:#FDE68A}
 body.dark-mode .kpi-box.k3 .kpi-icon{background:#78350F;color:#FDE68A;border-color:rgba(253,230,138,0.2)}
+body.dark-mode .kpi-box.k3 .kpi-tag{background:#78350F;color:#FDE68A;border-color:rgba(253,230,138,0.3)}
 
 body.dark-mode .kpi-box.k4{border-color:rgba(5,150,105,0.35)}
-body.dark-mode .kpi-box.k4 .kpi-lbl{color:#6EE7B7}
 body.dark-mode .kpi-box.k4 .kpi-icon{background:#064E3B;color:#6EE7B7;border-color:rgba(110,231,183,0.2)}
+body.dark-mode .kpi-box.k4 .kpi-tag{background:#064E3B;color:#6EE7B7;border-color:rgba(110,231,183,0.3)}
+
+@media(max-width:380px){
+  .kpi-grid{gap:8px}
+  .kpi-box{padding:10px 11px;min-height:100px}
+  .kpi-icon{width:28px;height:28px;font-size:14px;border-radius:8px}
+  .kpi-tag{font-size:8.5px;padding:1.5px 5px}
+  .kpi-val{font-size:23px;margin:2px 0 4px}
+  .kpi-lbl{font-size:11px}
+  .kpi-sub{font-size:9.5px}
+}
 
 .chart-wrap{
   background:var(--card);border-radius:var(--radius);padding:16px;
@@ -409,6 +427,13 @@ body.dark-mode .recent-item:hover{background:rgba(255,255,255,0.03)}
 .ri-sub{font-size:11px;color:var(--text2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ri-speed-wrap{text-align:right;flex-shrink:0}
 .ri-speed{font-size:13px;font-weight:900;white-space:nowrap}
+@media(max-width:480px){
+  .recent-item{padding:9px 6px;gap:8px}
+  .ri-badge{width:34px;height:34px;font-size:12px;border-radius:10px}
+  .ri-name{font-size:12.5px}
+  .ri-sub{font-size:10px;white-space:normal;line-height:1.25}
+  .ri-speed{font-size:12px}
+}
 
 .repeat-card{background:linear-gradient(135deg,#FFF3E0,#FFF8E1);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow);border:1px solid #FFE0B2}
 .repeat-title{font-size:13px;font-weight:800;color:var(--primary-dark);display:flex;align-items:center;gap:6px}
@@ -3574,36 +3599,40 @@ function renderDashboard(){
 
   document.getElementById('kpiGrid').innerHTML=`
     <div class="kpi-box k1">
-      <div class="kpi-head">
-        <span class="kpi-lbl">Total Pelanggaran</span>
+      <div class="kpi-top-row">
         <div class="kpi-icon">📋</div>
+        <span class="kpi-tag k1">Total</span>
       </div>
       <div class="kpi-val" style="color:var(--primary)">${total}</div>
-      <div class="kpi-sub">Total kasus tercatat</div>
+      <div class="kpi-lbl">Total Pelanggaran</div>
+      <div class="kpi-sub">Semua kasus tercatat</div>
     </div>
     <div class="kpi-box k2">
-      <div class="kpi-head">
-        <span class="kpi-lbl">Kecepatan ≥40 KM/J</span>
+      <div class="kpi-top-row">
         <div class="kpi-icon">🚨</div>
+        <span class="kpi-tag k2">Bahaya</span>
       </div>
       <div class="kpi-val" style="color:var(--red)">${high}</div>
-      <div class="kpi-sub">Kategori batas bahaya</div>
+      <div class="kpi-lbl">Kecepatan ≥40 KM/J</div>
+      <div class="kpi-sub">Batas bahaya ekstrem</div>
     </div>
     <div class="kpi-box k3">
-      <div class="kpi-head">
-        <span class="kpi-lbl">Belum Ditindak</span>
+      <div class="kpi-top-row">
         <div class="kpi-icon">⏳</div>
+        <span class="kpi-tag k3">Pending</span>
       </div>
       <div class="kpi-val" style="color:var(--yellow-dark)">${newV}</div>
-      <div class="kpi-sub">Menunggu respon tindak lanjut</div>
+      <div class="kpi-lbl">Belum Ditindak</div>
+      <div class="kpi-sub">Perlu tindak lanjut</div>
     </div>
     <div class="kpi-box k4">
-      <div class="kpi-head">
-        <span class="kpi-lbl">Kec. Tertinggi</span>
+      <div class="kpi-top-row">
         <div class="kpi-icon">⚡</div>
+        <span class="kpi-tag k4">Puncak</span>
       </div>
       <div class="kpi-val" style="color:var(--green)">${max}<span class="kpi-unit">KM/J</span></div>
-      <div class="kpi-sub">Batas kecepatan 20 KM/J</div>
+      <div class="kpi-lbl">Kecepatan Tertinggi</div>
+      <div class="kpi-sub">Batas aman 20 KM/J</div>
     </div>
   `;
 
