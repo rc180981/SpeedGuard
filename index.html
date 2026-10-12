@@ -918,51 +918,113 @@ body.dark-mode .v-photo-badge{background:#0C263B;color:#7DD3FC;border-color:#075
    SCREEN: FORM
    ============================================================ */
 .form-card{
-  background:var(--card);border-radius:var(--radius);padding:18px;
+  background:var(--card);border-radius:18px;padding:20px;
   border:1px solid var(--border);
-  box-shadow:var(--shadow-sm)
+  box-shadow:var(--shadow-sm);
+  display:flex;flex-direction:column;gap:18px;
 }
 .form-title{
-  font-size:15px;font-weight:900;color:var(--primary);margin-bottom:16px;
-  padding-bottom:10px;border-bottom:2px solid var(--primary-tint);letter-spacing:-0.01em;
+  font-size:16px;font-weight:900;color:var(--text);margin-bottom:0;
+  display:flex;align-items:center;gap:8px;letter-spacing:-0.01em;
 }
-.fg{margin-bottom:13px}
-.fg label{display:block;font-size:11px;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+
+/* Form Sections */
+.form-section{
+  display:flex;flex-direction:column;gap:12px;
+  padding:14px;background:var(--bg);border-radius:14px;
+  border:1px solid var(--border);
+}
+.form-sec-head{
+  font-size:11.5px;font-weight:800;color:var(--primary);
+  display:flex;align-items:center;gap:6px;letter-spacing:0.3px;
+  text-transform:uppercase;border-bottom:1px dashed var(--border);
+  padding-bottom:6px;margin-bottom:2px;
+}
+
+.fg{margin-bottom:0;display:flex;flex-direction:column;gap:5px}
+.fg label{
+  display:flex;align-items:center;justify-content:space-between;
+  font-size:11px;font-weight:800;color:var(--text2);
+  text-transform:uppercase;letter-spacing:.3px;
+}
+.fg label .req-star{color:var(--red);margin-left:2px}
 .fg input,.fg select,.fg textarea{
-  width:100%;padding:10px 12px;border:1px solid var(--border);
-  border-radius:var(--radius2);font-size:14px;background:var(--card);outline:none;
-  transition:border-color .2s,box-shadow .2s,background .2s;color:var(--text);
-  font-family:inherit;
+  width:100%;padding:10px 13px;border:1.5px solid var(--border);
+  border-radius:11px;font-size:13.5px;background:var(--card);outline:none;
+  transition:border-color .18s,box-shadow .18s,background .18s;color:var(--text);
+  font-family:inherit;box-sizing:border-box;font-weight:600;
 }
 .fg input:focus,.fg select:focus,.fg textarea:focus{
   border-color:var(--primary);box-shadow:0 0 0 3px rgba(14,124,134,.16);background:var(--card);
 }
-.fg textarea{resize:vertical;min-height:72px}
-.fg-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.speed-inp{border-color:#FB7185!important;background:#FFF1F2!important}
-.speed-inp:focus{box-shadow:0 0 0 3px rgba(225,29,72,.16)!important}
-.input-hint{font-size:10px;color:var(--text3);margin-top:3px}
-.speed-indicator{display:flex;gap:6px;margin-top:5px}
-.si-chip{flex:1;text-align:center;padding:6px;border-radius:10px;font-size:10px;font-weight:700;cursor:pointer;transition:all .15s}
+.fg textarea{resize:vertical;min-height:76px;line-height:1.4}
+.fg-row{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+
+/* Speed input styling */
+.speed-input-box{position:relative}
+.speed-inp{
+  border-color:#FECDD3!important;background:#FFF1F2!important;
+  font-weight:900!important;font-size:15px!important;color:#9F1239!important;
+  padding-right:58px!important;
+}
+.speed-inp:focus{box-shadow:0 0 0 3px rgba(225,29,72,.16)!important;border-color:#FB7185!important}
+.speed-unit-tag{
+  position:absolute;right:10px;top:50%;transform:translateY(-50%);
+  font-size:11px;font-weight:900;color:#9F1239;pointer-events:none;
+}
+.input-hint{font-size:10px;color:var(--text3);margin-top:2px}
+
+/* Quick speed selector chips */
+.speed-indicator{display:flex;gap:6px;margin-top:3px}
+.si-chip{
+  flex:1;text-align:center;padding:7px 4px;border-radius:10px;
+  font-size:10.5px;font-weight:800;cursor:pointer;transition:all .15s ease;
+  user-select:none;display:flex;align-items:center;justify-content:center;
+}
 .si-chip.warn{background:#FFFBEB;color:#92400E;border:1px solid #FDE68A}
 .si-chip.danger{background:#FFF1F2;color:#9F1239;border:1px solid #FECDD3}
-.si-chip.selected{transform:scale(1.04);box-shadow:0 2px 6px rgba(0,0,0,.12)}
+.si-chip:hover{transform:translateY(-1px);filter:brightness(0.97)}
+.si-chip.selected{transform:scale(1.03);box-shadow:0 2px 8px rgba(0,0,0,.15);border-width:2px}
 
+/* Form Action Buttons */
+.form-actions{display:flex;flex-direction:column;gap:8px;margin-top:4px}
 .btn-primary{
   width:100%;padding:13px 18px;background:linear-gradient(135deg,#0E7C86 0%,#094E55 100%);
-  color:#fff;border:none;border-radius:var(--radius2);font-size:14.5px;font-weight:800;
+  color:#fff;border:none;border-radius:12px;font-size:14.5px;font-weight:900;
   cursor:pointer;letter-spacing:-0.01em;transition:transform .15s cubic-bezier(0.16, 1, 0.3, 1),box-shadow .2s ease;
-  margin-top:6px;box-shadow:var(--shadow-primary);
+  box-shadow:0 4px 14px rgba(14,124,134,.32);display:flex;align-items:center;justify-content:center;gap:6px;
 }
-.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(14,124,134,.38)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(14,124,134,.42)}
 .btn-primary:active{transform:scale(.98)}
 .btn-secondary{
-  width:100%;padding:11px 16px;background:var(--bg);color:var(--text2);
-  border:1px solid var(--border);border-radius:var(--radius2);font-size:13.5px;
-  font-weight:700;cursor:pointer;margin-top:8px;transition:all .15s ease;
+  width:100%;padding:11px 16px;background:var(--card);color:var(--text2);
+  border:1px solid var(--border);border-radius:12px;font-size:13.5px;
+  font-weight:800;cursor:pointer;transition:all .15s ease;
+  display:flex;align-items:center;justify-content:center;gap:6px;
 }
-.btn-secondary:hover{background:var(--border);color:var(--text)}
+.btn-secondary:hover{background:var(--bg);color:var(--text);border-color:var(--text3)}
 .btn-secondary:active{transform:scale(.98)}
+
+body.dark-mode .form-section{background:#0F172A;border-color:#223049}
+body.dark-mode .form-sec-head{color:var(--primary-light);border-bottom-color:#223049}
+body.dark-mode .speed-inp{background:#3B1115!important;border-color:#881337!important;color:#FDA4AF!important}
+body.dark-mode .speed-unit-tag{color:#FDA4AF}
+body.dark-mode .btn-secondary{background:#151E2E;border-color:#223049;color:#CBD5E1}
+
+@media(max-width:480px){
+  .form-card{padding:14px 12px;border-radius:15px;gap:14px}
+  .form-section{padding:11px 10px;gap:10px;border-radius:12px}
+  .form-sec-head{font-size:11px}
+  .fg label{font-size:10.5px}
+  .fg input,.fg select,.fg textarea{padding:9px 11px;font-size:13px;border-radius:10px}
+  .fg-row{gap:8px}
+  .si-chip{padding:6px 2px;font-size:10px}
+  .btn-primary{padding:12px 14px;font-size:13.5px}
+  .btn-secondary{padding:10px 14px;font-size:12.5px}
+}
+@media(max-width:360px){
+  .fg-row{grid-template-columns:1fr;gap:8px}
+}
 
 /* ============================================================
    AUTOCOMPLETE & AUTOFILL STYLES
@@ -1991,33 +2053,28 @@ body.dark-mode .fb-status-banner.local { background: #26180B; border-color: #4D3
   <!-- ===== FORM ===== -->
   <div class="screen" id="screen-form">
     <div class="form-card">
-      <div class="form-title" id="formTitle">➕ Tambah Pelanggaran Baru</div>
+      <div class="form-title" id="formTitle">
+        <span>➕</span> <span>Tambah Pelanggaran Baru</span>
+      </div>
       <input type="hidden" id="editId"/>
 
-      <div class="fg-row">
-        <div class="fg">
-          <label>📅 Tanggal <span style="color:var(--red)">*</span></label>
-          <input type="date" id="f-date" required/>
+      <!-- Section 1: Waktu & Lokasi -->
+      <div class="form-section">
+        <div class="form-sec-head">
+          <span>📍</span> <span>Waktu & Lokasi Kejadian</span>
         </div>
-        <div class="fg">
-          <label>⏰ Waktu <span style="color:var(--red)">*</span></label>
-          <input type="time" id="f-time" required/>
-        </div>
-      </div>
-
-      <div class="fg-row">
-        <div class="fg">
-          <label>🚨 Kecepatan <span style="color:var(--red)">*</span></label>
-          <input type="number" id="f-speed" min="1" max="250" placeholder="cth: 41" class="speed-inp" oninput="onSpeedInput(this)" required/>
-          <div class="speed-indicator">
-            <div class="si-chip warn" onclick="setSpeed(21)">21 KM/J</div>
-            <div class="si-chip warn" onclick="setSpeed(30)">30 KM/J</div>
-            <div class="si-chip danger" onclick="setSpeed(40)">40 KM/J</div>
-            <div class="si-chip danger" onclick="setSpeed(50)">50 KM/J</div>
+        <div class="fg-row">
+          <div class="fg">
+            <label><span>📅 Tanggal</span><span class="req-star">*</span></label>
+            <input type="date" id="f-date" required/>
+          </div>
+          <div class="fg">
+            <label><span>⏰ Waktu</span><span class="req-star">*</span></label>
+            <input type="time" id="f-time" required/>
           </div>
         </div>
         <div class="fg">
-          <label>📍 Area Speedgun <span style="color:var(--red)">*</span></label>
+          <label><span>📍 Area Speedgun</span><span class="req-star">*</span></label>
           <select id="f-area" required>
             <option value="Area sisi selatan wh3">Area Sisi Selatan WH3</option>
             <option value="Area sisi selatan wh4">Area Sisi Selatan WH4</option>
@@ -2030,113 +2087,151 @@ body.dark-mode .fb-status-banner.local { background: #26180B; border-color: #4D3
         </div>
       </div>
 
-      <div class="fg">
-        <label>👤 Nama Pelanggar <span style="color:var(--red)">*</span></label>
-        <div class="autocomplete-wrap">
-          <input type="text" id="f-name" placeholder="Ketik nama pelanggar (rekomendasi otomatis)..." autocomplete="off" oninput="onNameInput(this)" onblur="onNameBlur()" onkeydown="onNameKeydown(event)" required/>
-          <div class="autocomplete-dropdown" id="nameSuggestDropdown"></div>
-        </div>
-        <div class="autofill-notice" id="autofillNotice">
-          <span>✨</span> <span id="autofillNoticeTxt">Data terisi otomatis dari riwayat sebelumnya</span>
-        </div>
-      </div>
-
-      <div class="fg-row">
-        <div class="fg">
-          <label>🏢 Bagian / Karyawan <span style="color:var(--red)">*</span></label>
-          <input type="text" id="f-dept" placeholder="cth: DRIVER WB, ELUX" required/>
+      <!-- Section 2: Kecepatan Terdeteksi -->
+      <div class="form-section">
+        <div class="form-sec-head">
+          <span>⚡</span> <span>Kecepatan Terdeteksi</span>
         </div>
         <div class="fg">
-          <label>🪪 No NIK / NPK / SIM <span style="color:var(--red)">*</span></label>
-          <input type="text" id="f-nik" placeholder="Nomor identitas NIK/NPK/SIM" required/>
-        </div>
-      </div>
-
-      <div class="fg-row">
-        <div class="fg">
-          <label>🚘 NO. POLISI <span style="color:var(--red)">*</span></label>
-          <input type="text" id="f-plat" placeholder="B 1234 ABC" style="text-transform:uppercase" required/>
-        </div>
-        <div class="fg">
-          <label>🏍️ Jenis Kendaraan <span style="color:var(--red)">*</span></label>
-          <select id="f-vehicle" required>
-            <option value="MOTOR">🏍️ Motor</option>
-            <option value="MOBIL">🚗 Mobil</option>
-            <option value="TRUCK">🚚 Truck</option>
-            <option value="FORKLIFT">🏗️ Forklift</option>
-            <option value="SEPEDA">🚲 Sepeda</option>
-            <option value="Lainnya">Lainnya</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="fg-row">
-        <div class="fg">
-          <label>🏷️ Status Pelanggar <span style="color:var(--red)">*</span></label>
-          <select id="f-offender-type" onchange="onOffenderTypeChange(this.value)">
-            <option value="Karyawan Puninar">🏢 Karyawan Puninar</option>
-            <option value="Non Karyawan">👤 Non Karyawan</option>
-          </select>
-        </div>
-        <div class="fg" id="fg-action-taken" style="display:none">
-          <label>⚡ Sudah ditindak <span style="color:var(--red)">*</span></label>
-          <select id="f-action-taken">
-            <option value="" disabled selected>-- Pilih Status --</option>
-            <option value="Belum">🔴 Belum</option>
-            <option value="Sudah">🟢 Sudah</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Foto Bukti Pelanggaran (Kamera Live & Galeri) -->
-      <div class="fg">
-        <label>📷 Foto Bukti Pelanggaran <span style="font-size:9.5px;color:var(--text3);font-weight:600">(Opsional)</span></label>
-        <!-- Hidden file inputs -->
-        <input type="file" id="f-photo-camera" accept="image/*" capture="environment" style="display:none" onchange="handlePhotoUpload(event)">
-        <input type="file" id="f-photo-gallery" accept="image/*" style="display:none" onchange="handlePhotoUpload(event)">
-        
-        <!-- Kolom Foto: Saat diklik membuka pilihan Kamera Langsung atau Galeri -->
-        <div class="photo-dropzone" id="photoDropzone" onclick="openPhotoPickerModal()">
-          <div class="pd-icon">📸</div>
-          <div class="pd-text">
-            <div class="pd-title">Ambil Foto Bukti Pelanggaran</div>
-            <div class="pd-sub">Klik di sini untuk memilih Kamera Langsung atau Galeri</div>
+          <label><span>🚨 Nilai Kecepatan</span><span class="req-star">*</span></label>
+          <div class="speed-input-box">
+            <input type="number" id="f-speed" min="1" max="250" placeholder="cth: 41" class="speed-inp" oninput="onSpeedInput(this)" required/>
+            <span class="speed-unit-tag">KM/JAM</span>
           </div>
-          <div class="pd-badge">Pilih ➔</div>
+          <div class="speed-indicator">
+            <div class="si-chip warn" onclick="setSpeed(21)">21 KM/J</div>
+            <div class="si-chip warn" onclick="setSpeed(30)">30 KM/J</div>
+            <div class="si-chip danger" onclick="setSpeed(40)">40 KM/J</div>
+            <div class="si-chip danger" onclick="setSpeed(50)">50 KM/J</div>
+          </div>
+          <div class="input-hint">⚠️ Batas kecepatan maksimal adalah 20 KM/JAM.</div>
+        </div>
+      </div>
+
+      <!-- Section 3: Identitas Pelanggar & Kendaraan -->
+      <div class="form-section">
+        <div class="form-sec-head">
+          <span>👤</span> <span>Identitas Pelanggar & Kendaraan</span>
+        </div>
+        <div class="fg">
+          <label><span>👤 Nama Pelanggar</span><span class="req-star">*</span></label>
+          <div class="autocomplete-wrap">
+            <input type="text" id="f-name" placeholder="Ketik nama pelanggar (rekomendasi otomatis)..." autocomplete="off" oninput="onNameInput(this)" onblur="onNameBlur()" onkeydown="onNameKeydown(event)" required/>
+            <div class="autocomplete-dropdown" id="nameSuggestDropdown"></div>
+          </div>
+          <div class="autofill-notice" id="autofillNotice">
+            <span>✨</span> <span id="autofillNoticeTxt">Data terisi otomatis dari riwayat sebelumnya</span>
+          </div>
         </div>
 
-        <div class="photo-preview-box" id="photoPreviewWrap">
-          <img id="photoPreviewImg" class="photo-preview-img" alt="Pratinjau Foto Bukti"/>
-          <div class="photo-preview-overlay">
-            <span class="photo-preview-status">✅ Foto Terlampir</span>
-            <div style="display:flex;gap:6px">
-              <button type="button" class="btn-photo-change" onclick="openPhotoPickerModal()" title="Ganti foto ini">
-                <span>🔄</span> <span>Ganti</span>
-              </button>
-              <button type="button" class="btn-photo-del" onclick="removePhoto()" title="Hapus foto ini">
-                <span>🗑️</span> <span>Hapus</span>
-              </button>
+        <div class="fg-row">
+          <div class="fg">
+            <label><span>🏢 Bagian / Divisi</span><span class="req-star">*</span></label>
+            <input type="text" id="f-dept" placeholder="cth: DRIVER WB, ELUX" required/>
+          </div>
+          <div class="fg">
+            <label><span>🪪 NIK / NPK / SIM</span><span class="req-star">*</span></label>
+            <input type="text" id="f-nik" placeholder="Nomor identitas" required/>
+          </div>
+        </div>
+
+        <div class="fg-row">
+          <div class="fg">
+            <label><span>🚘 No. Polisi (Plat)</span><span class="req-star">*</span></label>
+            <input type="text" id="f-plat" placeholder="B 1234 ABC" style="text-transform:uppercase;font-weight:800;letter-spacing:0.4px" required/>
+          </div>
+          <div class="fg">
+            <label><span>🏍️ Jenis Kendaraan</span><span class="req-star">*</span></label>
+            <select id="f-vehicle" required>
+              <option value="MOTOR">🏍️ Motor</option>
+              <option value="MOBIL">🚗 Mobil</option>
+              <option value="TRUCK">🚚 Truck</option>
+              <option value="FORKLIFT">🏗️ Forklift</option>
+              <option value="SEPEDA">🚲 Sepeda</option>
+              <option value="Lainnya">Lainnya</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="fg-row">
+          <div class="fg">
+            <label><span>🏷️ Kategori Pelanggar</span><span class="req-star">*</span></label>
+            <select id="f-offender-type" onchange="onOffenderTypeChange(this.value)">
+              <option value="Karyawan Puninar">🏢 Karyawan Puninar</option>
+              <option value="Non Karyawan">👤 Non Karyawan</option>
+            </select>
+          </div>
+          <div class="fg" id="fg-action-taken" style="display:none">
+            <label><span>⚡ Sudah Ditindak</span><span class="req-star">*</span></label>
+            <select id="f-action-taken">
+              <option value="" disabled selected>-- Pilih Status --</option>
+              <option value="Belum">🔴 Belum</option>
+              <option value="Sudah">🟢 Sudah</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 4: Foto Bukti & Status Penanganan -->
+      <div class="form-section">
+        <div class="form-sec-head">
+          <span>📷</span> <span>Bukti Pelanggaran & Catatan</span>
+        </div>
+        
+        <div class="fg">
+          <label><span>📷 Foto Bukti</span><span style="font-size:10px;color:var(--text3);font-weight:600">(Opsional)</span></label>
+          <input type="file" id="f-photo-camera" accept="image/*" capture="environment" style="display:none" onchange="handlePhotoUpload(event)">
+          <input type="file" id="f-photo-gallery" accept="image/*" style="display:none" onchange="handlePhotoUpload(event)">
+          
+          <div class="photo-dropzone" id="photoDropzone" onclick="openPhotoPickerModal()">
+            <div class="pd-icon">📸</div>
+            <div class="pd-text">
+              <div class="pd-title">Ambil Foto Bukti Pelanggaran</div>
+              <div class="pd-sub">Pilih Kamera Langsung atau Galeri HP</div>
+            </div>
+            <div class="pd-badge">Pilih ➔</div>
+          </div>
+
+          <div class="photo-preview-box" id="photoPreviewWrap">
+            <img id="photoPreviewImg" class="photo-preview-img" alt="Pratinjau Foto Bukti"/>
+            <div class="photo-preview-overlay">
+              <span class="photo-preview-status">✅ Foto Terlampir</span>
+              <div style="display:flex;gap:6px">
+                <button type="button" class="btn-photo-change" onclick="openPhotoPickerModal()" title="Ganti foto">
+                  <span>🔄</span> <span>Ganti</span>
+                </button>
+                <button type="button" class="btn-photo-del" onclick="removePhoto()" title="Hapus foto">
+                  <span>🗑️</span> <span>Hapus</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
+
+        <div class="fg" id="fg-status">
+          <label><span>📋 Status Penanganan</span><span class="req-star">*</span></label>
+          <select id="f-status" required>
+            <option value="Baru">🔵 Status Baru</option>
+            <option value="Proses">🟠 Dalam Proses</option>
+            <option value="Selesai">🟢 Selesai / Sudah Ditindak</option>
+          </select>
+        </div>
+
+        <div class="fg">
+          <label><span>📝 Catatan Tambahan</span><span style="font-size:10px;color:var(--text3);font-weight:600">(Opsional)</span></label>
+          <textarea id="f-remark" placeholder="Keterangan tambahan, kondisi di lapangan, pengakuan pelanggar, dll…"></textarea>
+        </div>
       </div>
 
-      <div class="fg" id="fg-status">
-        <label>📋 Status Penanganan <span style="color:var(--red)">*</span></label>
-        <select id="f-status" required>
-          <option value="Baru">🔵 Baru</option>
-          <option value="Proses">🟠 Dalam Proses</option>
-          <option value="Selesai">🟢 Selesai / Sudah Ditindak</option>
-        </select>
+      <!-- Action Buttons -->
+      <div class="form-actions">
+        <button type="button" class="btn-primary" onclick="saveViolation(event)">
+          <span>💾</span> <span>SIMPAN DATA PELANGGARAN</span>
+        </button>
+        <button type="button" class="btn-secondary" onclick="cancelForm()">
+          <span>✖</span> <span>Batal & Kembali</span>
+        </button>
       </div>
-
-      <div class="fg">
-        <label>📝 Remark / Catatan <span style="font-size:9.5px;color:var(--text3);font-weight:600">(Opsional)</span></label>
-        <textarea id="f-remark" placeholder="Keterangan tambahan, kondisi, dll…"></textarea>
-      </div>
-
-      <button type="button" class="btn-primary" onclick="saveViolation(event)">💾 SIMPAN DATA</button>
-      <button type="button" class="btn-secondary" onclick="cancelForm()">✖ Batal</button>
     </div>
   </div>
 
