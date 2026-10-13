@@ -27,9 +27,9 @@
       "purpose": "maskable"
     },
     {
-      "src": "favicon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
+      "src": "logo.png",
+      "sizes": "800x800",
+      "type": "image/png",
       "purpose": "any"
     }
   ]
