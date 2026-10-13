@@ -100,26 +100,27 @@ img{display:block}
 }
 .header-text{
   flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;
-  gap:2px;overflow:hidden;
+  gap:4px;overflow:hidden;
 }
 .header-brand-row{
   display:flex;align-items:center;gap:6px;
   white-space:nowrap;min-width:0;overflow:hidden;
 }
 .header-app-name{
-  font-size:15px;font-weight:900;line-height:1.2;
+  font-size:15px;font-weight:900;line-height:1.25;
   color:#FFFFFF;letter-spacing:.3px;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0;
 }
 .header-loc-badge{
-  font-size:9.5px;font-weight:800;
+  font-size:9.5px;font-weight:800;line-height:1;
   background:rgba(255,255,255,.12);
   border:1px solid rgba(255,255,255,.2);
-  color:#F8FAFC;padding:1.5px 6.5px;border-radius:6px;
+  color:#F8FAFC;padding:2px 6.5px;border-radius:6px;
   letter-spacing:.2px;flex-shrink:0;white-space:nowrap;
+  display:inline-flex;align-items:center;
 }
 .header-sub-row{
-  font-size:11px;font-weight:600;line-height:1.2;
+  font-size:11px;font-weight:600;line-height:1.25;
   color:rgba(255,255,255,.85);display:flex;align-items:center;gap:5px;
   white-space:nowrap;min-width:0;overflow:hidden;
 }
@@ -141,25 +142,6 @@ img{display:block}
 .icon-btn:active{transform:scale(.95)}
 @media(max-width:520px){
   .header-limit-txt,.header-sub-dot{display:none} /* Sederhanakan subtitle pada layar ponsel */
-}
-@media(max-width:440px){
-  .app-header{padding:0 10px;gap:7px}
-  .header-icon-box{width:32px;height:32px;font-size:16px;border-radius:8px}
-  .header-app-name{font-size:14px}
-  .header-loc-badge{font-size:8.5px;padding:1px 5px}
-  .header-sub-row{font-size:10px}
-}
-@media(max-width:390px){
-  .user-menu-name,.user-menu-caret{display:none} /* Tampilkan icon squircle bulat di HP sempit */
-  .user-menu-btn{width:32px;height:32px;padding:0;justify-content:center;border-radius:10px}
-  .user-menu-emoji{width:100%;height:100%;background:transparent;font-size:16px}
-  .cloud-pill{padding:0 7px;font-size:9.5px;gap:4px}
-}
-@media(max-width:345px){
-  .header-loc-badge{display:none}
-  .cloud-pill{width:32px;height:32px;padding:0;justify-content:center;border-radius:10px}
-  .cp-text{display:none}
-  .cp-dot{width:8px;height:8px}
 }
 
 .main-content{
@@ -1481,6 +1463,8 @@ body.dark-mode .bar-num{color:#F8FAFC}
 }
 .btn-login-header:hover{background:#F0FDFA;color:var(--primary-dark);transform:translateY(-1px);box-shadow:0 3px 8px rgba(0,0,0,0.18)}
 .btn-login-header:active{transform:scale(.96)}
+body.dark-mode .btn-login-header{background:rgba(255,255,255,0.14);color:#F8FAFC;border:1px solid rgba(255,255,255,0.24)}
+body.dark-mode .btn-login-header:hover{background:rgba(255,255,255,0.24);color:#38BDF8}
 .btn-manage-users{
   background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.35);
   border-radius:16px;padding:4px 8px;font-size:10.5px;font-weight:800;cursor:pointer;
@@ -2006,6 +1990,34 @@ body.dark-mode .cloud-pill { background: rgba(0, 0, 0, 0.35); border-color: rgba
 body.dark-mode .fb-raw-json { background: #111827; border-color: #374151; color: #F9FAFB; }
 body.dark-mode .fb-status-banner.online { background: #14281B; border-color: #1F4A2C; color: #A7F3D0; }
 body.dark-mode .fb-status-banner.local { background: #26180B; border-color: #4D3319; color: #FFB74D; }
+
+/* ============================================================
+   RESPONSIVE HEADER & APP BAR MEDIA QUERIES (FULL PRIORITY)
+   ============================================================ */
+@media(max-width:480px){
+  .btn-login-text{display:none} /* Kompakkan tombol login jadi icon di HP */
+  .btn-login-header{width:32px;height:32px;padding:0;justify-content:center;border-radius:10px;font-size:14px}
+  .cloud-pill{width:32px;height:32px;padding:0;justify-content:center;border-radius:10px}
+  .cp-text{display:none}
+  .cp-dot{width:8px;height:8px}
+}
+@media(max-width:440px){
+  .app-header{padding:0 10px;gap:7px}
+  .header-icon-box{width:32px;height:32px;font-size:16px;border-radius:8px}
+  .header-app-name{font-size:14px}
+  .header-loc-badge{font-size:8.5px;padding:1.5px 5px}
+  .header-sub-row{font-size:10px}
+}
+@media(max-width:390px){
+  .user-menu-name,.user-menu-caret{display:none} /* Tampilkan icon squircle bulat di HP sempit setelah login */
+  .user-menu-btn{width:32px;height:32px;padding:0;justify-content:center;border-radius:10px}
+  .user-menu-emoji{width:100%;height:100%;background:transparent;font-size:16px}
+}
+@media(max-width:360px){
+  .header-loc-badge{display:none}
+  .header-app-name{font-size:13.5px}
+  .header-sub-row{font-size:9.5px}
+}
 </style>
 </head>
 <body>
@@ -3581,7 +3593,7 @@ function updateAuthUI(){
       if(themeBtn) themeBtn.style.display = 'flex';
       badgeArea.innerHTML = `
         <button class="btn-login-header" onclick="openLoginModal()" title="Login Petugas / Admin">
-          <span>🔐</span> <span>Login</span>
+          <span class="btn-login-icon">🔐</span> <span class="btn-login-text">Login</span>
         </button>
       `;
       closeUserDropdown();
