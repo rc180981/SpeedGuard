@@ -325,35 +325,46 @@ img{display:block}
 .kpi-box.k1{border-color:rgba(30,64,175,0.18)}
 .kpi-box.k1 .kpi-icon{background:#EFF6FF;color:#1E40AF;border:1px solid rgba(30,64,175,0.18)}
 .kpi-box.k1 .kpi-tag{background:#EFF6FF;color:#1E40AF;border:1px solid rgba(30,64,175,0.2)}
+.kpi-val.k1-val{color:var(--primary)}
 
 .kpi-box.k2{border-color:rgba(225,29,72,0.22)}
 .kpi-box.k2 .kpi-icon{background:#FFE4E6;color:#E11D48;border:1px solid rgba(225,29,72,0.18)}
 .kpi-box.k2 .kpi-tag{background:#FFE4E6;color:#E11D48;border:1px solid rgba(225,29,72,0.2)}
+.kpi-val.k2-val{color:var(--red)}
 
 .kpi-box.k3{border-color:rgba(217,119,6,0.24)}
 .kpi-box.k3 .kpi-icon{background:#FEF3C7;color:#D97706;border:1px solid rgba(217,119,6,0.2)}
 .kpi-box.k3 .kpi-tag{background:#FEF3C7;color:#D97706;border:1px solid rgba(217,119,6,0.25)}
+.kpi-val.k3-val{color:var(--yellow-dark)}
 
 .kpi-box.k4{border-color:rgba(5,150,105,0.22)}
 .kpi-box.k4 .kpi-icon{background:#D1FAE5;color:#059669;border:1px solid rgba(5,150,105,0.18)}
 .kpi-box.k4 .kpi-tag{background:#D1FAE5;color:#059669;border:1px solid rgba(5,150,105,0.2)}
+.kpi-val.k4-val{color:var(--green)}
 
 /* Dark mode accents */
-body.dark-mode .kpi-box.k1{border-color:rgba(30,64,175,0.35)}
-body.dark-mode .kpi-box.k1 .kpi-icon{background:#172554;color:#93C5FD;border-color:rgba(147,197,253,0.2)}
-body.dark-mode .kpi-box.k1 .kpi-tag{background:#172554;color:#93C5FD;border-color:rgba(147,197,253,0.3)}
+body.dark-mode .kpi-box.k1{border-color:rgba(56,189,248,0.35)}
+body.dark-mode .kpi-box.k1 .kpi-icon{background:#172554;color:#93C5FD;border-color:rgba(147,197,253,0.25)}
+body.dark-mode .kpi-box.k1 .kpi-tag{background:#172554;color:#93C5FD;border-color:rgba(147,197,253,0.35)}
+body.dark-mode .kpi-val.k1-val{color:#38BDF8}
 
 body.dark-mode .kpi-box.k2{border-color:rgba(225,29,72,0.35)}
 body.dark-mode .kpi-box.k2 .kpi-icon{background:#881337;color:#FDA4AF;border-color:rgba(253,164,175,0.2)}
 body.dark-mode .kpi-box.k2 .kpi-tag{background:#881337;color:#FDA4AF;border-color:rgba(253,164,175,0.3)}
+body.dark-mode .kpi-val.k2-val{color:#FB7185}
 
 body.dark-mode .kpi-box.k3{border-color:rgba(217,119,6,0.35)}
 body.dark-mode .kpi-box.k3 .kpi-icon{background:#78350F;color:#FDE68A;border-color:rgba(253,230,138,0.2)}
 body.dark-mode .kpi-box.k3 .kpi-tag{background:#78350F;color:#FDE68A;border-color:rgba(253,230,138,0.3)}
+body.dark-mode .kpi-val.k3-val{color:#FDE68A}
 
 body.dark-mode .kpi-box.k4{border-color:rgba(5,150,105,0.35)}
 body.dark-mode .kpi-box.k4 .kpi-icon{background:#064E3B;color:#6EE7B7;border-color:rgba(110,231,183,0.2)}
 body.dark-mode .kpi-box.k4 .kpi-tag{background:#064E3B;color:#6EE7B7;border-color:rgba(110,231,183,0.3)}
+body.dark-mode .kpi-val.k4-val{color:#34D399}
+
+body.dark-mode .kpi-lbl{color:#F8FAFC}
+body.dark-mode .kpi-sub{color:#94A3B8}
 
 @media(max-width:380px){
   .kpi-grid{gap:8px}
@@ -439,14 +450,18 @@ body.dark-mode .ctg-btn.active{background:#151E2E;color:var(--primary-light);box
 .ts-chip:hover .ts-chip-sub{color:var(--text2)}
 
 body.dark-mode .chart-toggle-group{background:#0F172A;border-color:#223049}
-body.dark-mode .ctg-btn{color:#94A3B8}
-body.dark-mode .ctg-btn.active{background:#151E2E;color:var(--primary-light)}
+body.dark-mode .ctg-btn{color:#CBD5E1}
+body.dark-mode .ctg-btn.active{background:#1E293B;color:#38BDF8;box-shadow:0 2px 6px rgba(0,0,0,0.3);border:1px solid rgba(56,189,248,0.35)}
+body.dark-mode .chart-subtitle{color:#94A3B8}
 body.dark-mode .ts-chip{background:#0F172A;border-color:#223049}
-body.dark-mode .ts-chip.c1{background:rgba(30,64,175,0.12)}
-body.dark-mode .ts-chip.c2{background:rgba(2,132,199,0.12)}
-body.dark-mode .ts-chip.c3{background:rgba(5,150,105,0.12)}
-body.dark-mode .ts-chip.c1 .ts-chip-val{color:#93C5FD}
-body.dark-mode .ts-chip.c2 .ts-chip-val{color:#38BDF8}
+body.dark-mode .ts-chip-lbl{color:#CBD5E1}
+body.dark-mode .ts-chip-sub{color:#94A3B8}
+body.dark-mode .ts-chip-arrow{color:#94A3B8}
+body.dark-mode .ts-chip.c1{background:rgba(56,189,248,0.08);border-left-color:#38BDF8}
+body.dark-mode .ts-chip.c2{background:rgba(2,132,199,0.12);border-left-color:#38BDF8}
+body.dark-mode .ts-chip.c3{background:rgba(5,150,105,0.12);border-left-color:#34D399}
+body.dark-mode .ts-chip.c1 .ts-chip-val{color:#38BDF8}
+body.dark-mode .ts-chip.c2 .ts-chip-val{color:#7DD3FC}
 body.dark-mode .ts-chip.c3 .ts-chip-val{color:#6EE7B7}
 
 .chart-canvas-box{position:relative;width:100%;height:250px!important;min-height:250px!important;flex-shrink:0!important}
@@ -516,11 +531,20 @@ body.dark-mode .ts-chip.c3 .ts-chip-val{color:#6EE7B7}
 .rl-btn:hover{color:var(--primary)}
 .rl-btn.active{
   background:#fff;color:var(--primary);
-  box-shadow:0 2px 6px rgba(14,124,134,0.18);
+  box-shadow:0 2px 6px rgba(15,39,68,0.18);
 }
 body.dark-mode .recent-limit-group{background:#0F172A;border-color:#223049}
-body.dark-mode .rl-btn{color:#94A3B8}
-body.dark-mode .rl-btn.active{background:#151E2E;color:var(--primary-light);box-shadow:0 2px 6px rgba(0,0,0,0.3)}
+body.dark-mode .rl-label{color:#94A3B8}
+body.dark-mode .rl-btn{color:#CBD5E1}
+body.dark-mode .rl-btn.active{background:#1E293B;color:#38BDF8;box-shadow:0 2px 6px rgba(0,0,0,0.3);border:1px solid rgba(56,189,248,0.35)}
+
+.ri-speed-pill.spd-danger{background:#FFE4E6;color:#E11D48;border:1px solid #FECDD3}
+.ri-speed-pill.spd-warn{background:#FEF3C7;color:#D97706;border:1px solid #FDE68A}
+.ri-speed-pill.spd-info{background:#EFF6FF;color:#1E40AF;border:1px solid #BFDBFE}
+
+body.dark-mode .ri-speed-pill.spd-danger{background:#3B1115;color:#FDA4AF;border:1px solid #881337}
+body.dark-mode .ri-speed-pill.spd-warn{background:#331F00;color:#FDE68A;border:1px solid #78350F}
+body.dark-mode .ri-speed-pill.spd-info{background:#082F49;color:#7DD3FC;border:1px solid #0369A1}
 
 .recent-list{display:flex;flex-direction:column;gap:10px}
 .recent-item{
@@ -603,14 +627,20 @@ body.dark-mode .rl-btn.active{background:#151E2E;color:var(--primary-light);box-
 .recent-item:hover .ri-arrow{color:var(--primary);transform:translateX(2px)}
 
 body.dark-mode .recent-item{background:#151E2E;border-color:#223049}
-body.dark-mode .recent-item:hover{background:#1B273B;border-color:var(--primary)}
+body.dark-mode .recent-item:hover{background:#1B273B;border-color:#38BDF8}
+body.dark-mode .ri-name{color:#F8FAFC}
+body.dark-mode .ri-meta{color:#94A3B8}
+body.dark-mode .ri-meta-chip strong{color:#F8FAFC}
 body.dark-mode .ri-meta-sep{color:#2A3B53}
 body.dark-mode .ri-bot{border-top-color:#223049}
-body.dark-mode .ri-status-pill.baru{background:#0C241B;color:#5EEAD4;border-color:#134E4A}
+body.dark-mode .ri-status-pill.baru{background:#172554;color:#93C5FD;border-color:#1E3A8A}
 body.dark-mode .ri-status-pill.proses{background:#381E05;color:#FDE68A;border-color:#78350F}
 body.dark-mode .ri-status-pill.selesai{background:#064E3B;color:#6EE7B7;border-color:#047857}
 body.dark-mode .ri-status-pill.action-belum{background:#4C0519;color:#FDA4AF;border-color:#881337}
 body.dark-mode .ri-status-pill.action-sudah{background:#064E3B;color:#6EE7B7;border-color:#047857}
+body.dark-mode .ri-non-badge{background:rgba(56,189,248,0.14);color:#38BDF8;border:1px solid rgba(56,189,248,0.3)}
+body.dark-mode .ri-arrow{color:#94A3B8}
+body.dark-mode .recent-item:hover .ri-arrow{color:#38BDF8}
 
 @media(max-width:480px){
   .recent-card{padding:13px 12px}
@@ -649,15 +679,17 @@ body.dark-mode .ri-status-pill.action-sudah{background:#064E3B;color:#6EE7B7;bor
 .repeat-grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(180px, 1fr));gap:8px;margin-top:10px}
 @media(max-width:480px){.repeat-grid{grid-template-columns:repeat(auto-fill, minmax(140px, 1fr));gap:6px}}
 .repeat-item{display:flex;align-items:center;gap:8px;padding:8px 10px;background:#fff;border-radius:10px;border:1px solid #FFCC80;cursor:pointer;transition:all .15s;min-width:0}
-.repeat-item:hover{transform:translateY(-1px);box-shadow:0 2px 6px rgba(14,124,134,0.15);border-color:var(--primary)}
+.repeat-item:hover{transform:translateY(-1px);box-shadow:0 2px 6px rgba(15,39,68,0.15);border-color:var(--primary)}
 .repeat-item:active{transform:scale(.98)}
 .repeat-count{background:var(--red);color:#fff;border-radius:12px;padding:2px 7px;font-size:10.5px;font-weight:900;flex-shrink:0}
 .repeat-name{font-size:12px;font-weight:800;color:var(--text);flex:1;min-width:0;word-break:break-word;overflow-wrap:break-word;line-height:1.25}
 .repeat-arrow{font-size:12px;font-weight:900;color:var(--primary);opacity:.6}
-body.dark-mode .repeat-card{background:#26180B;border-color:#4D3319}
-body.dark-mode .repeat-title{color:#FFB74D}
-body.dark-mode .repeat-item{background:#1F160C;border-color:#5C3D1E}
-body.dark-mode .repeat-name{color:#F9FAFB}
+body.dark-mode .repeat-card{background:#1F160C;border-color:#5C3D1E}
+body.dark-mode .repeat-title{color:#FBBF24}
+body.dark-mode .repeat-item{background:#2A1D0E;border-color:#6B461D}
+body.dark-mode .repeat-item:hover{border-color:#FBBF24;box-shadow:0 2px 8px rgba(0,0,0,0.5)}
+body.dark-mode .repeat-name{color:#F8FAFC}
+body.dark-mode .repeat-arrow{color:#FDE68A;opacity:0.9}
 
 /* ============================================================
    SCREEN: DATA LIST
@@ -1759,12 +1791,21 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
    DARK THEME SYSTEM OVERRIDES
    ============================================================ */
 body.dark-mode {
+  --primary: #38BDF8;
+  --primary-light: #60A5FA;
+  --primary-dark: #0A192F;
+  --primary-tint: #172554;
+  --accent: #FF8A00;
+  --yellow: #FBBF24; --yellow-dark: #FDE68A;
+  --blue: #38BDF8; --blue-light: #7DD3FC; --blue-dark: #0284C7;
+  --green: #34D399; --green-light: #6EE7B7;
+  --red: #FB7185; --red-light: #FDA4AF;
   --bg: #0B0F17;
   --card: #151E2E;
   --card-subtle: #0F172A;
   --text: #F8FAFC;
-  --text2: #94A3B8;
-  --text3: #64748B;
+  --text2: #CBD5E1;
+  --text3: #94A3B8;
   --border: #223049;
   --border2: #334460;
   --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.4), 0 4px 14px rgba(0, 0, 0, 0.3);
@@ -1812,9 +1853,11 @@ body.dark-mode .sheet-title, body.dark-mode .modal-title { color: #F8FAFC; }
 body.dark-mode .chip { background: #0F172A; border-color: #223049; color: #CBD5E1; }
 body.dark-mode .chip.selected { background: var(--primary); color: #fff; border-color: var(--primary); }
 body.dark-mode .btn-reset, body.dark-mode .btn-cancel-modal { background: #1E293B; border-color: #334155; color: #E2E8F0; }
-body.dark-mode .repeat-card { background: #26180B; border-color: #4D3319; }
-body.dark-mode .repeat-title { color: #FFB74D; }
-body.dark-mode .repeat-item { background: #1F160C; border-color: #5C3D1E; color: #F8FAFC; }
+body.dark-mode .repeat-card { background: #1F160C; border-color: #5C3D1E; }
+body.dark-mode .repeat-title { color: #FBBF24; }
+body.dark-mode .repeat-item { background: #2A1D0E; border-color: #6B461D; color: #F8FAFC; }
+body.dark-mode .repeat-item:hover { border-color: #FBBF24; box-shadow: 0 2px 8px rgba(0,0,0,0.5); }
+body.dark-mode .repeat-arrow { color: #FDE68A; opacity: 0.9; }
 body.dark-mode .app-info-box { background: #14281B; border-color: #1F4A2C; color: #A7F3D0; }
 body.dark-mode .btn-danger-outline { background: transparent; }
 
@@ -4098,7 +4141,7 @@ function renderDashboard(){
         <div class="kpi-icon">📋</div>
         <span class="kpi-tag k1">Total</span>
       </div>
-      <div class="kpi-val" style="color:var(--primary)">${total}</div>
+      <div class="kpi-val k1-val">${total}</div>
       <div class="kpi-lbl">Total Pelanggaran</div>
       <div class="kpi-sub">Semua kasus tercatat</div>
     </div>
@@ -4107,7 +4150,7 @@ function renderDashboard(){
         <div class="kpi-icon">🚨</div>
         <span class="kpi-tag k2">Bahaya</span>
       </div>
-      <div class="kpi-val" style="color:var(--red)">${high}</div>
+      <div class="kpi-val k2-val">${high}</div>
       <div class="kpi-lbl">Kecepatan ≥40 KM/J</div>
       <div class="kpi-sub">Batas bahaya ekstrem</div>
     </div>
@@ -4116,7 +4159,7 @@ function renderDashboard(){
         <div class="kpi-icon">⏳</div>
         <span class="kpi-tag k3">Pending</span>
       </div>
-      <div class="kpi-val" style="color:var(--yellow-dark)">${newV}</div>
+      <div class="kpi-val k3-val">${newV}</div>
       <div class="kpi-lbl">Belum Ditindak</div>
       <div class="kpi-sub">Perlu tindak lanjut</div>
     </div>
@@ -4125,7 +4168,7 @@ function renderDashboard(){
         <div class="kpi-icon">⚡</div>
         <span class="kpi-tag k4">Puncak</span>
       </div>
-      <div class="kpi-val" style="color:var(--green)">${max}<span class="kpi-unit">KM/J</span></div>
+      <div class="kpi-val k4-val">${max}<span class="kpi-unit">KM/J</span></div>
       <div class="kpi-lbl">Kecepatan Tertinggi</div>
       <div class="kpi-sub">Batas aman 20 KM/J</div>
     </div>
@@ -4190,42 +4233,48 @@ function renderDashboard(){
   if(canvas){
     const ctx = canvas.getContext('2d');
     const isDark = document.body.classList.contains('dark-mode');
-    const primaryColor = '#1E40AF';
-    const gridColor = isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.05)';
-    const textColor = isDark ? '#94A3B8' : '#64748B';
+    const primaryColor = isDark ? '#38BDF8' : '#1E40AF';
+    const gridColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.05)';
+    const textColor = isDark ? '#CBD5E1' : '#64748B';
 
     const grad = ctx.createLinearGradient(0, 0, 0, 200);
     if(trendChartType === 'line'){
-      grad.addColorStop(0, 'rgba(30, 64, 175, 0.28)');
-      grad.addColorStop(0.7, 'rgba(30, 64, 175, 0.05)');
-      grad.addColorStop(1, 'rgba(30, 64, 175, 0.00)');
+      if(isDark){
+        grad.addColorStop(0, 'rgba(56, 189, 248, 0.35)');
+        grad.addColorStop(0.7, 'rgba(56, 189, 248, 0.06)');
+        grad.addColorStop(1, 'rgba(56, 189, 248, 0.00)');
+      } else {
+        grad.addColorStop(0, 'rgba(30, 64, 175, 0.28)');
+        grad.addColorStop(0.7, 'rgba(30, 64, 175, 0.05)');
+        grad.addColorStop(1, 'rgba(30, 64, 175, 0.00)');
+      }
     }
 
     const dataset = trendChartType === 'line' ? {
       label: 'Jumlah Pelanggaran',
       data: vals,
-      borderColor: '#1E40AF',
+      borderColor: primaryColor,
       borderWidth: 2.6,
       backgroundColor: grad,
       fill: true,
       tension: 0.32,
-      pointBackgroundColor: '#FFFFFF',
-      pointBorderColor: '#1E40AF',
+      pointBackgroundColor: isDark ? '#0A192F' : '#FFFFFF',
+      pointBorderColor: primaryColor,
       pointBorderWidth: 2.2,
       pointRadius: 4,
       pointHoverRadius: 6.5,
-      pointHoverBackgroundColor: '#1E40AF',
+      pointHoverBackgroundColor: primaryColor,
       pointHoverBorderColor: '#FFFFFF',
       pointHoverBorderWidth: 2,
     } : {
       label: 'Jumlah Pelanggaran',
       data: vals,
-      backgroundColor: vals.map(v => v === maxCases ? '#1E40AF' : 'rgba(30, 64, 175, 0.45)'),
-      borderColor: '#1E40AF',
+      backgroundColor: vals.map(v => v === maxCases ? primaryColor : (isDark ? 'rgba(56, 189, 248, 0.45)' : 'rgba(30, 64, 175, 0.45)')),
+      borderColor: primaryColor,
       borderWidth: 1,
       borderRadius: 6,
       borderSkipped: false,
-      hoverBackgroundColor: '#0F2744',
+      hoverBackgroundColor: isDark ? '#7DD3FC' : '#0F2744',
     };
 
     chartInstances['trendChart'] = new Chart(canvas, {
@@ -4313,17 +4362,17 @@ function renderDashboard(){
               const txt = `⭐ ${val}`;
               const tw = ctx.measureText(txt).width;
               ctx.fillStyle = isDark ? '#172554' : '#EFF6FF';
-              ctx.strokeStyle = '#1E40AF';
-              ctx.lineWidth = 1;
+              ctx.strokeStyle = isDark ? '#38BDF8' : '#1E40AF';
+              ctx.lineWidth = 1.2;
               const rx = x - tw/2 - 4, ry = y - 13, rw = tw + 8, rh = 14;
               ctx.beginPath();
               if(ctx.roundRect) ctx.roundRect(rx, ry, rw, rh, 4); else ctx.rect(rx, ry, rw, rh);
               ctx.fill();
               ctx.stroke();
-              ctx.fillStyle = '#1E40AF';
+              ctx.fillStyle = isDark ? '#38BDF8' : '#1E40AF';
               ctx.fillText(txt, x, y);
             } else {
-              ctx.fillStyle = isDark ? '#D1D5DB' : '#4B5563';
+              ctx.fillStyle = isDark ? '#CBD5E1' : '#4B5563';
               ctx.fillText(String(val), x, y);
             }
           });
@@ -4398,9 +4447,7 @@ function renderRecentList(){
     }
 
     // Speed pill styling
-    const spdColor = speedColor(v.speed);
-    const spdBg = v.speed >= 40 ? '#FFE4E6' : v.speed >= 30 ? '#FEF3C7' : '#E0F2FE';
-    const spdBorder = v.speed >= 40 ? '#FECDD3' : v.speed >= 30 ? '#FDE68A' : '#BAE6FD';
+    const spdClass = v.speed >= 40 ? 'spd-danger' : v.speed >= 30 ? 'spd-warn' : 'spd-info';
 
     return `
     <div class="recent-item" onclick="${clickAction}" title="${isNonKaryawan ? 'Klik untuk edit data Non-Karyawan' : 'Klik untuk lihat surat / rincian'}">
@@ -4410,7 +4457,7 @@ function renderRecentList(){
           <span class="ri-name">${esc(v.name)}</span>
           ${isNonKaryawan ? '<span class="ri-non-badge">Non-Karyawan</span>' : ''}
         </div>
-        <div class="ri-speed-pill" style="background:${spdBg};color:${spdColor};border:1px solid ${spdBorder}">
+        <div class="ri-speed-pill ${spdClass}">
           ⚡ <span class="ri-speed-num">${v.speed}</span><span class="ri-speed-unit"> KM/J</span>
         </div>
       </div>
