@@ -1218,103 +1218,372 @@ body.dark-mode .v-photo-badge{background:#1E3A8A;color:#93C5FD;border-color:#1E4
 /* ============================================================
    SCREEN: STATISTIK
    ============================================================ */
-.stats-kpi{display:grid;grid-template-columns:repeat(2, 1fr);gap:10px}
-.sk-box-full{grid-column:1 / -1}
-.sk-box{
-  background:var(--card);border-radius:var(--radius);padding:14px 10px;
-  border:1px solid var(--border);
-  box-shadow:var(--shadow);text-align:center;display:flex;flex-direction:column;
-  justify-content:center;align-items:center;border-top:3.5px solid transparent;
-  cursor:pointer;user-select:none;transition:transform .18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow .18s ease;
-  position:relative;
-}
-.sk-box:hover{transform:translateY(-2px);box-shadow:var(--shadow2)}
-.sk-box:active{transform:scale(.97)}
-.sk-hint{font-size:9.5px;color:var(--text3);margin-top:4px;display:flex;align-items:center;gap:3px;font-weight:700}
-.sk-sub-label{font-size:10px;color:var(--blue);font-weight:700;margin-top:2px}
-.sk-box.c1{border-top-color:var(--primary)}
-.sk-box.c2{border-top-color:var(--red)}
-.sk-box.c3{border-top-color:var(--blue)}
-.sk-val{font-size:24px;font-weight:900;line-height:1.1;letter-spacing:-0.03em}
-.sk-lbl{font-size:11px;color:var(--text2);font-weight:700;margin-top:6px;line-height:1.2}
-
 /* ============================================================
-   CHART CARDS (DIAGRAM CARDS IN STATISTIK)
+   SCREEN: STATISTIK
    ============================================================ */
-.chart-cards-section{margin-top:14px}
-.chart-cards-grid{
+.stats-kpi{
   display:grid;
   grid-template-columns:repeat(2, 1fr);
   gap:10px;
 }
-.cc-box{
+@media(min-width:768px){
+  .stats-kpi{grid-template-columns:repeat(3, 1fr);gap:14px}
+  .sk-box-full{grid-column:auto}
+}
+.sk-box-full{grid-column:1 / -1}
+.sk-box{
   background:var(--card);
-  border-radius:var(--radius);
-  padding:14px;
+  border-radius:16px;
+  padding:14px 14px 12px;
   border:1px solid var(--border);
-  box-shadow:var(--shadow);
-  border-top:3.5px solid transparent;
-  cursor:pointer;
-  user-select:none;
-  transition:transform .18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow .18s ease;
+  box-shadow:var(--shadow-sm);
   display:flex;
   flex-direction:column;
   justify-content:space-between;
-  min-height:105px;
+  cursor:pointer;
+  user-select:none;
+  transition:transform .18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow .18s ease, border-color .18s ease;
+  position:relative;
+  min-height:114px;
+  min-width:0;
+  box-sizing:border-box;
+}
+.sk-box:hover{
+  transform:translateY(-2px);
+  box-shadow:var(--shadow2);
+}
+.sk-box:active{
+  transform:scale(.98);
+}
+.sk-top-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:6px;
+  margin-bottom:6px;
+}
+.sk-icon{
+  width:34px;
+  height:34px;
+  border-radius:10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:16px;
+  flex-shrink:0;
+  box-shadow:0 1px 3px rgba(0,0,0,0.04);
+}
+.sk-tag{
+  font-size:9.5px;
+  font-weight:800;
+  padding:2.5px 8px;
+  border-radius:8px;
+  letter-spacing:.3px;
+  text-transform:uppercase;
+  line-height:1;
+  white-space:nowrap;
+}
+.sk-val-wrap{
+  display:flex;
+  align-items:baseline;
+  gap:4px;
+  margin:2px 0 4px;
+}
+.sk-val{
+  font-size:26px;
+  font-weight:900;
+  line-height:1;
+  letter-spacing:-0.03em;
+}
+.sk-unit{
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:0;
+  opacity:.85;
+}
+.sk-lbl{
+  font-size:12px;
+  font-weight:800;
+  color:var(--text);
+  line-height:1.25;
+  margin-top:2px;
+  white-space:normal;
+  word-break:break-word;
+}
+.sk-bot-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:6px;
+  margin-top:8px;
+  padding-top:7px;
+  border-top:1px dashed var(--border);
+}
+.sk-hint{
+  font-size:10px;
+  color:var(--text3);
+  display:inline-flex;
+  align-items:center;
+  gap:3px;
+  font-weight:700;
+}
+.sk-arrow{
+  font-size:11px;
+  font-weight:900;
+  color:var(--text3);
+  transition:transform .18s ease;
+}
+.sk-box:hover .sk-arrow{
+  transform:translateX(2px);
+  color:var(--primary);
+}
+
+/* Color Accents for Statistics KPI */
+.sk-box.c1{border-color:rgba(2,132,199,0.24)}
+.sk-box.c1 .sk-icon{background:#E0F2FE;color:#0284C7;border:1px solid rgba(2,132,199,0.22)}
+.sk-box.c1 .sk-tag{background:#E0F2FE;color:#0284C7;border:1px solid rgba(2,132,199,0.25)}
+.sk-box.c1 .sk-val{color:#0284C7}
+
+.sk-box.c2{border-color:rgba(225,29,72,0.24)}
+.sk-box.c2 .sk-icon{background:#FFE4E6;color:#E11D48;border:1px solid rgba(225,29,72,0.2)}
+.sk-box.c2 .sk-tag{background:#FFE4E6;color:#E11D48;border:1px solid rgba(225,29,72,0.25)}
+.sk-box.c2 .sk-val{color:var(--red)}
+
+.sk-box.c3{border-color:rgba(15,39,68,0.2)}
+.sk-box.c3 .sk-icon{background:#EFF6FF;color:var(--primary-light);border:1px solid rgba(30,64,175,0.2)}
+.sk-box.c3 .sk-tag{background:#EFF6FF;color:var(--primary-light);border:1px solid rgba(30,64,175,0.25)}
+.sk-box.c3 .sk-val{color:var(--primary-light)}
+
+/* Dark mode accents for KPI */
+body.dark-mode .sk-box.c1{border-color:rgba(56,189,248,0.35)}
+body.dark-mode .sk-box.c1 .sk-icon{background:#082F49;color:#38BDF8;border-color:rgba(56,189,248,0.3)}
+body.dark-mode .sk-box.c1 .sk-tag{background:#082F49;color:#38BDF8;border-color:rgba(56,189,248,0.35)}
+body.dark-mode .sk-box.c1 .sk-val{color:#38BDF8}
+
+body.dark-mode .sk-box.c2{border-color:rgba(225,29,72,0.35)}
+body.dark-mode .sk-box.c2 .sk-icon{background:#881337;color:#FDA4AF;border-color:rgba(253,164,175,0.2)}
+body.dark-mode .sk-box.c2 .sk-tag{background:#881337;color:#FDA4AF;border-color:rgba(253,164,175,0.3)}
+body.dark-mode .sk-box.c2 .sk-val{color:#FB7185}
+
+body.dark-mode .sk-box.c3{border-color:rgba(56,189,248,0.3)}
+body.dark-mode .sk-box.c3 .sk-icon{background:#1E293B;color:#7DD3FC;border-color:rgba(125,211,252,0.25)}
+body.dark-mode .sk-box.c3 .sk-tag{background:#1E293B;color:#7DD3FC;border-color:rgba(125,211,252,0.3)}
+body.dark-mode .sk-box.c3 .sk-val{color:#7DD3FC}
+
+body.dark-mode .sk-lbl{color:#F8FAFC}
+body.dark-mode .sk-hint{color:#94A3B8}
+body.dark-mode .sk-arrow{color:#94A3B8}
+
+@media(max-width:380px){
+  .stats-kpi{gap:8px}
+  .sk-box{padding:11px 11px 10px;min-height:104px;border-radius:14px}
+  .sk-icon{width:30px;height:30px;font-size:14px;border-radius:8px}
+  .sk-tag{font-size:8.5px;padding:2px 6px}
+  .sk-val{font-size:22px}
+  .sk-lbl{font-size:11px}
+  .sk-hint{font-size:9px}
+  .sk-bot-row{margin-top:6px;padding-top:5px}
+}
+
+/* ============================================================
+   CHART CARDS (DIAGRAM CARDS IN STATISTIK)
+   ============================================================ */
+.chart-cards-section{margin-top:16px}
+.chart-cards-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:12px;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.stats-export-all-btn{
+  padding:7px 14px;
+  border:1px solid #FECDD3;
+  border-radius:24px;
+  background:#FFF1F2;
+  color:#BE123C;
+  font-size:11.5px;
+  font-weight:800;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  box-shadow:0 1px 3px rgba(190,18,60,0.08);
+  transition:all .18s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space:nowrap;
+  flex-shrink:0;
+}
+.stats-export-all-btn:hover{
+  background:#FFE4E6;
+  border-color:#FDA4AF;
+  color:#9F1239;
+  transform:translateY(-1px);
+  box-shadow:0 3px 8px rgba(190,18,60,0.15);
+}
+.stats-export-all-btn:active{transform:scale(.97)}
+body.dark-mode .stats-export-all-btn{
+  background:#4C0519;
+  border-color:#881337;
+  color:#FECDD3;
+  box-shadow:0 2px 6px rgba(0,0,0,0.3);
+}
+body.dark-mode .stats-export-all-btn:hover{
+  background:#881337;
+  border-color:#BE123C;
+  color:#FFF;
+}
+
+.chart-cards-grid{
+  display:grid;
+  grid-template-columns:repeat(2, 1fr);
+  gap:11px;
+}
+@media(min-width:768px){
+  .chart-cards-grid{grid-template-columns:repeat(4, 1fr);gap:14px}
+}
+.cc-box{
+  background:var(--card);
+  border-radius:16px;
+  padding:14px 13px 12px;
+  border:1px solid var(--border);
+  box-shadow:var(--shadow-sm);
+  cursor:pointer;
+  user-select:none;
+  transition:transform .18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow .18s ease, border-color .18s ease;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  min-height:122px;
+  min-width:0;
+  box-sizing:border-box;
+  position:relative;
 }
 .cc-box:hover{
   transform:translateY(-2px);
   box-shadow:var(--shadow2);
 }
 .cc-box:active{
-  transform:scale(.97);
+  transform:scale(.98);
 }
-.cc-box.c1{border-top-color:var(--blue)}
-.cc-box.c2{border-top-color:var(--primary)}
-.cc-box.c3{border-top-color:var(--green)}
-.cc-box.c4{border-top-color:var(--purple)}
-.cc-box.c5{border-top-color:#F57C00}
+.cc-box.c1{border-color:rgba(2,132,199,0.22)}
+.cc-box.c2{border-color:rgba(15,39,68,0.22)}
+.cc-box.c3{border-color:rgba(5,150,105,0.22)}
+.cc-box.c5{border-color:rgba(217,119,6,0.22)}
 
 .cc-top{
   display:flex;
   justify-content:space-between;
   align-items:center;
+  gap:6px;
   margin-bottom:8px;
 }
-.cc-icon{font-size:22px}
+.cc-icon-wrap{
+  width:32px;
+  height:32px;
+  border-radius:9px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:16px;
+  flex-shrink:0;
+}
+.cc-box.c1 .cc-icon-wrap{background:#E0F2FE;color:#0284C7;border:1px solid rgba(2,132,199,0.2)}
+.cc-box.c2 .cc-icon-wrap{background:#EFF6FF;color:var(--primary-light);border:1px solid rgba(30,64,175,0.2)}
+.cc-box.c3 .cc-icon-wrap{background:#D1FAE5;color:#059669;border:1px solid rgba(5,150,105,0.2)}
+.cc-box.c5 .cc-icon-wrap{background:#FEF3C7;color:#D97706;border:1px solid rgba(217,119,6,0.2)}
+
 .cc-badge{
-  font-size:10px;
+  font-size:9.5px;
   font-weight:800;
   background:var(--bg);
   color:var(--text2);
-  padding:2px 7px;
+  padding:2.5px 7px;
   border-radius:8px;
   border:1px solid var(--border);
+  letter-spacing:.2px;
+  white-space:nowrap;
 }
+.cc-body{min-width:0;margin-bottom:8px}
 .cc-title{
-  font-size:12.5px;
+  font-size:12px;
   font-weight:800;
   color:var(--text);
+  line-height:1.35;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+  word-break:break-word;
+  min-height:32px;
+}
+.cc-sub{
+  font-size:10.5px;
+  color:var(--text3);
+  margin-top:2px;
   line-height:1.25;
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
+  font-weight:600;
 }
-.cc-sub{
-  font-size:10.5px;
-  color:var(--text2);
-  margin-top:3px;
-  line-height:1.2;
+.cc-bot{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:4px;
+  margin-top:auto;
+  padding-top:7px;
+  border-top:1px dashed var(--border);
 }
 .cc-hint{
   font-size:10.5px;
-  font-weight:700;
-  color:var(--primary);
-  margin-top:10px;
-  display:flex;
+  font-weight:800;
+  color:var(--primary-light);
+  display:inline-flex;
   align-items:center;
   gap:3px;
+  line-height:1;
 }
+.cc-arrow{
+  font-size:11px;
+  font-weight:900;
+  color:var(--primary-light);
+  transition:transform .18s ease;
+}
+.cc-box:hover .cc-arrow{
+  transform:translateX(2px);
+}
+
+/* Dark mode accents for Chart Cards */
+body.dark-mode .cc-box{background:#151E2E;border-color:#223049}
+body.dark-mode .cc-box.c1{border-color:rgba(56,189,248,0.3)}
+body.dark-mode .cc-box.c1 .cc-icon-wrap{background:#082F49;color:#38BDF8;border-color:rgba(56,189,248,0.3)}
+body.dark-mode .cc-box.c2{border-color:rgba(125,211,252,0.3)}
+body.dark-mode .cc-box.c2 .cc-icon-wrap{background:#1E293B;color:#7DD3FC;border-color:rgba(125,211,252,0.25)}
+body.dark-mode .cc-box.c3{border-color:rgba(5,150,105,0.35)}
+body.dark-mode .cc-box.c3 .cc-icon-wrap{background:#064E3B;color:#6EE7B7;border-color:rgba(110,231,183,0.2)}
+body.dark-mode .cc-box.c5{border-color:rgba(217,119,6,0.35)}
+body.dark-mode .cc-box.c5 .cc-icon-wrap{background:#78350F;color:#FDE68A;border-color:rgba(253,230,138,0.2)}
+
+body.dark-mode .cc-badge{background:#0F172A;border-color:#223049;color:#CBD5E1}
+body.dark-mode .cc-title{color:#F8FAFC}
+body.dark-mode .cc-sub{color:#94A3B8}
+body.dark-mode .cc-hint{color:#38BDF8}
+body.dark-mode .cc-arrow{color:#38BDF8}
+
+@media(max-width:380px){
+  .chart-cards-grid{gap:8px}
+  .cc-box{padding:11px 10px 10px;min-height:114px;border-radius:14px}
+  .cc-icon-wrap{width:28px;height:28px;font-size:14px;border-radius:8px}
+  .cc-badge{font-size:8.5px;padding:2px 5px}
+  .cc-title{font-size:11.5px}
+  .cc-sub{font-size:9.5px}
+  .cc-hint{font-size:9.5px}
+  .cc-bot{padding-top:5px}
+}
+
 .bar-row{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
 .bar-row:last-child{margin-bottom:0}
 .bar-header{display:flex;justify-content:space-between;align-items:center;font-size:12.5px}
@@ -2298,53 +2567,74 @@ body.dark-mode .fb-status-banner.local { background: #26180B; border-color: #4D3
   <!-- ===== STATISTIK ===== -->
   <div class="screen" id="screen-stats">
     <div class="stats-kpi" id="statsKpi"></div>
+
     <!-- Diagram Cards (Bentuk Card yang saat diklik membuka diagram batang) -->
     <div class="chart-cards-section">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+      <div class="chart-cards-header">
         <div class="section-title" style="margin-bottom:0">📊 Grafik & Diagram Batang</div>
-        <button onclick="exportAllChartsPDF()" style="padding:6px 14px;border:none;border-radius:20px;background:linear-gradient(135deg,#B71C1C,#C62828);color:#fff;font-size:11px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:6px;box-shadow:0 2px 6px rgba(198,40,40,.25);">
-          <span>📕</span> Export PDF Semua Diagram
+        <button class="stats-export-all-btn" onclick="exportAllChartsPDF()">
+          <span>📕</span> <span>Export PDF Semua Diagram</span>
         </button>
       </div>
       <div class="chart-cards-grid">
         <div class="cc-box c1" onclick="openChartModal('month')">
           <div class="cc-top">
-            <span class="cc-icon">📅</span>
+            <div class="cc-icon-wrap">📅</div>
             <span class="cc-badge" id="ccBadgeMonth">0 Bulan</span>
           </div>
-          <div class="cc-title">Pelanggaran per Bulan</div>
-          <div class="cc-sub" id="ccSubMonth">Tren kasus bulanan</div>
-          <div class="cc-hint">📊 Buka Diagram ›</div>
+          <div class="cc-body">
+            <div class="cc-title">Pelanggaran per Bulan</div>
+            <div class="cc-sub" id="ccSubMonth">Tren kasus bulanan</div>
+          </div>
+          <div class="cc-bot">
+            <span class="cc-hint"><span>📊</span> Buka Diagram</span>
+            <span class="cc-arrow">›</span>
+          </div>
         </div>
 
         <div class="cc-box c2" onclick="openChartModal('dept')">
           <div class="cc-top">
-            <span class="cc-icon">🏢</span>
+            <div class="cc-icon-wrap">🏢</div>
             <span class="cc-badge" id="ccBadgeDept">0 Bagian</span>
           </div>
-          <div class="cc-title">Pelanggaran per Bagian</div>
-          <div class="cc-sub" id="ccSubDept">Divisi & kontraktor</div>
-          <div class="cc-hint">📊 Buka Diagram ›</div>
+          <div class="cc-body">
+            <div class="cc-title">Pelanggaran per Bagian</div>
+            <div class="cc-sub" id="ccSubDept">Divisi & kontraktor</div>
+          </div>
+          <div class="cc-bot">
+            <span class="cc-hint"><span>📊</span> Buka Diagram</span>
+            <span class="cc-arrow">›</span>
+          </div>
         </div>
 
         <div class="cc-box c3" onclick="openChartModal('area')">
           <div class="cc-top">
-            <span class="cc-icon">📍</span>
+            <div class="cc-icon-wrap">📍</div>
             <span class="cc-badge" id="ccBadgeArea">0 Area</span>
           </div>
-          <div class="cc-title">Pelanggaran per Area</div>
-          <div class="cc-sub" id="ccSubArea">Titik lokasi speedgun</div>
-          <div class="cc-hint">📊 Buka Diagram ›</div>
+          <div class="cc-body">
+            <div class="cc-title">Pelanggaran per Area</div>
+            <div class="cc-sub" id="ccSubArea">Titik lokasi speedgun</div>
+          </div>
+          <div class="cc-bot">
+            <span class="cc-hint"><span>📊</span> Buka Diagram</span>
+            <span class="cc-arrow">›</span>
+          </div>
         </div>
 
         <div class="cc-box c5" onclick="openChartModal('time')">
           <div class="cc-top">
-            <span class="cc-icon">⏰</span>
+            <div class="cc-icon-wrap">⏰</div>
             <span class="cc-badge" id="ccBadgeTime">6 Rentang</span>
           </div>
-          <div class="cc-title">Distribusi Jam Kejadian</div>
-          <div class="cc-sub" id="ccSubTime">Sebaran Waktu 24 Jam</div>
-          <div class="cc-hint">📊 Buka Diagram ›</div>
+          <div class="cc-body">
+            <div class="cc-title">Distribusi Jam Kejadian</div>
+            <div class="cc-sub" id="ccSubTime">Sebaran Waktu 24 Jam</div>
+          </div>
+          <div class="cc-bot">
+            <span class="cc-hint"><span>📊</span> Buka Diagram</span>
+            <span class="cc-arrow">›</span>
+          </div>
         </div>
       </div>
     </div>
@@ -5579,19 +5869,49 @@ function renderStats(){
 
   document.getElementById('statsKpi').innerHTML=`
     <div class="sk-box c1 sk-box-full" onclick="openKpiDetail('total')">
-      <div class="sk-val" style="color:var(--primary)">${total}</div>
-      <div class="sk-lbl">Total Pelanggaran</div>
-      <div class="sk-hint">🔍 Lihat Rincian Kasus</div>
+      <div class="sk-top-row">
+        <div class="sk-icon">📋</div>
+        <span class="sk-tag">KUMULATIF</span>
+      </div>
+      <div class="sk-val-wrap">
+        <span class="sk-val">${total}</span>
+        <span class="sk-unit">Kasus</span>
+      </div>
+      <div class="sk-lbl">Total Pelanggaran Kecepatan</div>
+      <div class="sk-bot-row">
+        <span class="sk-hint"><span>🔍</span> Rincian Semua Kasus</span>
+        <span class="sk-arrow">›</span>
+      </div>
     </div>
     <div class="sk-box c2" onclick="openKpiDetail('max')">
-      <div class="sk-val" style="color:var(--red)">${max} <span style="font-size:13px;font-weight:700">KM/J</span></div>
+      <div class="sk-top-row">
+        <div class="sk-icon">⚡</div>
+        <span class="sk-tag">REKOR</span>
+      </div>
+      <div class="sk-val-wrap">
+        <span class="sk-val">${max}</span>
+        <span class="sk-unit">KM/J</span>
+      </div>
       <div class="sk-lbl">Kecepatan Tertinggi</div>
-      <div class="sk-hint">🔍 Rekor Tertinggi</div>
+      <div class="sk-bot-row">
+        <span class="sk-hint"><span>🔍</span> Rekor Tertinggi</span>
+        <span class="sk-arrow">›</span>
+      </div>
     </div>
     <div class="sk-box c3" onclick="openKpiDetail('avg')">
-      <div class="sk-val" style="color:var(--blue)">${avg} <span style="font-size:13px;font-weight:700">KM/J</span></div>
+      <div class="sk-top-row">
+        <div class="sk-icon">⏱️</div>
+        <span class="sk-tag">RATA-RATA</span>
+      </div>
+      <div class="sk-val-wrap">
+        <span class="sk-val">${avg}</span>
+        <span class="sk-unit">KM/J</span>
+      </div>
       <div class="sk-lbl">Kecepatan Rata-rata</div>
-      <div class="sk-hint">🔍 Rincian ${avgViolations.length} Kasus</div>
+      <div class="sk-bot-row">
+        <span class="sk-hint"><span>🔍</span> ${avgViolations.length} Kasus Terdata</span>
+        <span class="sk-arrow">›</span>
+      </div>
     </div>
   `;
 
@@ -6640,9 +6960,23 @@ loadData();
 initFirebaseConnection();
 getUsers();
 migrateAndHashPasswords(); // Hash password plaintext menjadi SHA-256 (berjalan sekali di background)
+// Auto test mode query parameter
+const urlParams = new URLSearchParams(window.location.search);
+if(urlParams.get('test_role') === 'petugas'){
+  saveSession({ id: 2, username: 'petugas', name: 'Petugas Patroli', role: 'petugas' });
+}
 updateAuthUI();
-renderDashboard();
+if(location.hash && ['#stats', '#data', '#export'].includes(location.hash)){
+  showScreen(location.hash.slice(1));
+} else {
+  renderDashboard();
+}
 initSortRow();
+window.addEventListener('hashchange', () => {
+  if(location.hash && ['#stats', '#data', '#export', '#dashboard'].includes(location.hash)){
+    showScreen(location.hash.slice(1));
+  }
+});
 </script>
 </body>
 </html>
